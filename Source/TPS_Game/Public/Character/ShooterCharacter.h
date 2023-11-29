@@ -31,7 +31,9 @@ private:
 	/** Input Functions */
 	UFUNCTION()
 	void Movement(const FInputActionValue& Value);
-
+	UFUNCTION()
+	void LookAround(const FInputActionValue& Value);
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -44,6 +46,10 @@ private:
 	TObjectPtr<UInputMappingContext> ShooterInputMapping;
 	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> MovementAction;
+	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> LookAction;
+	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> JumpAction;
 	
 public:
 	/** Getter Functıons */

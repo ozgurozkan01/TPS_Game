@@ -58,13 +58,26 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	if (EnhancedInputComponent)
 	{
-		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this,  &AShooterCharacter::Movement);
+		if (MovementAction)
+		{
+			EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this,  &AShooterCharacter::Movement);
+		}
+
+		if (LookAction)
+		{
+			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this,  &AShooterCharacter::LookAround);
+		}
+		
+		if (JumpAction)
+		{
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this,  &ACharacter::Jump);
+		}
 	}
 }
 
 void AShooterCharacter::Movement(const FInputActionValue& Value)
 {
-		const FVector2D MovementDirection = Value.Get<FVector2D>();
+	const FVector2D MovementDirection = Value.Get<FVector2D>();
 
 	const FRotator ControllerRotation = GetControlRotation();
 	const FRotator YawRotation = FRotator(0.f, ControllerRotation.Yaw, 0.f);
@@ -73,4 +86,12 @@ void AShooterCharacter::Movement(const FInputActionValue& Value)
 	AddMovementInput(ForwardVector, MovementDirection.Y);
 	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	AddMovementInput(RightVector, MovementDirection.X);
+}
+
+void AShooterCharacter::LookAround(const FInputActionValue& Value)
+{
+	FVector2D LookDirection = Value.Get<FVector2D>();
+
+	AddControllerYawInput(LookDirection.X);
+	AddControllerPitchInput(-LookDirection.Y);
 }
