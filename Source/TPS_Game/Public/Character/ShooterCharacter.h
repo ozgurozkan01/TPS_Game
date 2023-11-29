@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class UInputAction;
+class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
 
@@ -25,13 +27,27 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
+	/** Input Functions */
+	UFUNCTION()
+	void Movement(const FInputActionValue& Value);
+
+	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	/** Input */
+	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> ShooterInputMapping;
+	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MovementAction;
 	
 public:
+	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
+	
 };
