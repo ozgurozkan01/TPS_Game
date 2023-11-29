@@ -42,14 +42,19 @@ private:
 	TObjectPtr<UCameraComponent> FollowCamera;
 
 	/** Input */
-	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> ShooterInputMapping;
-	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> MovementAction;
-	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> LookAction;
-	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, Category=Input)
+	float BaseTurnRate;
+	UPROPERTY(EditAnywhere, Category=Input)
+	float BaseLookUpRate;
 	
 public:
 	/** Getter Functıons */
