@@ -17,6 +17,7 @@ class TPS_GAME_API UShooterAnimInstance : public UAnimInstance
 	
 public:
 	virtual void NativeInitializeAnimation() override;
+	UFUNCTION(BlueprintCallable)
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
