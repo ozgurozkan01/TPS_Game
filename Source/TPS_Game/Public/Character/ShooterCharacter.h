@@ -40,7 +40,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
-
+	
+	UPROPERTY(EditDefaultsOnly, Category=Animation)
+	TSubclassOf<UAnimInstance> AnimationClass;
+	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> ShooterInputMapping;
@@ -50,10 +53,9 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
-
-	UPROPERTY(EditAnywhere, Category=Input)
+	UPROPERTY(EditAnywhere, Category=Input, meta=(AllowPrivateAccess = "true"))
 	float BaseTurnRate;
-	UPROPERTY(EditAnywhere, Category=Input)
+	UPROPERTY(EditAnywhere, Category=Input, meta=(AllowPrivateAccess = "true"))
 	float BaseLookUpRate;
 	
 public:

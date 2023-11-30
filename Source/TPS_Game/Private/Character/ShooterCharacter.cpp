@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -24,6 +25,17 @@ AShooterCharacter::AShooterCharacter() :
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	// Set the animation mode of character mesh
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	// deactivate the character rotate with controller
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Activate the character rotate towards movement vector.
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +43,9 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Set the animation BP class of character mesh
+	GetMesh()->SetAnimClass(AnimationClass);
+	
 	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
 
 	if (PlayerController)
