@@ -8,6 +8,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -123,5 +125,8 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::Fire(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fired"));
+	if (FireSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, FireSoundCue);
+	}
 }

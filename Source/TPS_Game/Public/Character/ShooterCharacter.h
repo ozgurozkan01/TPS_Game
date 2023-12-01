@@ -11,6 +11,7 @@ class UInputAction;
 class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
+class USoundCue;
 
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
@@ -45,6 +46,9 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category=Animation)
 	TSubclassOf<UAnimInstance> AnimationClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sound, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<USoundCue> FireSoundCue;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
