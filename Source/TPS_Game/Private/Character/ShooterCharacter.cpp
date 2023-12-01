@@ -10,9 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
-AShooterCharacter::AShooterCharacter() :
-	BaseTurnRate(45.f),
-	BaseLookUpRate(45.f)
+AShooterCharacter::AShooterCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -114,6 +112,6 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 {
 	FVector2D LookDirection = Value.Get<FVector2D>();
 
-	AddControllerYawInput(LookDirection.X * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-	AddControllerPitchInput(-LookDirection.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	AddControllerYawInput(LookDirection.X);
+	AddControllerPitchInput(LookDirection.Y);
 }

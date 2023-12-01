@@ -53,10 +53,6 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
-	UPROPERTY(EditAnywhere, Category=Input, meta=(AllowPrivateAccess = "true"))
-	float BaseTurnRate;
-	UPROPERTY(EditAnywhere, Category=Input, meta=(AllowPrivateAccess = "true"))
-	float BaseLookUpRate;
 	
 public:
 	/** Getter Functıons */
