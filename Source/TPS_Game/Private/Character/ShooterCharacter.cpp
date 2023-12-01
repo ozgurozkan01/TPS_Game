@@ -92,6 +92,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		{
 			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this,  &ACharacter::Jump);
 		}
+
+		if (FireAction)
+		{
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShooterCharacter::Fire);
+		}
 	}
 }
 
@@ -114,4 +119,9 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 	AddControllerYawInput(LookDirection.X);
 	AddControllerPitchInput(LookDirection.Y);
+}
+
+void AShooterCharacter::Fire(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Fired"));
 }

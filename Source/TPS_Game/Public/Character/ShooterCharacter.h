@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 class UCameraComponent;
@@ -33,7 +34,8 @@ private:
 	void Movement(const FInputActionValue& Value);
 	UFUNCTION()
 	void LookAround(const FInputActionValue& Value);
-	
+	UFUNCTION()
+	void Fire(const FInputActionValue& Value);
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -53,7 +55,8 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
-	
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> FireAction;
 public:
 	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
