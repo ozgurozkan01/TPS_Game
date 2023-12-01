@@ -19,7 +19,7 @@ AShooterCharacter::AShooterCharacter() :
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
-	CameraBoom->TargetArmLength = 300.f;
+	CameraBoom->TargetArmLength = 450.f;
 	CameraBoom->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -30,12 +30,17 @@ AShooterCharacter::AShooterCharacter() :
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	// deactivate the character rotate with controller
+	// Do not rotate when the controller rotates
+	// Let the controller only affect the camera
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	// Activate the character rotate towards movement vector.
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 540, 0.f);
+	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->AirControl = 0.15f; // Control percent when the character is in air
 }
 
 // Called when the game starts or when spawned
