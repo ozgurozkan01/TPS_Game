@@ -127,11 +127,32 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::Fire(const FInputActionValue& Value)
 {
+	PlayFireSoundCue();
+	PlayBarrelMuzzleFlash();
+	PlayGunFireMontage();
+}
+
+void AShooterCharacter::PlayGunFireMontage()
+{
+	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance && GunFireMontage)
+	{
+		AnimInstance->Montage_Play(GunFireMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+	}
+}
+
+void AShooterCharacter::PlayFireSoundCue()
+{
 	if (FireSoundCue)
 	{
 		UGameplayStatics::PlaySound2D(this, FireSoundCue);
 	}
+}
 
+void AShooterCharacter::PlayBarrelMuzzleFlash()
+{
 	if(MuzzleFlash)
 	{
 		const USkeletalMeshSocket* MeshSocket = GetMesh()->GetSocketByName("BarrelSocket");

@@ -12,6 +12,8 @@ class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
 class USoundCue;
+class UAnimMontage;
+class UParticleSystem;
 
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
@@ -37,6 +39,12 @@ private:
 	void LookAround(const FInputActionValue& Value);
 	UFUNCTION()
 	void Fire(const FInputActionValue& Value);
+
+	/** Combat Functions*/
+	void PlayGunFireMontage();
+	void PlayFireSoundCue();
+	void PlayBarrelMuzzleFlash();
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -52,6 +60,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UParticleSystem> MuzzleFlash;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAnimMontage> GunFireMontage;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
