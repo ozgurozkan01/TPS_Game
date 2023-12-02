@@ -7,8 +7,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 #include "Sound/SoundCue.h"
 
 // Sets default values
@@ -128,5 +130,16 @@ void AShooterCharacter::Fire(const FInputActionValue& Value)
 	if (FireSoundCue)
 	{
 		UGameplayStatics::PlaySound2D(this, FireSoundCue);
+	}
+
+	if(MuzzleFlash)
+	{
+		const USkeletalMeshSocket* MeshSocket = GetMesh()->GetSocketByName("BarrelSocket");
+
+		if (MeshSocket)
+		{
+			FTransform SocketTransform = MeshSocket->GetSocketTransform(GetMesh());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+		}
 	}
 }

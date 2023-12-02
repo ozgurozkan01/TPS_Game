@@ -47,8 +47,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Animation)
 	TSubclassOf<UAnimInstance> AnimationClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Sound, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<USoundCue> FireSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> MuzzleFlash;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
