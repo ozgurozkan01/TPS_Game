@@ -176,6 +176,7 @@ void AShooterCharacter::Shoot()
 	{
 		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f);
 		DrawDebugPoint(GetWorld(), FireHit.Location, 5.f, FColor::Red, false, 2.f);
+		PlayHitParticle(FireHit.Location);
 	}
 }
 
@@ -190,4 +191,12 @@ FTransform AShooterCharacter::GetSocketTransform(FName SocketName)
 	}
 
 	return FTransform();
+}
+
+void AShooterCharacter::PlayHitParticle(FVector& HitLocation)
+{
+	if (HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, HitLocation);
+	}
 }

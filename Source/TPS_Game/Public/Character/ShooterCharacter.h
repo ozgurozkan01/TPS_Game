@@ -45,6 +45,7 @@ private:
 	void PlayGunFireMontage();
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
+	void PlayHitParticle(FVector& HitLocation);
 	void Shoot();
 	
 	/** Character Components */
@@ -63,6 +64,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UParticleSystem> MuzzleFlash;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> HitParticle;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 	
