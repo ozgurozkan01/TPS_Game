@@ -41,9 +41,11 @@ private:
 	void Fire(const FInputActionValue& Value);
 
 	/** Combat Functions*/
+	FTransform GetSocketTransform(FName SocketName);
 	void PlayGunFireMontage();
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
+	void Shoot();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
