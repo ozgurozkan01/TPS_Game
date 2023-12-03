@@ -14,6 +14,7 @@ class USpringArmComponent;
 class USoundCue;
 class UAnimMontage;
 class UParticleSystem;
+class UParticleSystemComponent;
 
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
@@ -46,6 +47,7 @@ private:
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
 	void PlayHitParticle(FVector& HitLocation);
+	void PlayBeamParticle(FTransform& StartTransform, FVector& End);
 	void Shoot();
 	
 	/** Character Components */
@@ -66,6 +68,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UParticleSystem> HitParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> SmokeBeamParticle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;

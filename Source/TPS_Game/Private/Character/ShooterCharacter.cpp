@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -168,16 +169,18 @@ void AShooterCharacter::Shoot()
 	FQuat Rotation { SocketTransform.GetRotation() };
 	FVector RotationX { Rotation.GetAxisX() };
 	FVector End { Start + RotationX * 50'000.f };
-
+	FVector SmokeEnd { End };
+	
 	FHitResult FireHit;
 	GetWorld()->LineTraceSingleByChannel(FireHit, Start, End, ECollisionChannel::ECC_Visibility);
 
 	if (FireHit.bBlockingHit)
 	{
-		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f);
-		DrawDebugPoint(GetWorld(), FireHit.Location, 5.f, FColor::Red, false, 2.f);
+		SmokeEnd = {FireHit.Location};
 		PlayHitParticle(FireHit.Location);
 	}
+
+	PlayBeamParticle(SocketTransform, SmokeEnd);
 }
 
 FTransform AShooterCharacter::GetSocketTransform(FName SocketName)
@@ -198,5 +201,14 @@ void AShooterCharacter::PlayHitParticle(FVector& HitLocation)
 	if (HitParticle)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, HitLocation);
+	}
+}
+
+void AShooterCharacter::PlayBeamParticle(FTransform& StartTransform, FVector& End)
+{
+	if (SmokeBeamParticle)
+	{
+		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, StartTransform);
+		BeamParticleComponent->SetVectorParameter(FName("Target"), End);
 	}
 }
