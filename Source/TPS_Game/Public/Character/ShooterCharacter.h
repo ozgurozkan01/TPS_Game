@@ -43,6 +43,7 @@ private:
 
 	/** Combat Functions*/
 	FTransform GetSocketTransform(FName SocketName);
+	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void PlayGunFireMontage();
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();

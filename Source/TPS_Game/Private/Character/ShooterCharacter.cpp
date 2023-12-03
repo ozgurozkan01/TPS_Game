@@ -167,28 +167,32 @@ void AShooterCharacter::PlayBarrelMuzzleFlash()
 void AShooterCharacter::Shoot()
 {
 	FTransform SocketTransform = GetSocketTransform("BarrelSocket");
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
 
-	FVector Start { SocketTransform.GetLocation() };
-	FQuat Rotation { SocketTransform.GetRotation() };
-	FVector RotationX { Rotation.GetAxisX() };
-	FVector End { Start + RotationX * 50'000.f };
-	FVector SmokeEnd { End };
-	
-	FHitResult FireHit;
-	GetWorld()->LineTraceSingleByChannel(FireHit, Start, End, ECollisionChannel::ECC_Visibility);
-
-	if (FireHit.bBlockingHit)
+	if (IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection))
 	{
-		SmokeEnd = {FireHit.Location};
-		PlayHitParticle(FireHit.Location);
-	}
+		FHitResult ScreenTraceHit;
+		FVector Start {CrosshairWorldPosition};
+		FVector End {Start + CrosshairWorldDirection * 50'000.f};
 
-	PlayBeamParticle(SocketTransform, SmokeEnd);
+		FVector BeanEndPoint {End};
+		
+		GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
+
+		if (ScreenTraceHit.bBlockingHit)
+		{
+			BeanEndPoint = ScreenTraceHit.Location;
+			PlayHitParticle(ScreenTraceHit.Location);
+		}
+		
+		PlayBeamParticle(SocketTransform, BeanEndPoint);
+	}
 }
 
 FTransform AShooterCharacter::GetSocketTransform(FName SocketName)
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName(SocketName);
 
 	if (BarrelSocket)
 	{
@@ -197,6 +201,30 @@ FTransform AShooterCharacter::GetSocketTransform(FName SocketName)
 	}
 
 	return FTransform();
+}
+
+bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
+{
+	FVector2D ViewportSize;
+
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(ViewportSize);
+	}
+
+	FVector2D CrosshairPosition = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
+	CrosshairPosition.Y -= 50.f;
+
+
+	
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		CrosshairPosition,
+		CrosshairWorldPosition,
+		CrosshairWorldDirection
+		);
+
+	return bScreenToWorld;
 }
 
 void AShooterCharacter::PlayHitParticle(FVector& HitLocation)
