@@ -106,6 +106,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void AShooterCharacter::Movement(const FInputActionValue& Value)
 {
+	if (GetCharacterMovement()->IsFalling()) { return; }
+	
 	const FVector2D MovementDirection = Value.Get<FVector2D>();
 
 	const FRotator ControllerRotation = GetControlRotation();
@@ -208,7 +210,10 @@ void AShooterCharacter::PlayBeamParticle(FTransform& StartTransform, FVector& En
 {
 	if (SmokeBeamParticle)
 	{
+		/** Spawn the Beam Particle and Store in the variable */
 		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, StartTransform);
+		/** This Particle has the target point and target point represents the end location. If we do not set, the end point is set FVector(0, 0, 0)
+		 * To set this variable we need to store it in variable. */
 		BeamParticleComponent->SetVectorParameter(FName("Target"), End);
 	}
 }
