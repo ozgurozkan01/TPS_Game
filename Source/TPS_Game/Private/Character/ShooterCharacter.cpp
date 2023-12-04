@@ -172,21 +172,12 @@ void AShooterCharacter::Shoot()
 
 	if (IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection))
 	{
-		FHitResult ScreenTraceHit;
-		FVector Start {CrosshairWorldPosition};
-		FVector End {Start + CrosshairWorldDirection * 50'000.f};
-
-		FVector BeanEndPoint {End};
+		FVector BeamEndPoint { FVector::ZeroVector };
+		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
+		LineTraceFromTheGunBarrel(SocketTransform, BeamEndPoint);
 		
-		GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
-
-		if (ScreenTraceHit.bBlockingHit)
-		{
-			BeanEndPoint = ScreenTraceHit.Location;
-			PlayHitParticle(ScreenTraceHit.Location);
-		}
-		
-		PlayBeamParticle(SocketTransform, BeanEndPoint);
+		PlayHitParticle(BeamEndPoint);
+		PlayBeamParticle(SocketTransform, BeamEndPoint);
 	}
 }
 
@@ -214,8 +205,6 @@ bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition
 
 	FVector2D CrosshairPosition = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
 	CrosshairPosition.Y -= 50.f;
-
-
 	
 	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
 		UGameplayStatics::GetPlayerController(this, 0),
@@ -225,6 +214,42 @@ bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition
 		);
 
 	return bScreenToWorld;
+}
+
+void AShooterCharacter::LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint)
+{
+	FVector Start {CrosshairWorldPosition};
+	FVector End {Start + CrosshairWorldDirection * 50'000.f};
+	// Set beam end point to line trace end point
+	BeamEndPoint = End;
+	
+	FHitResult ScreenTraceHit;
+	// Tracing outward from the crosshairs world location
+	GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
+
+	if (ScreenTraceHit.bBlockingHit)
+	{
+		// Beam end point is set as tracing hit location
+		BeamEndPoint = ScreenTraceHit.Location;
+	}
+}
+
+void AShooterCharacter::LineTraceFromTheGunBarrel(const FTransform& SocketTransform, FVector& BeamEndPoint)
+{
+	const FVector WeaponTraceStart { SocketTransform.GetLocation()};
+	const FVector WeaponTraceEnd { BeamEndPoint };
+
+	FHitResult WeaponTraceHit;
+	// Tracing from the gun barrel to the Screen Trace Hit Location
+	// We trace from the camera to the world screen, but we need to trace also
+	// from the gun barrel to the screen trace hit location. Because, the gun is more
+	// angular than the camera, because of that, where the camera trace hit , gun trace might not arrive.
+	GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
+
+	if (WeaponTraceHit.bBlockingHit)
+	{
+		BeamEndPoint = WeaponTraceHit.Location;
+	}
 }
 
 void AShooterCharacter::PlayHitParticle(FVector& HitLocation)

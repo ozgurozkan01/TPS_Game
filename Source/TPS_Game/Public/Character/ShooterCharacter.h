@@ -43,7 +43,9 @@ private:
 
 	/** Combat Functions*/
 	FTransform GetSocketTransform(FName SocketName);
-	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
+	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition,FVector& CrosshairWorldDirection);
+	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
+	void LineTraceFromTheGunBarrel(const FTransform& SocketTransform, FVector& BeamEndPoint);
 	void PlayGunFireMontage();
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
