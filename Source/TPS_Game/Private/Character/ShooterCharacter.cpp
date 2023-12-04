@@ -13,7 +13,6 @@
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 
-// Sets default values
 AShooterCharacter::AShooterCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -46,7 +45,6 @@ AShooterCharacter::AShooterCharacter()
 	GetCharacterMovement()->AirControl = 0.15f; // Control percent when the character is in air
 }
 
-// Called when the game starts or when spawned
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -67,14 +65,12 @@ void AShooterCharacter::BeginPlay()
 	}
 }
 
-// Called every frame
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -136,54 +132,9 @@ void AShooterCharacter::Fire(const FInputActionValue& Value)
 	Shoot();
 }
 
-void AShooterCharacter::PlayGunFireMontage()
+FTransform AShooterCharacter::GetGunBarrelSocketTransform()
 {
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
-
-	if (AnimInstance && GunFireMontage)
-	{
-		AnimInstance->Montage_Play(GunFireMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartFire"));
-	}
-}
-
-void AShooterCharacter::PlayFireSoundCue()
-{
-	if (FireSoundCue)
-	{
-		UGameplayStatics::PlaySound2D(this, FireSoundCue);
-	}
-}
-
-void AShooterCharacter::PlayBarrelMuzzleFlash()
-{
-	if(MuzzleFlash)
-	{
-		FTransform SocketTransform = GetSocketTransform("BarrelSocket");
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
-	}
-}
-
-void AShooterCharacter::Shoot()
-{
-	FTransform SocketTransform = GetSocketTransform("BarrelSocket");
-	FVector CrosshairWorldPosition;
-	FVector CrosshairWorldDirection;
-
-	if (IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection))
-	{
-		FVector BeamEndPoint { FVector::ZeroVector };
-		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
-		LineTraceFromTheGunBarrel(SocketTransform, BeamEndPoint);
-		
-		PlayHitParticle(BeamEndPoint);
-		PlayBeamParticle(SocketTransform, BeamEndPoint);
-	}
-}
-
-FTransform AShooterCharacter::GetSocketTransform(FName SocketName)
-{
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName(SocketName);
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 
 	if (BarrelSocket)
 	{
@@ -234,9 +185,9 @@ void AShooterCharacter::LineTraceFromTheScreen(const FVector& CrosshairWorldPosi
 	}
 }
 
-void AShooterCharacter::LineTraceFromTheGunBarrel(const FTransform& SocketTransform, FVector& BeamEndPoint)
+void AShooterCharacter::LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint)
 {
-	const FVector WeaponTraceStart { SocketTransform.GetLocation()};
+	const FVector WeaponTraceStart { GunSocketLocation };
 	const FVector WeaponTraceEnd { BeamEndPoint };
 
 	FHitResult WeaponTraceHit;
@@ -245,14 +196,43 @@ void AShooterCharacter::LineTraceFromTheGunBarrel(const FTransform& SocketTransf
 	// from the gun barrel to the screen trace hit location. Because, the gun is more
 	// angular than the camera, because of that, where the camera trace hit , gun trace might not arrive.
 	GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
-
 	if (WeaponTraceHit.bBlockingHit)
 	{
 		BeamEndPoint = WeaponTraceHit.Location;
 	}
+
+	//DrawDebugLine(GetWorld(), WeaponTraceStart, BeamEndPoint, FColor::Red, false, 5.f);
 }
 
-void AShooterCharacter::PlayHitParticle(FVector& HitLocation)
+void AShooterCharacter::PlayGunFireMontage()
+{
+	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance && GunFireMontage)
+	{
+		AnimInstance->Montage_Play(GunFireMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+	}
+}
+
+void AShooterCharacter::PlayFireSoundCue()
+{
+	if (FireSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, FireSoundCue);
+	}
+}
+
+void AShooterCharacter::PlayBarrelMuzzleFlash()
+{
+	if(MuzzleFlash)
+	{
+		FTransform SocketTransform = GetGunBarrelSocketTransform();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+	}
+}
+
+void AShooterCharacter::PlayHitParticle(const FVector& HitLocation)
 {
 	if (HitParticle)
 	{
@@ -260,14 +240,31 @@ void AShooterCharacter::PlayHitParticle(FVector& HitLocation)
 	}
 }
 
-void AShooterCharacter::PlayBeamParticle(FTransform& StartTransform, FVector& End)
+void AShooterCharacter::PlayBeamParticle(const FTransform& Start, const FVector& End)
 {
 	if (SmokeBeamParticle)
 	{
 		/** Spawn the Beam Particle and Store in the variable */
-		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, StartTransform);
+		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, Start);
 		/** This Particle has the target point and target point represents the end location. If we do not set, the end point is set FVector(0, 0, 0)
 		 * To set this variable we need to store it in variable. */
 		BeamParticleComponent->SetVectorParameter(FName("Target"), End);
+	}
+}
+
+void AShooterCharacter::Shoot()
+{
+	FTransform SocketTransform = GetGunBarrelSocketTransform();
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+
+	if (IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection))
+	{
+		FVector BeamEndPoint { FVector::ZeroVector };
+		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
+		LineTraceFromTheGunBarrel(SocketTransform.GetLocation(), BeamEndPoint);
+		
+		PlayHitParticle(BeamEndPoint);
+		PlayBeamParticle(SocketTransform, BeamEndPoint);
 	}
 }

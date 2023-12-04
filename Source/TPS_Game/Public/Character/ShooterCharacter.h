@@ -42,15 +42,15 @@ private:
 	void Fire(const FInputActionValue& Value);
 
 	/** Combat Functions*/
-	FTransform GetSocketTransform(FName SocketName);
+	FTransform GetGunBarrelSocketTransform();
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition,FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
-	void LineTraceFromTheGunBarrel(const FTransform& SocketTransform, FVector& BeamEndPoint);
+	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void PlayGunFireMontage();
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
-	void PlayHitParticle(FVector& HitLocation);
-	void PlayBeamParticle(FTransform& StartTransform, FVector& End);
+	void PlayHitParticle(const FVector& HitLocation);
+	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void Shoot();
 	
 	/** Character Components */
