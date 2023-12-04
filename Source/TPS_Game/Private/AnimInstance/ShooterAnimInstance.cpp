@@ -4,6 +4,7 @@
 #include "AnimInstance/ShooterAnimInstance.h"
 #include "Character/ShooterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UShooterAnimInstance::NativeInitializeAnimation()
 {
@@ -42,4 +43,35 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			bIsAccelerating = false;
 		}
 	}
+}
+
+FRotator UShooterAnimInstance::GetAimRotation()
+{
+	if (ShooterCharacter)
+	{
+		FRotator AimRotation = ShooterCharacter->GetBaseAimRotation();
+		return AimRotation;
+	}
+
+	return FRotator::ZeroRotator;
+}
+
+FRotator UShooterAnimInstance::GetMovementRotation()
+{
+	if (ShooterCharacter && ShooterCharacter->GetCharacterMovement())
+	{
+		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ShooterCharacter->GetCharacterMovement()->Velocity);
+		return MovementRotation;
+	}
+
+	return FRotator::ZeroRotator;
+}
+
+void UShooterAnimInstance::SetMovementOffsetYaw()
+{
+	FRotator AimRotation = GetAimRotation();
+	UE_LOG(LogTemp, Warning, TEXT("Aim Rotation Yaw : %f"), AimRotation.Yaw);
+	FRotator MovementRotation = GetMovementRotation();
+	// UE_LOG(LogTemp, Warning, TEXT("Movement Rotation Yaw : %f"), MovementRotation.Yaw);
+	MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 }

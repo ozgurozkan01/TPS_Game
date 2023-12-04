@@ -21,6 +21,14 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
+
+	/** Calculate the character aim rotation (Controller Rotation for AI, Camera Look At Rotation for Main Player) */
+	FRotator GetAimRotation();
+	/** Calculate the rotation character move through */
+	FRotator GetMovementRotation();
+	/** Set the movement offset yaw value */
+	void SetMovementOffsetYaw();
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<AShooterCharacter> ShooterCharacter;
 
@@ -32,4 +40,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsAccelerating;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
+	float MovementOffsetYaw;
 };
