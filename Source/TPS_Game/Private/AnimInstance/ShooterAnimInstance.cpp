@@ -42,36 +42,30 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			bIsAccelerating = false;
 		}
+
+		SetMovementOffsetYaw();
+		
 	}
 }
 
 FRotator UShooterAnimInstance::GetAimRotation()
 {
-	if (ShooterCharacter)
-	{
-		FRotator AimRotation = ShooterCharacter->GetBaseAimRotation();
-		return AimRotation;
-	}
-
-	return FRotator::ZeroRotator;
+	FRotator AimRotation = ShooterCharacter->GetBaseAimRotation();
+	return AimRotation;
 }
 
 FRotator UShooterAnimInstance::GetMovementRotation()
 {
-	if (ShooterCharacter && ShooterCharacter->GetCharacterMovement())
-	{
-		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ShooterCharacter->GetCharacterMovement()->Velocity);
-		return MovementRotation;
-	}
-
-	return FRotator::ZeroRotator;
+	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ShooterCharacter->GetCharacterMovement()->Velocity);
+	return MovementRotation;
 }
 
 void UShooterAnimInstance::SetMovementOffsetYaw()
 {
 	FRotator AimRotation = GetAimRotation();
-	UE_LOG(LogTemp, Warning, TEXT("Aim Rotation Yaw : %f"), AimRotation.Yaw);
+	//UE_LOG(LogTemp, Warning, TEXT("Aim Rotation Yaw : %f"), AimRotation.Yaw);
 	FRotator MovementRotation = GetMovementRotation();
-	// UE_LOG(LogTemp, Warning, TEXT("Movement Rotation Yaw : %f"), MovementRotation.Yaw);
+	//UE_LOG(LogTemp, Warning, TEXT("Movement Rotation Yaw : %f"), MovementRotation.Yaw);
 	MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
+	//UE_LOG(LogTemp, Warning, TEXT("Movement Offset Yaw : %f"), MovementOffsetYaw);
 }
