@@ -66,6 +66,11 @@ void UShooterAnimInstance::SetMovementOffsetYaw()
 	//UE_LOG(LogTemp, Warning, TEXT("Aim Rotation Yaw : %f"), AimRotation.Yaw);
 	FRotator MovementRotation = GetMovementRotation();
 	//UE_LOG(LogTemp, Warning, TEXT("Movement Rotation Yaw : %f"), MovementRotation.Yaw);
+	if (ShooterCharacter->GetCharacterMovement()->Velocity.Size() > 0.f)
+	{
+		LastFrameMovementOffsetYaw = MovementOffsetYaw;
+	}
+	
 	MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 	//UE_LOG(LogTemp, Warning, TEXT("Movement Offset Yaw : %f"), MovementOffsetYaw);
 }
