@@ -43,6 +43,9 @@ AShooterCharacter::AShooterCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.15f; // Control percent when the character is in air
+	GetCharacterMovement()->MaxAcceleration = 1250.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 315.f;
+	GetCharacterMovement()->GroundFriction = 3.f;
 }
 
 void AShooterCharacter::BeginPlay()
@@ -126,15 +129,13 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::Fire(const FInputActionValue& Value)
 {
-	PlayFireSoundCue();
-	PlayBarrelMuzzleFlash();
 	PlayGunFireMontage();
 	Shoot();
 }
 
-FTransform AShooterCharacter::GetGunBarrelSocketTransform()
+FTransform AShooterCharacter::GetGunBarrelSocketTransform(FName GunBarrelSocket)
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName(GunBarrelSocket);
 
 	if (BarrelSocket)
 	{
@@ -223,12 +224,21 @@ void AShooterCharacter::PlayFireSoundCue()
 	}
 }
 
-void AShooterCharacter::PlayBarrelMuzzleFlash()
+void AShooterCharacter::PlayRightBarrelMuzzleFlash()
 {
 	if(MuzzleFlash)
 	{
-		FTransform SocketTransform = GetGunBarrelSocketTransform();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+		FTransform RightBarrelSocketTransform = GetGunBarrelSocketTransform("RightWeaponBarrelSocket");
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, RightBarrelSocketTransform);
+	}
+}
+
+void AShooterCharacter::PlayLeftBarrelMuzzleFlash()
+{
+	if (MuzzleFlash)
+	{
+		FTransform LeftBarrelSocketTransform = GetGunBarrelSocketTransform("LeftWeaponBarrelSocket");
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, LeftBarrelSocketTransform);
 	}
 }
 
@@ -254,7 +264,13 @@ void AShooterCharacter::PlayBeamParticle(const FTransform& Start, const FVector&
 
 void AShooterCharacter::Shoot()
 {
-	FTransform SocketTransform = GetGunBarrelSocketTransform();
+	FTransform RightBarrelSocketTransform = GetGunBarrelSocketTransform("RightWeaponBarrelSocket");
+	FTransform LeftBarrelSocketTransform = GetGunBarrelSocketTransform("LeftWeaponBarrelSocket");
+	/*
+	DrawDebugSphere(GetWorld(), RightBarrelSocketTransform.GetLocation(), 25, 15, FColor::Red, true);
+	DrawDebugSphere(GetWorld(), LeftBarrelSocketTransform.GetLocation(), 25, 15, FColor::Green, true);
+	*/
+
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
 
@@ -262,9 +278,14 @@ void AShooterCharacter::Shoot()
 	{
 		FVector BeamEndPoint { FVector::ZeroVector };
 		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
-		LineTraceFromTheGunBarrel(SocketTransform.GetLocation(), BeamEndPoint);
+		LineTraceFromTheGunBarrel(RightBarrelSocketTransform.GetLocation(), BeamEndPoint);
+		LineTraceFromTheGunBarrel(LeftBarrelSocketTransform.GetLocation(), BeamEndPoint);
+
 		
 		PlayHitParticle(BeamEndPoint);
-		PlayBeamParticle(SocketTransform, BeamEndPoint);
+		PlayBeamParticle(RightBarrelSocketTransform, BeamEndPoint);
+		PlayBeamParticle(LeftBarrelSocketTransform, BeamEndPoint);
+
+		//DrawDebugSphere(GetWorld(), BeamEndPoint, 25, 15, FColor::Blue, true);
 	}
 }
