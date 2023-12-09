@@ -47,7 +47,11 @@ private:
 	void LookAround(const FInputActionValue& Value);
 	UFUNCTION()
 	void Fire(const FInputActionValue& Value);
-
+	UFUNCTION()
+	void OpenScope(const FInputActionValue& Value);
+	UFUNCTION()
+	void CloseScope(const FInputActionValue& Value);
+	
 	/** Combat Functions*/
 	FTransform GetGunBarrelSocketTransform(FName GunBarrelSocket);
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition,FVector& CrosshairWorldDirection);
@@ -57,7 +61,8 @@ private:
 	void PlayHitParticle(const FVector& HitLocation);
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void Shoot();
-	
+	void CameraInterpZoom(float DeltaTime);
+	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -82,6 +87,13 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
+
+	float CameraDefaultFOV;
+	float CameraZoomedFOV;
+	float CameraCurrentFOV;
+	float CameraZoomInterpSpeed;
+	bool bAiming; 
+	
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -94,6 +106,9 @@ private:
 	TObjectPtr<UInputAction> JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> FireAction;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ScopeAction;
+
 public:
 	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }

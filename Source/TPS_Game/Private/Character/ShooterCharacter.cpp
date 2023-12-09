@@ -13,7 +13,12 @@
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 
-AShooterCharacter::AShooterCharacter()
+AShooterCharacter::AShooterCharacter() :
+	CameraDefaultFOV(0.f),
+	CameraZoomedFOV(30.f),
+	CameraCurrentFOV(0.f),
+	CameraZoomInterpSpeed(25.f),
+	bAiming(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,7 +27,7 @@ AShooterCharacter::AShooterCharacter()
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 300.f;
 	CameraBoom->bUsePawnControlRotation = true;
-	CameraBoom->SocketOffset = FVector(0.f, 50.f, 50.f);
+	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);
 	
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -55,6 +60,12 @@ void AShooterCharacter::BeginPlay()
 	// Set the animation BP class of character mesh
 	GetMesh()->SetAnimClass(AnimationClass);
 	
+	if (FollowCamera)
+	{
+		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
+		CameraCurrentFOV = CameraDefaultFOV;
+	}
+	
 	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
 
 	if (PlayerController)
@@ -72,6 +83,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CameraInterpZoom(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -100,6 +112,12 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		if (FireAction)
 		{
 			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShooterCharacter::Fire);
+		}
+
+		if (ScopeAction)
+		{
+			EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Triggered, this, &AShooterCharacter::OpenScope);
+			EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Completed, this, &AShooterCharacter::CloseScope);
 		}
 	}
 }
@@ -131,6 +149,20 @@ void AShooterCharacter::Fire(const FInputActionValue& Value)
 {
 	PlayGunFireMontage();
 	Shoot();
+}
+
+void AShooterCharacter::OpenScope(const FInputActionValue& Value)
+{
+	bool bCrosshairShouldZoom = Value.Get<bool>();
+
+	bAiming = bCrosshairShouldZoom;
+}
+
+void AShooterCharacter::CloseScope(const FInputActionValue& Value)
+{
+	bool bCrosshairShouldZoom = Value.Get<bool>();
+	
+	bAiming = bCrosshairShouldZoom;
 }
 
 FTransform AShooterCharacter::GetGunBarrelSocketTransform(FName GunBarrelSocket)
@@ -283,9 +315,31 @@ void AShooterCharacter::Shoot()
 
 		
 		PlayHitParticle(BeamEndPoint);
-		PlayBeamParticle(RightBarrelSocketTransform, BeamEndPoint);
 		PlayBeamParticle(LeftBarrelSocketTransform, BeamEndPoint);
 
 		//DrawDebugSphere(GetWorld(), BeamEndPoint, 25, 15, FColor::Blue, true);
 	}
+}
+
+void AShooterCharacter::CameraInterpZoom(float DeltaTime)
+{
+	if (bAiming)
+	{
+		CameraCurrentFOV = InterpCurrentFOV(CameraZoomedFOV, DeltaTime);
+	}
+
+	else
+	{
+		CameraCurrentFOV = InterpCurrentFOV(CameraDefaultFOV, DeltaTime);
+	}
+
+	if (FollowCamera)
+	{
+		GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
+	}
+}
+
+float AShooterCharacter::InterpCurrentFOV(float TargetFOV, float DeltaTime)
+{
+	return FMath::FInterpTo(CameraCurrentFOV, TargetFOV, DeltaTime, CameraZoomInterpSpeed);
 }
