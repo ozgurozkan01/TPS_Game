@@ -165,9 +165,9 @@ void AShooterCharacter::CloseScope(const FInputActionValue& Value)
 	bAiming = bCrosshairShouldZoom;
 }
 
-FTransform AShooterCharacter::GetGunBarrelSocketTransform(FName GunBarrelSocket)
+FTransform AShooterCharacter::GetGunBarrelSocketTransform()
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName(GunBarrelSocket);
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 
 	if (BarrelSocket)
 	{
@@ -256,21 +256,12 @@ void AShooterCharacter::PlayFireSoundCue()
 	}
 }
 
-void AShooterCharacter::PlayRightBarrelMuzzleFlash()
-{
-	if(MuzzleFlash)
-	{
-		FTransform RightBarrelSocketTransform = GetGunBarrelSocketTransform("RightWeaponBarrelSocket");
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, RightBarrelSocketTransform);
-	}
-}
-
-void AShooterCharacter::PlayLeftBarrelMuzzleFlash()
+void AShooterCharacter::PlayBarrelMuzzleFlash()
 {
 	if (MuzzleFlash)
 	{
-		FTransform LeftBarrelSocketTransform = GetGunBarrelSocketTransform("LeftWeaponBarrelSocket");
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, LeftBarrelSocketTransform);
+		FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
 	}
 }
 
@@ -296,12 +287,7 @@ void AShooterCharacter::PlayBeamParticle(const FTransform& Start, const FVector&
 
 void AShooterCharacter::Shoot()
 {
-	FTransform RightBarrelSocketTransform = GetGunBarrelSocketTransform("RightWeaponBarrelSocket");
-	FTransform LeftBarrelSocketTransform = GetGunBarrelSocketTransform("LeftWeaponBarrelSocket");
-	/*
-	DrawDebugSphere(GetWorld(), RightBarrelSocketTransform.GetLocation(), 25, 15, FColor::Red, true);
-	DrawDebugSphere(GetWorld(), LeftBarrelSocketTransform.GetLocation(), 25, 15, FColor::Green, true);
-	*/
+	FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
 
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
@@ -310,14 +296,11 @@ void AShooterCharacter::Shoot()
 	{
 		FVector BeamEndPoint { FVector::ZeroVector };
 		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
-		LineTraceFromTheGunBarrel(RightBarrelSocketTransform.GetLocation(), BeamEndPoint);
-		LineTraceFromTheGunBarrel(LeftBarrelSocketTransform.GetLocation(), BeamEndPoint);
-
+		LineTraceFromTheGunBarrel(BarrelSocketTransform.GetLocation(), BeamEndPoint);
 		
 		PlayHitParticle(BeamEndPoint);
-		PlayBeamParticle(LeftBarrelSocketTransform, BeamEndPoint);
-
-		//DrawDebugSphere(GetWorld(), BeamEndPoint, 25, 15, FColor::Blue, true);
+		PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
+		PlayFireSoundCue();
 	}
 }
 

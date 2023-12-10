@@ -30,13 +30,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable)
-	void PlayRightBarrelMuzzleFlash();
-	UFUNCTION(BlueprintCallable)
-	void PlayLeftBarrelMuzzleFlash();
-	UFUNCTION(BlueprintCallable)
-	void PlayFireSoundCue();
 	
 private:
 
@@ -53,13 +46,16 @@ private:
 	void CloseScope(const FInputActionValue& Value);
 	
 	/** Combat Functions*/
-	FTransform GetGunBarrelSocketTransform(FName GunBarrelSocket);
+	FTransform GetGunBarrelSocketTransform();
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition,FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void PlayGunFireMontage();
 	void PlayHitParticle(const FVector& HitLocation);
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
+	void PlayFireSoundCue();
+	void PlayBarrelMuzzleFlash();
+
 	void Shoot();
 	void CameraInterpZoom(float DeltaTime);
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
