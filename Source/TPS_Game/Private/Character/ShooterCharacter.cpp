@@ -15,12 +15,11 @@
 
 AShooterCharacter::AShooterCharacter() :
 	CameraDefaultFOV(0.f),
-	CameraZoomedFOV(30.f),
+	CameraZoomedFOV(25.f),
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
 	bAiming(false)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
