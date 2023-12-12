@@ -30,6 +30,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FORCEINLINE bool GetIsAiming() { return bAiming; }
 	
 private:
 
