@@ -44,7 +44,7 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 
 		SetMovementOffsetYaw();
-		
+		bAiming = ShooterCharacter->GetIsAiming();
 	}
 }
 
