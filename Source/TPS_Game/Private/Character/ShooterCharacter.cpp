@@ -14,11 +14,17 @@
 #include "Particles/ParticleSystemComponent.h"
 
 AShooterCharacter::AShooterCharacter() :
+	bAiming(false),
+	// Turn Rates for aiming/not aiming 
+	HipTurnRate(1.f),
+	HipLookUpRate(1.f),
+	AimingTurnRate(0.2f),
+	AimingLookUpRate(0.2f),
+	// Camera Field Of View values to use aiming/not aiming
 	CameraDefaultFOV(0.f),
 	CameraZoomedFOV(25.f),
 	CameraCurrentFOV(0.f),
-	CameraZoomInterpSpeed(25.f),
-	bAiming(false)
+	CameraZoomInterpSpeed(25.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -82,7 +88,10 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UE_LOG(LogTemp, Warning, TEXT("%f"), HipTurnRate);
+	
 	CameraInterpZoom(DeltaTime);
+	SetLookRates();
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -139,10 +148,10 @@ void AShooterCharacter::Movement(const FInputActionValue& Value)
 void AShooterCharacter::LookAround(const FInputActionValue& Value)
 {
 	FVector2D LookDirection = Value.Get<FVector2D>();
-
-	AddControllerYawInput(LookDirection.X);
-	AddControllerPitchInput(LookDirection.Y);
-}
+	
+	AddControllerYawInput(LookDirection.X * BaseTurnRate);
+	AddControllerPitchInput(LookDirection.Y * BaseLookUpRate);
+}	
 
 void AShooterCharacter::Fire(const FInputActionValue& Value)
 {
@@ -318,6 +327,21 @@ void AShooterCharacter::CameraInterpZoom(float DeltaTime)
 	if (FollowCamera)
 	{
 		GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
+	}
+}
+
+void AShooterCharacter::SetLookRates()
+{
+	if(bAiming)
+	{
+		BaseTurnRate = AimingTurnRate;
+		BaseLookUpRate = AimingLookUpRate;
+	}
+
+	else
+	{
+		BaseTurnRate = HipTurnRate;
+		BaseLookUpRate = HipLookUpRate;
 	}
 }
 

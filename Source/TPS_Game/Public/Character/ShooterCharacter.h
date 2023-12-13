@@ -30,9 +30,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	FORCEINLINE bool GetIsAiming() { return bAiming; }
-	
 private:
 
 	/** Input Functions */
@@ -57,10 +54,13 @@ private:
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
-
 	void Shoot();
+
+	/** Aiming Functions */
 	void CameraInterpZoom(float DeltaTime);
+	void SetLookRates();
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -86,12 +86,21 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 
+	float BaseTurnRate;
+	float BaseLookUpRate;
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;
 	float CameraCurrentFOV;
 	float CameraZoomInterpSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float HipTurnRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float HipLookUpRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float AimingTurnRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float AimingLookUpRate;
 	bool bAiming; 
-	
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -111,5 +120,5 @@ public:
 	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
-	
+	FORCEINLINE bool GetIsAiming() const { return bAiming; }
 };
