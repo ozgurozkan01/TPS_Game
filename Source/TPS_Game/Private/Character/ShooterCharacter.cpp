@@ -26,7 +26,9 @@ AShooterCharacter::AShooterCharacter() :
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
 	// Crosshair max spread value
-	CrosshairSpreadMax(16.f)
+	CrosshairSpreadMax(16.f),
+	CrosshairInAirMultiplier(0.f),
+	CrosshairAimingMultiplier(0.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -92,7 +94,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 	
 	CameraInterpZoom(DeltaTime);
 	SetLookRates();
-	CalculateCrosshairSpread(DeltaTime);
+	CalculateCrosshairSpreadMultiplier(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -346,12 +348,12 @@ void AShooterCharacter::SetLookRates()
 	}
 }
 
-void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
+void AShooterCharacter::CalculateCrosshairSpreadMultiplier(float DeltaTime)
 {
-	CrosshairSpreadMultiplier = 0.5 + CalculateCrosshairVelocity();
+	CrosshairSpreadMultiplier = 0.5 + CalculateCrosshairVelocityMultiplier() + CalculateCrosshairInAirMultiplier(DeltaTime) - CalculateCrosshairAimingMultiplier(DeltaTime);
 }
 
-float AShooterCharacter::CalculateCrosshairVelocity()
+float AShooterCharacter::CalculateCrosshairVelocityMultiplier()
 {
 	FVector2D WalkSpeedRange {0.f, 600.f};
 	FVector2D VelocityMultiplierRange {0.f, 1.f};
@@ -360,6 +362,37 @@ float AShooterCharacter::CalculateCrosshairVelocity()
 
 	/** Clamp the speed value based on output range value and return corresponding percentage accordingly output*/
 	return FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, CurrentVelocity.Size());	
+}
+
+float AShooterCharacter::CalculateCrosshairInAirMultiplier(float DeltaTime)
+{
+	if (GetCharacterMovement()->IsFalling())
+	{
+		CrosshairInAirMultiplier = FMath::FInterpTo(CrosshairInAirMultiplier, 2.25f, DeltaTime, 6.f); 
+	}
+
+	else
+	{
+		CrosshairInAirMultiplier = FMath::FInterpTo(CrosshairInAirMultiplier, 0, DeltaTime, 10.f); 
+	}
+
+	return CrosshairInAirMultiplier;
+}
+
+float AShooterCharacter::CalculateCrosshairAimingMultiplier(float DeltaTime)
+{
+	if (bAiming)
+	{
+		CrosshairAimingMultiplier = FMath::FInterpTo(CrosshairAimingMultiplier, 0.35f, DeltaTime, 6.f); 
+	}
+
+	else
+	{
+		CrosshairAimingMultiplier = FMath::FInterpTo(CrosshairAimingMultiplier, 0, DeltaTime, 10.f); 
+	}
+
+	return CrosshairAimingMultiplier;
+	
 }
 
 float AShooterCharacter::GetCrosshairSpreadValue()

@@ -60,9 +60,11 @@ private:
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates();
-	void CalculateCrosshairSpread(float DeltaTime);
-	float CalculateCrosshairVelocity();
-
+	void CalculateCrosshairSpreadMultiplier(float DeltaTime);
+	float CalculateCrosshairVelocityMultiplier();
+	float CalculateCrosshairInAirMultiplier(float DeltaTime);
+	float CalculateCrosshairAimingMultiplier(float DeltaTime);
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
