@@ -60,6 +60,7 @@ private:
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates();
+	/** Functions that calculate values that affect the crosshair's spread animation */
 	void CalculateCrosshairSpreadMultiplier(float DeltaTime);
 	float CalculateCrosshairVelocityMultiplier();
 	float CalculateCrosshairInAirMultiplier(float DeltaTime);
@@ -107,8 +108,6 @@ private:
 	float AimingTurnRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float AimingLookUpRate;
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
-	float CrosshairVelocityMultiplier;*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float CrosshairSpreadMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))

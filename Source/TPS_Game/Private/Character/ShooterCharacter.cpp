@@ -259,23 +259,6 @@ void AShooterCharacter::PlayGunFireMontage()
 	}
 }
 
-void AShooterCharacter::PlayFireSoundCue()
-{
-	if (FireSoundCue)
-	{
-		UGameplayStatics::PlaySound2D(this, FireSoundCue);
-	}
-}
-
-void AShooterCharacter::PlayBarrelMuzzleFlash()
-{
-	if (MuzzleFlash)
-	{
-		FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
-	}
-}
-
 void AShooterCharacter::PlayHitParticle(const FVector& HitLocation)
 {
 	if (HitParticle)
@@ -296,6 +279,23 @@ void AShooterCharacter::PlayBeamParticle(const FTransform& Start, const FVector&
 	}
 }
 
+void AShooterCharacter::PlayFireSoundCue()
+{
+	if (FireSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, FireSoundCue);
+	}
+}
+
+void AShooterCharacter::PlayBarrelMuzzleFlash()
+{
+	if (MuzzleFlash)
+	{
+		FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
+	}
+}
+
 void AShooterCharacter::Shoot()
 {
 	FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
@@ -313,6 +313,11 @@ void AShooterCharacter::Shoot()
 		PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
 		PlayFireSoundCue();
 	}
+}
+
+float AShooterCharacter::InterpCurrentFOV(float TargetFOV, float DeltaTime)
+{
+	return FMath::FInterpTo(CameraCurrentFOV, TargetFOV, DeltaTime, CameraZoomInterpSpeed);
 }
 
 void AShooterCharacter::CameraInterpZoom(float DeltaTime)
@@ -403,9 +408,4 @@ float AShooterCharacter::GetCrosshairSpreadValue()
 float AShooterCharacter::GetCrosshairSpreadMax()
 {
 	return CrosshairSpreadMax;
-}
-
-float AShooterCharacter::InterpCurrentFOV(float TargetFOV, float DeltaTime)
-{
-	return FMath::FInterpTo(CameraCurrentFOV, TargetFOV, DeltaTime, CameraZoomInterpSpeed);
 }
