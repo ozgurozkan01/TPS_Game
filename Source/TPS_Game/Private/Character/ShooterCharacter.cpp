@@ -24,7 +24,9 @@ AShooterCharacter::AShooterCharacter() :
 	CameraDefaultFOV(0.f),
 	CameraZoomedFOV(25.f),
 	CameraCurrentFOV(0.f),
-	CameraZoomInterpSpeed(25.f)
+	CameraZoomInterpSpeed(25.f),
+	// Crosshair max spread value
+	CrosshairSpreadMax(16.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -87,11 +89,10 @@ void AShooterCharacter::BeginPlay()
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("%f"), HipTurnRate);
 	
 	CameraInterpZoom(DeltaTime);
 	SetLookRates();
+	CalculateCrosshairSpread(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -343,6 +344,32 @@ void AShooterCharacter::SetLookRates()
 		BaseTurnRate = HipTurnRate;
 		BaseLookUpRate = HipLookUpRate;
 	}
+}
+
+void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
+{
+	CrosshairSpreadMultiplier = 0.5 + CalculateCrosshairVelocity();
+}
+
+float AShooterCharacter::CalculateCrosshairVelocity()
+{
+	FVector2D WalkSpeedRange {0.f, 600.f};
+	FVector2D VelocityMultiplierRange {0.f, 1.f};
+	FVector CurrentVelocity = GetVelocity();
+	CurrentVelocity.Z = 0.f;
+
+	/** Clamp the speed value based on output range value and return corresponding percentage accordingly output*/
+	return FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, CurrentVelocity.Size());	
+}
+
+float AShooterCharacter::GetCrosshairSpreadValue()
+{
+	return CrosshairSpreadMultiplier;
+}
+
+float AShooterCharacter::GetCrosshairSpreadMax()
+{
+	return CrosshairSpreadMax;
 }
 
 float AShooterCharacter::InterpCurrentFOV(float TargetFOV, float DeltaTime)

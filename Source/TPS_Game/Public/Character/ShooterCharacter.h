@@ -57,10 +57,12 @@ private:
 	void Shoot();
 
 	/** Aiming Functions */
+	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates();
-	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
-	
+	void CalculateCrosshairSpread(float DeltaTime);
+	float CalculateCrosshairVelocity();
+
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -86,12 +88,15 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 
-	float BaseTurnRate;
-	float BaseLookUpRate;
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;
 	float CameraCurrentFOV;
 	float CameraZoomInterpSpeed;
+
+	bool bAiming; 
+
+	float BaseTurnRate;
+	float BaseLookUpRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float HipTurnRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
@@ -100,7 +105,16 @@ private:
 	float AimingTurnRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float AimingLookUpRate;
-	bool bAiming; 
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairVelocityMultiplier;*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairSpreadMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairInAirMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairAimingMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairSpreadMax;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -117,8 +131,11 @@ private:
 	TObjectPtr<UInputAction> ScopeAction;
 
 public:
+	
 	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE bool GetIsAiming() const { return bAiming; }
+	float GetCrosshairSpreadValue();
+	float GetCrosshairSpreadMax();
 };
