@@ -20,7 +20,8 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void DrawCrosshair(int32 ScreenWidth, int32 ScreenHeight);
-
+	FVector2D CalculateCrosshairLocation(int32 ScreenWidth, int32 ScreenHeight);
+	float CalculateCrosshairSpreadValue();
 private:
 
 	
