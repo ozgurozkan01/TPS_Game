@@ -34,7 +34,11 @@ AShooterCharacter::AShooterCharacter() :
 	CrosshairSpreadMax(16.f),
 	// Crosshair Fire Factors
 	FireBulletDuration(0.05f),
-	bFiring(false)
+	bFiring(false),
+	// Automatic Gun Fire Factors
+	AutomaticFireRate(0.1f),
+	bShouldFire(true),
+	bFireButtonPressed(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -128,7 +132,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 		if (FireAction)
 		{
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShooterCharacter::Fire);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShooterCharacter::FireButtonPressed);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &AShooterCharacter::FireButtonReleased);
 		}
 
 		if (ScopeAction)
@@ -162,7 +167,7 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 	AddControllerPitchInput(LookDirection.Y * BaseLookUpRate);
 }	
 
-void AShooterCharacter::Fire(const FInputActionValue& Value)
+void AShooterCharacter::Fire()
 {
 	PlayGunFireMontage();
 	Shoot();
@@ -436,6 +441,37 @@ float AShooterCharacter::CalculateCrosshairFireAimingMultiplier(float DeltaTime)
 	}
 
 	return CrosshairShootingMultiplier;
+}
+
+void AShooterCharacter::FireButtonPressed(const FInputActionValue& Value)
+{
+	bFireButtonPressed = true;
+	StartFireTimer();
+}
+
+void AShooterCharacter::FireButtonReleased(const FInputActionValue& Value)
+{
+	bFireButtonPressed = false;
+}
+
+void AShooterCharacter::StartFireTimer()
+{
+	if (bShouldFire)
+	{
+		Fire();
+		bShouldFire = false;
+		GetWorldTimerManager().SetTimer(AutomaticFireHandle, this, &AShooterCharacter::AutomaticFireReset, AutomaticFireRate);
+	}
+}
+
+void AShooterCharacter::AutomaticFireReset()
+{
+	bShouldFire = true;
+
+	if (bFireButtonPressed)
+	{
+		StartFireTimer();
+	}
 }
 
 float AShooterCharacter::GetCrosshairSpreadValue()

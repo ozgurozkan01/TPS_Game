@@ -38,7 +38,7 @@ private:
 	UFUNCTION()
 	void LookAround(const FInputActionValue& Value);
 	UFUNCTION()
-	void Fire(const FInputActionValue& Value);
+	void Fire();
 	UFUNCTION()
 	void OpenScope(const FInputActionValue& Value);
 	UFUNCTION()
@@ -69,6 +69,12 @@ private:
 	float CalculateCrosshairAimingMultiplier(float DeltaTime);
 	float CalculateCrosshairFireAimingMultiplier(float DeltaTime);
 
+	/** Automatic Gun Fire Functions */
+	void FireButtonPressed(const FInputActionValue& Value);
+	void FireButtonReleased(const FInputActionValue& Value);
+	void StartFireTimer();
+	void AutomaticFireReset();
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -126,6 +132,12 @@ private:
 
 	bool bFiring;
 	FTimerHandle FireBulletHandle;
+
+	/** Automatic Fire Factors*/
+	bool bFireButtonPressed;
+	bool bShouldFire;
+	float AutomaticFireRate;
+	FTimerHandle AutomaticFireHandle;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
