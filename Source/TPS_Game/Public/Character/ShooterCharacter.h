@@ -55,7 +55,9 @@ private:
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
 	void Shoot();
-
+	void CrosshairStartFireBullet();
+	void CrosshairFinishFireBullet();
+	
 	/** Aiming Functions */
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
@@ -65,7 +67,7 @@ private:
 	float CalculateCrosshairVelocityMultiplier();
 	float CalculateCrosshairInAirMultiplier(float DeltaTime);
 	float CalculateCrosshairAimingMultiplier(float DeltaTime);
-	/*float CalculateCrosshairFireAimingMultiplier(float DeltaTime);*/
+	float CalculateCrosshairFireAimingMultiplier(float DeltaTime);
 
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -119,6 +121,11 @@ private:
 	float CrosshairShootingMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float CrosshairSpreadMax;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float FireBulletDuration;
+
+	bool bFiring;
+	FTimerHandle FireBulletHandle;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))

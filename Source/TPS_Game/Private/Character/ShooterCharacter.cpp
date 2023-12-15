@@ -31,7 +31,10 @@ AShooterCharacter::AShooterCharacter() :
 	CrosshairAimingMultiplier(0.f),
 	CrosshairShootingMultiplier(0.f),
 	// Crosshair max spread value
-	CrosshairSpreadMax(16.f)
+	CrosshairSpreadMax(16.f),
+	// Crosshair Fire Factors
+	FireBulletDuration(0.05f),
+	bFiring(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -314,7 +317,20 @@ void AShooterCharacter::Shoot()
 		PlayHitParticle(BeamEndPoint);
 		PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
 		PlayFireSoundCue();
+		CrosshairStartFireBullet();
 	}
+}
+
+void AShooterCharacter::CrosshairStartFireBullet()
+{
+	bFiring = true;
+
+	GetWorldTimerManager().SetTimer(FireBulletHandle, this, &AShooterCharacter::CrosshairFinishFireBullet, FireBulletDuration);
+}
+
+void AShooterCharacter::CrosshairFinishFireBullet()
+{
+	bFiring = false;
 }
 
 float AShooterCharacter::InterpCurrentFOV(float TargetFOV, float DeltaTime)
@@ -357,7 +373,12 @@ void AShooterCharacter::SetLookRates()
 
 void AShooterCharacter::CalculateCrosshairSpreadMultiplier(float DeltaTime)
 {
-	CrosshairSpreadMultiplier = 0.5 + CalculateCrosshairVelocityMultiplier() + CalculateCrosshairInAirMultiplier(DeltaTime) - CalculateCrosshairAimingMultiplier(DeltaTime);
+	CrosshairSpreadMultiplier =
+		0.5 +
+		CalculateCrosshairVelocityMultiplier() +
+		CalculateCrosshairInAirMultiplier(DeltaTime) +
+		CalculateCrosshairFireAimingMultiplier(DeltaTime) -
+		CalculateCrosshairAimingMultiplier(DeltaTime);
 }
 
 float AShooterCharacter::CalculateCrosshairVelocityMultiplier()
@@ -402,10 +423,20 @@ float AShooterCharacter::CalculateCrosshairAimingMultiplier(float DeltaTime)
 	
 }
 
-/*float AShooterCharacter::CalculateCrosshairFireAimingMultiplier(float DeltaTime)
+float AShooterCharacter::CalculateCrosshairFireAimingMultiplier(float DeltaTime)
 {
-	return 0.f;
-}*/
+	if (bFiring)
+	{
+		CrosshairShootingMultiplier = FMath::FInterpTo(CrosshairShootingMultiplier, 0.2f, DeltaTime, 45.f); 
+	}
+
+	else
+	{
+		CrosshairShootingMultiplier = FMath::FInterpTo(CrosshairShootingMultiplier, 0.f, DeltaTime, 45.f); 
+	}
+
+	return CrosshairShootingMultiplier;
+}
 
 float AShooterCharacter::GetCrosshairSpreadValue()
 {
