@@ -25,10 +25,13 @@ AShooterCharacter::AShooterCharacter() :
 	CameraZoomedFOV(25.f),
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
-	// Crosshair max spread value
-	CrosshairSpreadMax(16.f),
+	// Crosshair spread factors
+	CrosshairSpreadMultiplier(0.f),
 	CrosshairInAirMultiplier(0.f),
-	CrosshairAimingMultiplier(0.f)
+	CrosshairAimingMultiplier(0.f),
+	CrosshairShootingMultiplier(0.f),
+	// Crosshair max spread value
+	CrosshairSpreadMax(16.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -199,7 +202,6 @@ bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition
 	}
 
 	FVector2D CrosshairPosition = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
-	CrosshairPosition.Y -= 50.f;
 	
 	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
 		UGameplayStatics::GetPlayerController(this, 0),
@@ -399,6 +401,11 @@ float AShooterCharacter::CalculateCrosshairAimingMultiplier(float DeltaTime)
 	return CrosshairAimingMultiplier;
 	
 }
+
+/*float AShooterCharacter::CalculateCrosshairFireAimingMultiplier(float DeltaTime)
+{
+	return 0.f;
+}*/
 
 float AShooterCharacter::GetCrosshairSpreadValue()
 {

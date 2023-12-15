@@ -19,7 +19,6 @@ void AShooterHUD::DrawCrosshair(int32 ScreenWidth, int32 ScreenHeight)
 {
 	float SpreadValue = CalculateCrosshairSpreadValue();
 	FVector2D CrosshairLocation = CalculateCrosshairLocation(ScreenWidth, ScreenHeight);
-	CrosshairLocation.Y -= 50;
 	
 	DrawTexture(CrosshairLeft, CrosshairLocation.X - SpreadValue, CrosshairLocation.Y, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);
 	DrawTexture(CrosshairRight, CrosshairLocation.X + SpreadValue, CrosshairLocation.Y, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);

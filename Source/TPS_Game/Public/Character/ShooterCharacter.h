@@ -65,7 +65,8 @@ private:
 	float CalculateCrosshairVelocityMultiplier();
 	float CalculateCrosshairInAirMultiplier(float DeltaTime);
 	float CalculateCrosshairAimingMultiplier(float DeltaTime);
-	
+	/*float CalculateCrosshairFireAimingMultiplier(float DeltaTime);*/
+
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -114,6 +115,8 @@ private:
 	float CrosshairInAirMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float CrosshairAimingMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float CrosshairShootingMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Crosshair, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float CrosshairSpreadMax;
 	
