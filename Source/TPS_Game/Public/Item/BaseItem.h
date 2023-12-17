@@ -6,21 +6,26 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class TPS_GAME_API ABaseItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ABaseItem();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UBoxComponent> CollisionBox;
+public:
+	
 };
