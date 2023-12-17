@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class UWidgetComponent;
 class UBoxComponent;
 
 UCLASS()
@@ -27,9 +28,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
 
+	/** Line Trace collides with it to show the HUD which has information about item */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> CollisionBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UWidgetComponent> InformationPopUpWidget;
+	
 	float SinusodialSpeed;
 	float AmplitudeMultiplier;
 	float YawRotationRate;

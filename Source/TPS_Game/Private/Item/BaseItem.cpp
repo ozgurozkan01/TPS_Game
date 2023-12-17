@@ -3,6 +3,7 @@
 
 #include "Item/BaseItem.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
@@ -15,7 +16,12 @@ ABaseItem::ABaseItem() :
 	SetRootComponent(ItemMesh);
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
-	CollisionBox->SetupAttachment(ItemMesh);
+	CollisionBox->SetupAttachment(GetRootComponent());
+
+	InformationPopUpWidget = CreateDefaultSubobject<UWidgetComponent>("Information Pop Up");
+	InformationPopUpWidget->SetupAttachment(GetRootComponent());
+	InformationPopUpWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	InformationPopUpWidget->SetDrawSize(FVector2D(400.f, 125.f));
 }
 
 void ABaseItem::BeginPlay()
