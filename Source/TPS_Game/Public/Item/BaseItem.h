@@ -21,11 +21,18 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void SinusodialMovement();
+	void Rotate();
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> CollisionBox;
+
+	float SinusodialSpeed;
+	float AmplitudeMultiplier;
+	float YawRotationRate;
 public:
 	
 };
