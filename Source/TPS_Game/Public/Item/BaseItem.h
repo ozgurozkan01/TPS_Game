@@ -17,7 +17,7 @@ class TPS_GAME_API ABaseItem : public AActor
 public:	
 	ABaseItem();
 	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -39,5 +39,6 @@ private:
 	float AmplitudeMultiplier;
 	float YawRotationRate;
 public:
-	
+
+	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationPopUp() const { return InformationPopUpWidget; };
 };
