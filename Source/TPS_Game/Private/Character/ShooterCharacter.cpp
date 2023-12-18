@@ -7,8 +7,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/BaseItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -105,6 +107,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 	CameraInterpZoom(DeltaTime);
 	SetLookRates();
 	CalculateCrosshairSpreadMultiplier(DeltaTime);
+	LineTraceForInformationPopUp();
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -254,8 +257,45 @@ void AShooterCharacter::LineTraceFromTheGunBarrel(const FVector& GunSocketLocati
 	{
 		BeamEndPoint = WeaponTraceHit.Location;
 	}
+}
 
-	//DrawDebugLine(GetWorld(), WeaponTraceStart, BeamEndPoint, FColor::Red, false, 5.f);
+void AShooterCharacter::LineTraceForInformationPopUp()
+{
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+
+	bool bScreenToWorld = IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection);
+	
+	if (bScreenToWorld)
+	{
+		FVector StartPoint { CrosshairWorldPosition };
+		FVector EndPoint { CrosshairWorldPosition + CrosshairWorldDirection * 750.f };
+		FHitResult PopUpHit;
+
+		GetWorld()->LineTraceSingleByChannel(PopUpHit, StartPoint, EndPoint, ECC_Visibility);
+
+		if (PopUpHit.bBlockingHit)
+		{
+			TObjectPtr<ABaseItem> HitItem = Cast<ABaseItem>(PopUpHit.GetActor());
+
+			if (HitItem && HitItem->GetInformationPopUp())
+			{	
+				HitItem->GetInformationPopUp()->SetVisibility(true);
+			}
+
+			if (HoldedItem && HoldedItem != HitItem)
+			{
+				HoldedItem->GetInformationPopUp()->SetVisibility(false);
+			}
+			
+			HoldedItem = HitItem;
+		}
+	}
+	
+	else if (HoldedItem)
+	{
+		HoldedItem->GetInformationPopUp()->SetVisibility(false);
+	}
 }
 
 void AShooterCharacter::PlayGunFireMontage()
@@ -313,7 +353,9 @@ void AShooterCharacter::Shoot()
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
 
-	if (IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection))
+	bool bScreenToWorld = IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection);
+	
+	if (bScreenToWorld)
 	{
 		FVector BeamEndPoint { FVector::ZeroVector };
 		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);

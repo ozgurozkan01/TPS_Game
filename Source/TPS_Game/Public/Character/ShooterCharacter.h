@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class ABaseItem;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -46,9 +47,10 @@ private:
 	
 	/** Combat Functions*/
 	FTransform GetGunBarrelSocketTransform();
-	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition,FVector& CrosshairWorldDirection);
+	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
+	void LineTraceForInformationPopUp();
 	void PlayGunFireMontage();
 	void PlayHitParticle(const FVector& HitLocation);
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
@@ -100,6 +102,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 
+	/** Item Holder to control the widget visibility */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<ABaseItem> HoldedItem;
+	
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;
 	float CameraCurrentFOV;
