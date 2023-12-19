@@ -2,7 +2,10 @@
 
 
 #include "Item/BaseItem.h"
+
+#include "Character/ShooterCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 
 ABaseItem::ABaseItem() :
@@ -29,6 +32,10 @@ ABaseItem::ABaseItem() :
 	InformationPopUpWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	InformationPopUpWidget->SetDrawSize(FVector2D(400.f, 125.f));
 	InformationPopUpWidget->SetRelativeLocation(InformationPopUpWidget->GetRelativeLocation() + FVector(0.f, 0.f, 50.f));
+
+	TraceCheckSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Trace Check Area"));
+	TraceCheckSphere->SetupAttachment(GetRootComponent());
+	TraceCheckSphere->SetSphereRadius(200.f);
 }
 
 void ABaseItem::BeginPlay()
@@ -36,6 +43,8 @@ void ABaseItem::BeginPlay()
 	Super::BeginPlay();
 
 	InformationPopUpWidget->SetVisibility(false);
+	TraceCheckSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnSphereBeginOverlap);
+	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
 }
 
 void ABaseItem::Tick(float DeltaTime)
@@ -59,4 +68,32 @@ void ABaseItem::Rotate()
 	CurrentRotation.Yaw += YawRotationRate;
 
 	SetActorRotation(CurrentRotation);
+}
+
+void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+		TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
+		
+		if (ShooterCharacter)
+		{
+			ShooterCharacter->IncrementOverlappedItemCount(1);
+		}
+	}	
+}
+
+void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor)
+	{
+		TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
+
+		if (ShooterCharacter)
+		{
+			ShooterCharacter->IncrementOverlappedItemCount(-1);
+		}
+	}
 }

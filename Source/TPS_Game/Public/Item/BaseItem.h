@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class USphereComponent;
 class UWidgetComponent;
 class UBoxComponent;
 
@@ -24,6 +25,12 @@ protected:
 private:
 	void SinusodialMovement();
 	void Rotate();
+
+	UFUNCTION()
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
@@ -34,6 +41,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> InformationPopUpWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USphereComponent> TraceCheckSphere;
 	
 	float SinusodialSpeed;
 	float AmplitudeMultiplier;
