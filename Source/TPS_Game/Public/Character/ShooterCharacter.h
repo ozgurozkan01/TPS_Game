@@ -31,6 +31,9 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
+	void IncrementOverlappedItemCount(int8 Amount);
 private:
 
 	/** Input Functions */
@@ -144,6 +147,10 @@ private:
 	bool bShouldFire;
 	float AutomaticFireRate;
 	FTimerHandle AutomaticFireHandle;
+
+	/** Trace Control Values */
+	bool bShouldTraceForItems;
+	int8 OverlappedItemCount;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -165,6 +172,7 @@ public:
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE bool GetIsAiming() const { return bAiming; }
-	float GetCrosshairSpreadValue();
-	float GetCrosshairSpreadMax();
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
+	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
 };

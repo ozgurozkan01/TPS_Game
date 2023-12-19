@@ -2,7 +2,6 @@
 
 
 #include "Character/ShooterCharacter.h"
-
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
@@ -40,7 +39,10 @@ AShooterCharacter::AShooterCharacter() :
 	// Automatic Gun Fire Factors
 	AutomaticFireRate(0.1f),
 	bShouldFire(true),
-	bFireButtonPressed(false)
+	bFireButtonPressed(false),
+	//
+	bShouldTraceForItems(false),
+	OverlappedItemCount(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -261,6 +263,8 @@ void AShooterCharacter::LineTraceFromTheGunBarrel(const FVector& GunSocketLocati
 
 void AShooterCharacter::LineTraceForInformationPopUp()
 {
+	if (!bShouldTraceForItems) { return; }
+	
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
 
@@ -516,12 +520,19 @@ void AShooterCharacter::AutomaticFireReset()
 	}
 }
 
-float AShooterCharacter::GetCrosshairSpreadValue()
+void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
 {
-	return CrosshairSpreadMultiplier;
-}
+	if (OverlappedItemCount + Amount <= 0)
+	{
+		bShouldTraceForItems = false;
+		OverlappedItemCount = 0;
+		UE_LOG(LogTemp, Warning, TEXT("Increased"));
+	}
 
-float AShooterCharacter::GetCrosshairSpreadMax()
-{
-	return CrosshairSpreadMax;
+	else
+	{
+		bShouldTraceForItems = true;
+		OverlappedItemCount += Amount;
+		UE_LOG(LogTemp, Warning, TEXT("Decreased"));
+	}
 }
