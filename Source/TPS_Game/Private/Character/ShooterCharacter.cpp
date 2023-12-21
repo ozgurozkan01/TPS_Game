@@ -10,6 +10,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/BaseItem.h"
+#include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -55,7 +56,7 @@ AShooterCharacter::AShooterCharacter() :
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
+	
 	// Set the animation mode of character mesh
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -82,6 +83,7 @@ void AShooterCharacter::BeginPlay()
 
 	// Set the animation BP class of character mesh
 	GetMesh()->SetAnimClass(AnimationClass);
+	EquipWeapon(SpawnDefaultWeapon());
 	
 	if (FollowCamera)
 	{
@@ -192,7 +194,7 @@ void AShooterCharacter::CloseScope(const FInputActionValue& Value)
 	bAiming = bCrosshairShouldZoom;
 }
 
-FTransform AShooterCharacter::GetGunBarrelSocketTransform()
+/*FTransform AShooterCharacter::GetGunBarrelSocketTransform()
 {
 	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 
@@ -203,7 +205,7 @@ FTransform AShooterCharacter::GetGunBarrelSocketTransform()
 	}
 
 	return FTransform();
-}
+}*/
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
 {
@@ -263,7 +265,15 @@ void AShooterCharacter::LineTraceFromTheGunBarrel(const FVector& GunSocketLocati
 
 void AShooterCharacter::LineTraceForInformationPopUp()
 {
-	if (!bShouldTraceForItems) { return; }
+	if (!bShouldTraceForItems)
+	{
+		if (HoldedItem)
+		{
+			HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
+		}
+		
+		return;
+	}
 	
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
@@ -282,14 +292,14 @@ void AShooterCharacter::LineTraceForInformationPopUp()
 		{
 			TObjectPtr<ABaseItem> HitItem = Cast<ABaseItem>(PopUpHit.GetActor());
 
-			if (HitItem && HitItem->GetInformationPopUp())
+			if (HitItem && HitItem->GetInformationWidgetComponent())
 			{	
-				HitItem->GetInformationPopUp()->SetVisibility(true);
+				HitItem->GetInformationWidgetComponent()->SetVisibility(true);
 			}
 
 			if (HoldedItem && HoldedItem != HitItem)
 			{
-				HoldedItem->GetInformationPopUp()->SetVisibility(false);
+				HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
 			}
 			
 			HoldedItem = HitItem;
@@ -298,7 +308,7 @@ void AShooterCharacter::LineTraceForInformationPopUp()
 	
 	else if (HoldedItem)
 	{
-		HoldedItem->GetInformationPopUp()->SetVisibility(false);
+		HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
 	}
 }
 
@@ -343,16 +353,18 @@ void AShooterCharacter::PlayFireSoundCue()
 
 void AShooterCharacter::PlayBarrelMuzzleFlash()
 {
-	if (MuzzleFlash)
+	if (MuzzleFlash && EquippedWeapon)
 	{
-		FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
+		FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
 	}
 }
 
 void AShooterCharacter::Shoot()
 {
-	FTransform BarrelSocketTransform = GetGunBarrelSocketTransform();
+	if (EquippedWeapon == nullptr) { return; }
+
+	FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
 
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
@@ -518,6 +530,31 @@ void AShooterCharacter::AutomaticFireReset()
 	{
 		StartFireTimer();
 	}
+}
+
+TObjectPtr<AWeapon> AShooterCharacter::SpawnDefaultWeapon()
+{
+	if (DefaultWeaponClass)
+	{
+		TObjectPtr<AWeapon> DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+		return DefaultWeapon;
+	}
+
+	return nullptr;
+}
+
+void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
+{
+	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+
+	if (HandSocket)
+	{
+		HandSocket->AttachActor(WeaponToEquip, GetMesh());
+		WeaponToEquip->SetIdleMovement(false);
+		WeaponToEquip->SetItemCollisions(false);
+	}
+
+	EquippedWeapon = WeaponToEquip;
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
