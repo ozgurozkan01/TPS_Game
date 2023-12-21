@@ -7,17 +7,22 @@
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "HUD/InformationPopUp.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
 	AmplitudeMultiplier(2.5f),
-	YawRotationRate(0.4f)
+	YawRotationRate(0.4f),
+	ItemName("Default"),
+	InformationWidgetObject(nullptr),
+	ItemRarity(EItemRarity::EIR_Common),
+	bCanIdleMove(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	ItemMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Item Mesh"));
 	SetRootComponent(ItemMesh);
-
+	
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(GetRootComponent());
 	CollisionBox->SetGenerateOverlapEvents(true);
@@ -27,11 +32,11 @@ ABaseItem::ABaseItem() :
 	CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	CollisionBox->SetCollisionResponseToChannel(ECC_Camera, ECR_Overlap);
 	
-	InformationPopUpWidget = CreateDefaultSubobject<UWidgetComponent>("Information Pop Up");
-	InformationPopUpWidget->SetupAttachment(GetRootComponent());
-	InformationPopUpWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	InformationPopUpWidget->SetDrawSize(FVector2D(400.f, 125.f));
-	InformationPopUpWidget->SetRelativeLocation(InformationPopUpWidget->GetRelativeLocation() + FVector(0.f, 0.f, 50.f));
+	InformationWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("Information Pop Up");
+	InformationWidgetComponent->SetupAttachment(GetRootComponent());
+	InformationWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	InformationWidgetComponent->SetDrawSize(FVector2D(400.f, 125.f));
+	InformationWidgetComponent->SetRelativeLocation(InformationWidgetComponent->GetRelativeLocation() + FVector(0.f, 0.f, 50.f));
 
 	TraceCheckSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Trace Check Area"));
 	TraceCheckSphere->SetupAttachment(GetRootComponent());
@@ -42,7 +47,26 @@ void ABaseItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InformationPopUpWidget->SetVisibility(false);
+	for (uint8 i = 0; i < 5; i++)
+	{
+		ActiveStars.Add(false);
+	}
+
+	SetActiveStarts();
+	
+	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
+
+	if (InformationWidgetObject)
+	{
+		InformationWidgetObject->SetItemNameText(ItemName);
+		InformationWidgetObject->SetStarsImagesVisibility(ActiveStars);
+	}
+
+	if (InformationWidgetComponent)
+	{
+		InformationWidgetComponent->SetVisibility(false);
+	}
+
 	TraceCheckSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnSphereBeginOverlap);
 	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
 }
@@ -56,6 +80,8 @@ void ABaseItem::Tick(float DeltaTime)
 
 void ABaseItem::SinusodialMovement()
 {
+	if (bCanIdleMove == false) { return; }
+	
 	FVector CurrentLocation { GetActorLocation() };
 	CurrentLocation.Z += FMath::Sin(GetGameTimeSinceCreation() * SinusodialSpeed) / AmplitudeMultiplier;
 
@@ -64,6 +90,8 @@ void ABaseItem::SinusodialMovement()
 
 void ABaseItem::Rotate()
 {
+	if (bCanIdleMove == false) { return; }
+	
 	FRotator CurrentRotation { GetActorRotation() };
 	CurrentRotation.Yaw += YawRotationRate;
 
@@ -80,6 +108,7 @@ void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		if (ShooterCharacter)
 		{
 			ShooterCharacter->IncrementOverlappedItemCount(1);
+			InformationWidgetObject->SetAmmoAmountText(3);
 		}
 	}	
 }
@@ -96,4 +125,54 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 			ShooterCharacter->IncrementOverlappedItemCount(-1);
 		}
 	}
+}
+
+void ABaseItem::SetActiveStarts()
+{
+	uint8 ActiveStarAmount = GetActivateStarNumber();
+	
+	for (uint8 i = 0; i < ActiveStarAmount; i++)
+	{
+		ActiveStars[i] = true;
+	}
+}
+
+void ABaseItem::SetItemCollisions(bool bCanCollide)
+{
+	ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	
+	if (bCanCollide)
+	{
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	}
+
+	else
+	{
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	}
+}
+
+uint8 ABaseItem::GetActivateStarNumber()
+{
+	switch (ItemRarity)
+	{
+	case EItemRarity::EIR_Damaged:
+		return 1;
+	case EItemRarity::EIR_Common:
+		return 2;
+	case EItemRarity::EIR_Uncommon:
+		return 3;
+	case EItemRarity::EIR_Rare:
+		return 4;
+	case EItemRarity::EIR_Legendary:
+		return 5;
+	case EItemRarity::EIR_MAX:
+		return 0;
+	}
+	return 0;
 }

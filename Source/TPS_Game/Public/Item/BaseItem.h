@@ -6,9 +6,22 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class UInformationPopUp;
 class USphereComponent;
 class UWidgetComponent;
 class UBoxComponent;
+
+UENUM()
+enum class EItemRarity : uint8
+{
+	EIR_Damaged UMETA(DisplayName = "Damaged"),
+	EIR_Common UMETA(DisplayName = "Common"),
+	EIR_Uncommon UMETA(DisplayName = "Uncommon"),
+	EIR_Rare UMETA(DisplayName = "Rare"),
+	EIR_Legendary UMETA(DisplayName = "Legendary"),
+
+	EIR_MAX UMETA(DisplayName = "DefaultMAX"),
+};
 
 UCLASS()
 class TPS_GAME_API ABaseItem : public AActor
@@ -40,15 +53,40 @@ private:
 	TObjectPtr<UBoxComponent> CollisionBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UWidgetComponent> InformationPopUpWidget;
+	TObjectPtr<UWidgetComponent> InformationWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInformationPopUp> InformationWidgetObject;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> TraceCheckSphere;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	FString ItemName;	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	EItemRarity ItemRarity;
+
+	TArray<bool> ActiveStars;
 	
 	float SinusodialSpeed;
 	float AmplitudeMultiplier;
 	float YawRotationRate;
+
+	bool bCanIdleMove;
 public:
 
-	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationPopUp() const { return InformationPopUpWidget; };
+	
+	// Setter
+	void SetActiveStarts();
+	void SetItemCollisions(bool bCanCollide);
+	FORCEINLINE void SetIdleMovement(bool bCanMove) { bCanIdleMove = bCanMove; };
+	
+	// Getter
+	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };
+	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
+	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
+
+	uint8 GetActivateStarNumber();
+		
 };
