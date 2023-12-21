@@ -19,7 +19,15 @@ protected:
 	virtual void BeginPlay() override;
 
 private: // Variables
+
+	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
+	uint8 MaxAmmoAmount;
+
+	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
+	uint8 CurrentAmmoAmount;
 	
 public: // Getters and Setters
-	
+
+	const USkeletalMeshSocket* GetBarrelSocket() const;
+	FTransform GetBarrelSocketTransform() const;
 };
