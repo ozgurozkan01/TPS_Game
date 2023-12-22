@@ -11,6 +11,18 @@ class USphereComponent;
 class UWidgetComponent;
 class UBoxComponent;
 
+UENUM(BlueprintType)
+enum class EItemState : uint8
+{
+	EIS_Equipped UMETA(DisplayName = "Equipped"),
+	EIS_Pickup UMETA(DisplayName = "Pickup"),
+	EIS_EquipInterping UMETA(DisplayName = "EquipInterping"),
+	EIS_PickedUp UMETA(DisplayName = "PickedUp"),
+	EIS_Falling UMETA(DisplayName = "Falling"),
+
+	EIS_MAX UMETA(DisplayName = "DefaultMAX"),
+};
+
 UENUM()
 enum class EItemRarity : uint8
 {
@@ -67,6 +79,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemRarity ItemRarity;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	EItemState ItemState;
+	
 	TArray<bool> ActiveStars;
 	
 	float SinusodialSpeed;
@@ -81,11 +96,13 @@ public:
 	void SetActiveStarts();
 	void SetItemCollisions(bool bCanCollide);
 	FORCEINLINE void SetIdleMovement(bool bCanMove) { bCanIdleMove = bCanMove; };
-	
+	FORCEINLINE void SetItemState(EItemState CurrentState) { ItemState = CurrentState; };
+
 	// Getter
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };
 	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
+	FORCEINLINE EItemState GetItemState() const { return ItemState; };
 
 	uint8 GetActivateStarNumber();
 		

@@ -16,6 +16,7 @@ ABaseItem::ABaseItem() :
 	ItemName("Default"),
 	InformationWidgetObject(nullptr),
 	ItemRarity(EItemRarity::EIR_Common),
+	ItemState(EItemState::EIS_Pickup),
 	bCanIdleMove(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
