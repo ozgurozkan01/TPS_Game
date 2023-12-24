@@ -90,7 +90,6 @@ private:
 
 	bool bCanIdleMove;
 public:
-
 	
 	// Setter
 	void SetActiveStarts();

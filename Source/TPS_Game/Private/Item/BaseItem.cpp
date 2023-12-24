@@ -70,6 +70,8 @@ void ABaseItem::BeginPlay()
 
 	TraceCheckSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnSphereBeginOverlap);
 	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
+
+	SetItemState(ItemState);
 }
 
 void ABaseItem::Tick(float DeltaTime)
@@ -165,6 +167,7 @@ void ABaseItem::SetItemProperties(EItemState CurrentState)
 	case EItemState::EIS_Pickup:
 		// Set Mesh Properties
 		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
 		ItemMesh->SetVisibility(true);
 		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -176,9 +179,10 @@ void ABaseItem::SetItemProperties(EItemState CurrentState)
 		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Overlap);
 		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		break;
-
+	
 	case EItemState::EIS_Equipped:
 		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
 		ItemMesh->SetVisibility(true);
 		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -188,6 +192,21 @@ void ABaseItem::SetItemProperties(EItemState CurrentState)
 		
 		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EItemState::EIS_Falling:
+		ItemMesh->SetSimulatePhysics(true);
+		ItemMesh->SetEnableGravity(true);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
 	}
 }
 
