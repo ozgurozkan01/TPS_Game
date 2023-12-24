@@ -95,8 +95,9 @@ public:
 	// Setter
 	void SetActiveStarts();
 	void SetItemCollisions(bool bCanCollide);
+	void SetItemProperties(EItemState CurrentState);
+	void SetItemState(EItemState CurrentState);
 	FORCEINLINE void SetIdleMovement(bool bCanMove) { bCanIdleMove = bCanMove; };
-	FORCEINLINE void SetItemState(EItemState CurrentState) { ItemState = CurrentState; };
 
 	// Getter
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };

@@ -158,6 +158,45 @@ void ABaseItem::SetItemCollisions(bool bCanCollide)
 	}
 }
 
+void ABaseItem::SetItemProperties(EItemState CurrentState)
+{
+	switch (CurrentState)
+	{
+	case EItemState::EIS_Pickup:
+		// Set Mesh Properties
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		// Set CollisionBox Properties
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+		// Set TraceCheckSphere Properties
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Overlap);
+		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		break;
+
+	case EItemState::EIS_Equipped:
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ABaseItem::SetItemState(EItemState CurrentState)
+{
+	ItemState = CurrentState;
+	SetItemProperties(CurrentState);
+}
+
 uint8 ABaseItem::GetActivateStarNumber()
 {
 	switch (ItemRarity)
