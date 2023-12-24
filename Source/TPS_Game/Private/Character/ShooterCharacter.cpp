@@ -545,6 +545,8 @@ TObjectPtr<AWeapon> AShooterCharacter::SpawnDefaultWeapon()
 
 void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 {
+	if (WeaponToEquip == nullptr) { return; }
+	
 	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 
 	if (HandSocket)
@@ -555,6 +557,7 @@ void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 	}
 
 	EquippedWeapon = WeaponToEquip;
+	EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
