@@ -103,8 +103,8 @@ public:
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };
 	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
-	FORCEINLINE EItemState GetItemState() const { return ItemState; };
-
+	FORCEINLINE EItemState GetItemState() const { return ItemState; }
+	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemMesh() const { return ItemMesh; }
 	uint8 GetActivateStarNumber();
 		
 };
