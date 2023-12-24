@@ -148,6 +148,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Triggered, this, &AShooterCharacter::OpenScope);
 			EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Completed, this, &AShooterCharacter::CloseScope);
 		}
+
+		if (SelectAction)
+		{
+			EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &AShooterCharacter::SelectButtonPressed);
+		}
 	}
 }
 
@@ -194,18 +199,15 @@ void AShooterCharacter::CloseScope(const FInputActionValue& Value)
 	bAiming = bCrosshairShouldZoom;
 }
 
-/*FTransform AShooterCharacter::GetGunBarrelSocketTransform()
+void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+	bool bIsPressed = Value.Get<bool>();
 
-	if (BarrelSocket)
+	if (bIsPressed)
 	{
-		FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
-		return SocketTransform;
+		DropWeapon();
 	}
-
-	return FTransform();
-}*/
+}
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
 {
@@ -558,6 +560,14 @@ void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 
 	EquippedWeapon = WeaponToEquip;
 	EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
+}
+
+void AShooterCharacter::DropWeapon()
+{
+	if (EquippedWeapon == nullptr) { return; }
+
+	FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+	EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)

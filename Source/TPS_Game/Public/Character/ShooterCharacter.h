@@ -48,6 +48,8 @@ private:
 	void OpenScope(const FInputActionValue& Value);
 	UFUNCTION()
 	void CloseScope(const FInputActionValue& Value);
+	UFUNCTION()
+	void SelectButtonPressed(const FInputActionValue& Value);
 	
 	/** Combat Functions*/
 	// FTransform GetGunBarrelSocketTransform();
@@ -81,9 +83,10 @@ private:
 	void StartFireTimer();
 	void AutomaticFireReset();
 
-	/** Default Weapon */
+	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
+	void DropWeapon();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -177,6 +180,8 @@ private:
 	TObjectPtr<UInputAction> FireAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ScopeAction;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> SelectAction;
 
 public:
 	
