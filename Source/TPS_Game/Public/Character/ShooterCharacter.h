@@ -87,6 +87,7 @@ private:
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
+	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -115,7 +116,10 @@ private:
 
 	/** Item Holder to control the widget visibility */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<ABaseItem> HoldedItem;
+	TObjectPtr<ABaseItem> HeldItem;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<ABaseItem> TraceHitItem;
 	
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;

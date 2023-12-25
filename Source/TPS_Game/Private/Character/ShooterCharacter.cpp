@@ -203,9 +203,10 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 {
 	bool bIsPressed = Value.Get<bool>();
 
-	if (bIsPressed)
+	if (TraceHitItem && bIsPressed)
 	{
-		DropWeapon();
+		TObjectPtr<AWeapon> TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
+		SwapWeapon(TraceHitWeapon);
 	}
 }
 
@@ -269,9 +270,9 @@ void AShooterCharacter::LineTraceForInformationPopUp()
 {
 	if (!bShouldTraceForItems)
 	{
-		if (HoldedItem)
+		if (HeldItem)
 		{
-			HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
+			HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 		}
 		
 		return;
@@ -292,25 +293,25 @@ void AShooterCharacter::LineTraceForInformationPopUp()
 
 		if (PopUpHit.bBlockingHit)
 		{
-			TObjectPtr<ABaseItem> HitItem = Cast<ABaseItem>(PopUpHit.GetActor());
+			TraceHitItem = Cast<ABaseItem>(PopUpHit.GetActor());
 
-			if (HitItem && HitItem->GetInformationWidgetComponent())
+			if (TraceHitItem && TraceHitItem->GetInformationWidgetComponent())
 			{	
-				HitItem->GetInformationWidgetComponent()->SetVisibility(true);
+				TraceHitItem->GetInformationWidgetComponent()->SetVisibility(true);
 			}
 
-			if (HoldedItem && HoldedItem != HitItem)
+			if (HeldItem && HeldItem != TraceHitItem)
 			{
-				HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
+				HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 			}
 			
-			HoldedItem = HitItem;
+			HeldItem = TraceHitItem;
 		}
 	}
 	
-	else if (HoldedItem)
+	else if (HeldItem)
 	{
-		HoldedItem->GetInformationWidgetComponent()->SetVisibility(false);
+		HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 	}
 }
 
@@ -570,6 +571,12 @@ void AShooterCharacter::DropWeapon()
 	EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
 	EquippedWeapon->SetItemState(EItemState::EIS_Falling);
 	EquippedWeapon->ThrowWeapon();
+}
+
+void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
+{
+	DropWeapon();
+	EquipWeapon(WeaponToSwap);
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
