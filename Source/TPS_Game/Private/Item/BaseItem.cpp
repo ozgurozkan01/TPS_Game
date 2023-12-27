@@ -111,7 +111,6 @@ void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		if (ShooterCharacter)
 		{
 			ShooterCharacter->IncrementOverlappedItemCount(1);
-			InformationWidgetObject->SetAmmoAmountText(3);
 		}
 	}	
 }
