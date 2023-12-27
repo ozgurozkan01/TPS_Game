@@ -577,8 +577,11 @@ void AShooterCharacter::DropWeapon()
 
 void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 {
-	DropWeapon();
-	EquipWeapon(WeaponToSwap);
+	if (WeaponToSwap)
+	{
+		DropWeapon();
+		EquipWeapon(WeaponToSwap);
+	}
 }
 
 void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
