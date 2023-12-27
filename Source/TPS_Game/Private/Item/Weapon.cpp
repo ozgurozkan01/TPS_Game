@@ -18,8 +18,11 @@ AWeapon::AWeapon() :
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GetInformationWidgetObject()->SetAmmoAmountText(CurrentAmmoAmount);
+
+	if (GetInformationWidgetObject())
+	{
+		GetInformationWidgetObject()->SetAmmoAmountText(CurrentAmmoAmount);
+	}
 }
 
 void AWeapon::Tick(float DeltaSeconds)
