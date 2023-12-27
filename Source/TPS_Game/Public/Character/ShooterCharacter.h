@@ -37,7 +37,8 @@ public:
 	void IncrementOverlappedItemCount(int8 Amount);
 	/** Camera Interp Location */
 	FVector GetCameraInterpLocation();
-	
+	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
+
 private:
 
 	/** Input Functions */
@@ -91,7 +92,6 @@ private:
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
-	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
