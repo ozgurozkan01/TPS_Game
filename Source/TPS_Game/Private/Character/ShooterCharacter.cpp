@@ -581,6 +581,16 @@ void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 	EquipWeapon(WeaponToSwap);
 }
 
+void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
+{
+	TObjectPtr<AWeapon> PickedUpWeapon = Cast<AWeapon>(PickedUpItem);
+
+	if (PickedUpWeapon)
+	{
+		SwapWeapon(PickedUpWeapon);
+	}
+}
+
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
 {
 	if (OverlappedItemCount + Amount <= 0)

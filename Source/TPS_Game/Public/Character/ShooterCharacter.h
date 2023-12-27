@@ -91,6 +91,7 @@ private:
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
+	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
