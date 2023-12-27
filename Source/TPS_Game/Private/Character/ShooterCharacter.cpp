@@ -43,7 +43,9 @@ AShooterCharacter::AShooterCharacter() :
 	bFireButtonPressed(false),
 	//
 	bShouldTraceForItems(false),
-	OverlappedItemCount(0)
+	OverlappedItemCount(0),
+	CameraForwardDistance(250.f),
+	CameraUpDistance(60.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -594,4 +596,12 @@ void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
 		OverlappedItemCount += Amount;
 		UE_LOG(LogTemp, Warning, TEXT("Decreased"));
 	}
+}
+
+FVector AShooterCharacter::GetCameraInterpLocation()
+{
+	const FVector CameraWorldLocation { FollowCamera->GetComponentLocation() };
+	const FVector CameraForwardVector { FollowCamera->GetForwardVector() };
+
+	return CameraWorldLocation + CameraForwardVector * CameraForwardDistance + FVector::UpVector * CameraUpDistance;
 }

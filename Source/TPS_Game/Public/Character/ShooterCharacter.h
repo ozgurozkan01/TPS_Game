@@ -35,6 +35,9 @@ public:
 	
 	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
 	void IncrementOverlappedItemCount(int8 Amount);
+	/** Camera Interp Location */
+	FVector GetCameraInterpLocation();
+	
 private:
 
 	/** Input Functions */
@@ -170,6 +173,12 @@ private:
 	/** Trace Control Values */
 	bool bShouldTraceForItems;
 	int8 OverlappedItemCount;
+
+	/** Camera Interp Destination Values */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
+	float CameraForwardDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
+	float CameraUpDistance;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
