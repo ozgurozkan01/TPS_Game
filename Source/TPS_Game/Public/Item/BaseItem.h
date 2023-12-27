@@ -10,6 +10,7 @@ class UInformationPopUp;
 class USphereComponent;
 class UWidgetComponent;
 class UBoxComponent;
+class UCurveFloat;
 
 UENUM(BlueprintType)
 enum class EItemState : uint8
@@ -81,6 +82,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemState ItemState;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCurveFloat> ItemZCurve;
 	
 	TArray<bool> ActiveStars;
 	
