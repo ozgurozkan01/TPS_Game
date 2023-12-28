@@ -11,6 +11,7 @@ class USphereComponent;
 class UWidgetComponent;
 class UBoxComponent;
 class UCurveFloat;
+class AShooterCharacter;
 
 UENUM(BlueprintType)
 enum class EItemState : uint8
@@ -48,6 +49,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/** Called when is interping finished */
+	void FinishInterping();
 private:
 	void SinusodialMovement();
 	void Rotate();
@@ -83,8 +86,29 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemState ItemState;
 
+	/** Curve Asset to update Z Value */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCurveFloat> ItemZCurve;
+
+	/** Starting ocation of item when interping begins */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	FVector ItemStartInterpLocation; 
+
+	/** Target interp location in front of the camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	FVector CameraTargetLocation;
+
+	/** Interping controller value */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	bool bIsInterping;
+
+	/** Activates when interping begins */
+	FTimerHandle ItemInterpTimer;
+	/** Duration of curve and timer */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	float ZCurveTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<AShooterCharacter> ShooterRef;	
 	
 	TArray<bool> ActiveStars;
 	
@@ -94,6 +118,8 @@ private:
 
 	bool bCanIdleMove;
 public:
+	/** Start curve from the shooter class */
+	void StartItemCurve(TObjectPtr<AShooterCharacter> Shooter);
 	
 	// Setter
 	void SetActiveStarts();

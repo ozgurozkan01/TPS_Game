@@ -2,12 +2,12 @@
 
 
 #include "Item/BaseItem.h"
-
 #include "Character/ShooterCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "HUD/InformationPopUp.h"
+#include "ShooterCharacter.generated.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
@@ -17,7 +17,12 @@ ABaseItem::ABaseItem() :
 	InformationWidgetObject(nullptr),
 	ItemRarity(EItemRarity::EIR_Common),
 	ItemState(EItemState::EIS_Pickup),
-	bCanIdleMove(true)
+	bCanIdleMove(true),
+	// Interpolation variables
+	ZCurveTime(0.7f),
+	bIsInterping(false),
+	CameraTargetLocation(FVector(0.f)),
+	ItemStartInterpLocation(FVector(0.f))
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -81,6 +86,16 @@ void ABaseItem::Tick(float DeltaTime)
 	Rotate();
 }
 
+void ABaseItem::FinishInterping()
+{
+	if (ShooterRef)
+	{
+		ShooterRef->GetPickUpItem(this);
+	}
+
+	bIsInterping = false;
+}
+
 void ABaseItem::SinusodialMovement()
 {
 	if (bCanIdleMove == false) { return; }
@@ -127,6 +142,21 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 			ShooterCharacter->IncrementOverlappedItemCount(-1);
 		}
 	}
+}
+
+void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
+{
+	if (Shooter == nullptr) { return; }
+
+	// Set Shooter ref to use after
+	ShooterRef = Shooter;
+	// Set Interpolation variables
+	ItemStartInterpLocation = GetActorLocation();
+	CameraTargetLocation = ShooterRef->GetCameraInterpLocation();
+	bIsInterping = true;
+	SetItemState(EItemState::EIS_EquipInterping);
+
+	GetWorldTimerManager().SetTimer(ItemInterpTimer, this, &ABaseItem::FinishInterping, ZCurveTime);
 }
 
 void ABaseItem::SetActiveStarts()
