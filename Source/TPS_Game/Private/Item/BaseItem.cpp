@@ -235,7 +235,22 @@ void ABaseItem::SetItemProperties(EItemState CurrentState)
 		
 		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EItemState::EIS_EquipInterping:
+		InformationWidgetComponent->SetVisibility(false);
 		
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
 	}
 }
 
