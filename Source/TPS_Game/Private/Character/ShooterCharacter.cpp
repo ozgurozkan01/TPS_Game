@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Character/ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -16,12 +15,15 @@
 #include "Particles/ParticleSystemComponent.h"
 
 AShooterCharacter::AShooterCharacter() :
-	bAiming(false),
 	// Turn Rates for aiming/not aiming 
 	HipTurnRate(1.f),
 	HipLookUpRate(1.f),
 	AimingTurnRate(0.2f),
 	AimingLookUpRate(0.2f),
+	// Automatic Gun Fire Factors
+	AutomaticFireRate(0.1f),
+	bShouldFire(true),
+	bFireButtonPressed(false),
 	// Camera Field Of View values to use aiming/not aiming
 	CameraDefaultFOV(0.f),
 	CameraZoomedFOV(25.f),
@@ -37,15 +39,11 @@ AShooterCharacter::AShooterCharacter() :
 	// Crosshair Fire Factors
 	FireBulletDuration(0.05f),
 	bFiring(false),
-	// Automatic Gun Fire Factors
-	AutomaticFireRate(0.1f),
-	bShouldFire(true),
-	bFireButtonPressed(false),
-	//
 	bShouldTraceForItems(false),
 	OverlappedItemCount(0),
 	CameraForwardDistance(250.f),
-	CameraUpDistance(60.f)
+	CameraUpDistance(60.f),
+	bAiming(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -207,8 +205,7 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 
 	if (TraceHitItem && bIsPressed)
 	{
-		TObjectPtr<AWeapon> TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
-		SwapWeapon(TraceHitWeapon);
+		TraceHitItem->StartItemCurve(this);
 	}
 }
 
