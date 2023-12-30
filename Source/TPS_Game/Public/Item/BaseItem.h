@@ -109,6 +109,11 @@ private:
 	/** Duration of curve and timer */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	float ZCurveTime;
+
+	float ItemInterpingX;
+	float ItemInterpingY;
+	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<AShooterCharacter> ShooterRef;	
 	

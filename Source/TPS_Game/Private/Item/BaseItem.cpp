@@ -2,11 +2,11 @@
 
 
 #include "Item/BaseItem.h"
-#include "Character/ShooterCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "HUD/InformationPopUp.h"
+#include "Character/ShooterCharacter.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
@@ -21,7 +21,9 @@ ABaseItem::ABaseItem() :
 	ZCurveTime(0.7f),
 	bIsInterping(false),
 	CameraTargetLocation(FVector(0.f)),
-	ItemStartInterpLocation(FVector(0.f))
+	ItemStartInterpLocation(FVector(0.f)),
+	ItemInterpingX(0.f),
+	ItemInterpingY(0.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -137,6 +139,13 @@ void ABaseItem::ItemInterp(float DeltaTime)
 	// Adding Curve Value to the Z component of the Inital Location (Scaled by DeltaZ) 
 	ItemLocation.Z += CurveValue * SizeZ;
 
+	FVector CurrentLocation { GetActorLocation() };
+	const float InterpingXValue = FMath::FInterpTo(CurrentLocation.X, CameraTargetLocation.X, DeltaTime, 30.f);
+	const float InterpingYValue = FMath::FInterpTo(CurrentLocation.Y, CameraTargetLocation.Y, DeltaTime, 30.f);
+
+	ItemLocation.X = InterpingXValue;
+	ItemLocation.Y = InterpingYValue;
+	
 	SetActorLocation(ItemLocation, true, nullptr, ETeleportType::TeleportPhysics);
 }
 
