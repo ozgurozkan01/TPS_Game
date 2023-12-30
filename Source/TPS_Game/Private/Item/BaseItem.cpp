@@ -7,7 +7,6 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "HUD/InformationPopUp.h"
-#include "ShooterCharacter.generated.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
@@ -84,6 +83,11 @@ void ABaseItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SinusodialMovement();
 	Rotate();
+
+	if (bIsInterping)
+	{
+		ItemInterp(DeltaTime);
+	}
 }
 
 void ABaseItem::FinishInterping()
@@ -116,8 +120,28 @@ void ABaseItem::Rotate()
 	SetActorRotation(CurrentRotation);
 }
 
+void ABaseItem::ItemInterp(float DeltaTime)
+{
+	if (!bIsInterping || ShooterRef == nullptr || ItemZCurve == nullptr) { return; }
+
+
+	const float ElapsedTime = GetWorldTimerManager().GetTimerElapsed(ItemInterpTimer);
+	const float CurveValue = ItemZCurve->GetFloatValue(ElapsedTime); // Returns the corresponding value to the elapsed time
+	FVector ItemLocation = ItemStartInterpLocation; // CurrentLocation
+
+	CameraTargetLocation = ShooterRef->GetCameraInterpLocation();
+	// Vector from the ItemLocation to the Camera but at only Z direction. X and Y iz zero
+	const FVector ItemToCamera {FVector(0.f, 0.f, (CameraTargetLocation - ItemLocation).Z)};
+	// Scale Factor to muliply with CurveValue
+	const float SizeZ = ItemToCamera.Size();
+	// Adding Curve Value to the Z component of the Inital Location (Scaled by DeltaZ) 
+	ItemLocation.Z += CurveValue * SizeZ;
+
+	SetActorLocation(ItemLocation, true, nullptr, ETeleportType::TeleportPhysics);
+}
+
 void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor)
 	{
@@ -152,7 +176,6 @@ void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
 	ShooterRef = Shooter;
 	// Set Interpolation variables
 	ItemStartInterpLocation = GetActorLocation();
-	CameraTargetLocation = ShooterRef->GetCameraInterpLocation();
 	bIsInterping = true;
 	SetItemState(EItemState::EIS_EquipInterping);
 

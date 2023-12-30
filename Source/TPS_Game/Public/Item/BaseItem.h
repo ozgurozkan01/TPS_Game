@@ -54,7 +54,9 @@ protected:
 private:
 	void SinusodialMovement();
 	void Rotate();
-
+	/** Handle interpolation and curve motion when in the EquipInterping state */
+	void ItemInterp(float DeltaTime);
+	
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
