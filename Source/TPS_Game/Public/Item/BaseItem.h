@@ -92,6 +92,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCurveFloat> ItemZCurve;
 
+	/** Curve Asset to update Scale Value */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCurveFloat> ItemScaleCurve;
+
+	
 	/** Starting ocation of item when interping begins */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	FVector ItemStartInterpLocation; 

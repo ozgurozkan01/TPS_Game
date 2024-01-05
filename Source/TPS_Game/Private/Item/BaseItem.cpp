@@ -104,6 +104,8 @@ void ABaseItem::FinishInterping()
 	}
 
 	bIsInterping = false;
+
+	SetActorScale3D(FVector(1.f));
 }
 
 void ABaseItem::SinusodialMovement()
@@ -128,7 +130,7 @@ void ABaseItem::Rotate()
 
 void ABaseItem::ItemInterp(float DeltaTime)
 {
-	if (!bIsInterping || ShooterRef == nullptr || ItemZCurve == nullptr) { return; }
+	if (!bIsInterping || ShooterRef == nullptr || ItemZCurve == nullptr || ItemScaleCurve == nullptr) { return; }
 
 
 	const float ElapsedTime = GetWorldTimerManager().GetTimerElapsed(ItemInterpTimer);
@@ -160,6 +162,9 @@ void ABaseItem::ItemInterp(float DeltaTime)
 	FRotator ItemNewRotation {0.f, CameraRotation.Yaw + ItemInitialYawOffset, 0.f};
 	// Set the item rotation with new rotation
 	SetActorRotation(ItemNewRotation, ETeleportType::TeleportPhysics);
+
+	const float ScaleCurveElapsed { GetWorldTimerManager().GetTimerElapsed(ItemInterpTimer)};
+	SetActorScale3D(FVector(ItemScaleCurve->GetFloatValue(ScaleCurveElapsed)));
 }
 
 void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
