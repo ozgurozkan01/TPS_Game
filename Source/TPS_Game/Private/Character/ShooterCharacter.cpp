@@ -206,6 +206,8 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 	if (TraceHitItem && bIsPressed)
 	{
 		TraceHitItem->StartItemCurve(this);
+		// we set it to nullptr again, because otherwise it can call StartItemCurrve repeatedly.
+		TraceHitItem = nullptr;
 	}
 }
 
