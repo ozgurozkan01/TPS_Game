@@ -2,6 +2,9 @@
 
 
 #include "Item/BaseItem.h"
+
+#include "AIHelpers.h"
+#include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -23,7 +26,8 @@ ABaseItem::ABaseItem() :
 	CameraTargetLocation(FVector(0.f)),
 	ItemStartInterpLocation(FVector(0.f)),
 	ItemInterpingX(0.f),
-	ItemInterpingY(0.f)
+	ItemInterpingY(0.f),
+	ItemInitialYawOffset(0.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -140,6 +144,8 @@ void ABaseItem::ItemInterp(float DeltaTime)
 	ItemLocation.Z += CurveValue * SizeZ;
 
 	FVector CurrentLocation { GetActorLocation() };
+	/** In this Interpolation, the InterpSpeed might be different from to computer
+	 * to computer. U should try to better speed value that suits you on your own */
 	const float InterpingXValue = FMath::FInterpTo(CurrentLocation.X, CameraTargetLocation.X, DeltaTime, 30.f);
 	const float InterpingYValue = FMath::FInterpTo(CurrentLocation.Y, CameraTargetLocation.Y, DeltaTime, 30.f);
 
@@ -147,6 +153,13 @@ void ABaseItem::ItemInterp(float DeltaTime)
 	ItemLocation.Y = InterpingYValue;
 	
 	SetActorLocation(ItemLocation, true, nullptr, ETeleportType::TeleportPhysics);
+
+	// Get the camera current rotation to rotate the camera with using offset yaw
+	const FRotator CameraRotation { ShooterRef->GetFollowCamera()->GetComponentRotation() };
+	// Get the item current rotation and set accordingly camera yaw and initial yaw offset
+	FRotator ItemNewRotation {0.f, CameraRotation.Yaw + ItemInitialYawOffset, 0.f};
+	// Set the item rotation with new rotation
+	SetActorRotation(ItemNewRotation, ETeleportType::TeleportPhysics);
 }
 
 void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -189,6 +202,13 @@ void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
 	SetItemState(EItemState::EIS_EquipInterping);
 
 	GetWorldTimerManager().SetTimer(ItemInterpTimer, this, &ABaseItem::FinishInterping, ZCurveTime);
+
+	// Yaw value of camera rotation value
+	const double CameraYawRotation { ShooterRef->GetFollowCamera()->GetComponentRotation().Yaw };
+	// Yaw value of item rotation value
+	const double ItemYawRotation {GetActorRotation().Yaw};
+	// Yaw rotation offset between item and camera (angle difference)
+	ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;
 }
 
 void ABaseItem::SetActiveStarts()

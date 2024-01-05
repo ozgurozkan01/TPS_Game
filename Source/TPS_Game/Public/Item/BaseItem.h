@@ -123,6 +123,9 @@ private:
 	float AmplitudeMultiplier;
 	float YawRotationRate;
 
+	/**  */
+	float ItemInitialYawOffset;
+
 	bool bCanIdleMove;
 public:
 	/** Start curve from the shooter class */
