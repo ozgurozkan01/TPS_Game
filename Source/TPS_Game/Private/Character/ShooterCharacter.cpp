@@ -41,8 +41,8 @@ AShooterCharacter::AShooterCharacter() :
 	bFiring(false),
 	bShouldTraceForItems(false),
 	OverlappedItemCount(0),
-	CameraForwardDistance(250.f),
-	CameraUpDistance(60.f),
+	CameraForwardDistance(120.f),
+	CameraUpDistance(30.f),
 	bAiming(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
