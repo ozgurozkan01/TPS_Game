@@ -221,6 +221,7 @@ public:
 	/** Getter Functıons */
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
+	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE bool GetIsAiming() const { return bAiming; }
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
