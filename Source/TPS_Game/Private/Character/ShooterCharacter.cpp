@@ -390,6 +390,11 @@ void AShooterCharacter::Shoot()
 		PlayFireSoundCue();
 		CrosshairStartFireBullet();
 	}
+
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->DecremenetAmmo();
+	}
 }
 
 void AShooterCharacter::CrosshairStartFireBullet()
