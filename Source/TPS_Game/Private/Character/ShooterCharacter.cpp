@@ -43,7 +43,9 @@ AShooterCharacter::AShooterCharacter() :
 	OverlappedItemCount(0),
 	CameraForwardDistance(120.f),
 	CameraUpDistance(30.f),
-	bAiming(false)
+	bAiming(false),
+	Starting9mmAmmo(90),
+	StartingARAmmo(120)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -81,6 +83,8 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitializeAmmoMap();
+	
 	// Set the animation BP class of character mesh
 	GetMesh()->SetAnimClass(AnimationClass);
 	EquipWeapon(SpawnDefaultWeapon());
@@ -591,6 +595,12 @@ void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 	{
 		SwapWeapon(PickedUpWeapon);
 	}
+}
+
+void AShooterCharacter::InitializeAmmoMap()
+{
+	AmmoMap.Add(EAmmoType::EAT_9mm, Starting9mmAmmo);
+	AmmoMap.Add(EAmmoType::EAT_AR, StartingARAmmo);
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)

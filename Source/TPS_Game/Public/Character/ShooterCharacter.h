@@ -18,6 +18,15 @@ class UAnimMontage;
 class UParticleSystem;
 class UParticleSystemComponent;
 
+UENUM(BlueprintType)
+enum class EAmmoType : uint8
+{
+	EAT_9mm UMETA(DisplayName = "9mm"),
+	EAT_AR UMETA(DisplayName = "Assault Rifle"),
+
+	EAT_MAX UMETA(DisplayName = "Default")
+};
+
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
 {
@@ -38,7 +47,9 @@ public:
 	/** Camera Interp Location */
 	FVector GetCameraInterpLocation();
 	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
-
+	/** Ammo Type Functions */
+	void InitializeAmmoMap();
+	
 private:
 
 	/** Input Functions */
@@ -197,6 +208,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SelectAction;
 
+	/** Weapon Ammo Variables */
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
+	TMap<EAmmoType, int32> AmmoMap;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
+	int32 Starting9mmAmmo;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
+	int32 StartingARAmmo;
+	
 public:
 	
 	/** Getter Functıons */
