@@ -68,6 +68,17 @@ void AWeapon::StopFalling()
 	SetItemState(EItemState::EIS_Pickup);
 }
 
+void AWeapon::DecremenetAmmo()
+{
+	if (CurrentAmmoAmount - 1 < 0)
+	{
+		CurrentAmmoAmount = 0;
+		return;
+	}
+
+	CurrentAmmoAmount--;
+}
+
 const USkeletalMeshSocket* AWeapon::GetBarrelSocket() const
 {
 	if (GetItemSkeletalMesh())

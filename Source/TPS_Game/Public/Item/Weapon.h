@@ -32,8 +32,13 @@ private: // Variables
 	float ThrowWeaponTime;
 	bool bIsFalling;
 
-public: // Getters and Setters
-
+public:
+	void DecremenetAmmo();
+	
+	// Getters and Setters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
+	
+	FORCEINLINE uint8 GetCurrentAmmo() const { return CurrentAmmoAmount; }
+	FORCEINLINE bool HasAmmo() { return GetCurrentAmmo() > 0; }
 };
