@@ -5,7 +5,6 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "HUD/InformationPopUp.h"
 
-
 AWeapon::AWeapon() :
 	MaxAmmoAmount(30),
 	CurrentAmmoAmount(MaxAmmoAmount),
@@ -34,7 +33,6 @@ void AWeapon::Tick(float DeltaSeconds)
 		const FRotator MeshRotation {0.f, GetItemMesh()->GetComponentRotation().Yaw, 0.f};
 		GetItemMesh()->SetWorldRotation(MeshRotation, false, nullptr, ETeleportType::TeleportPhysics);
 	}
-	
 }
 
 void AWeapon::ThrowWeapon()
@@ -70,7 +68,7 @@ void AWeapon::StopFalling()
 
 void AWeapon::DecremenetAmmo()
 {
-	if (CurrentAmmoAmount - 1 < 0)
+	if (CurrentAmmoAmount - 1 <= 0)
 	{
 		CurrentAmmoAmount = 0;
 		return;
