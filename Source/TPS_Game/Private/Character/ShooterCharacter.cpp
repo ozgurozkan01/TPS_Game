@@ -511,8 +511,11 @@ float AShooterCharacter::CalculateCrosshairFireAimingMultiplier(float DeltaTime)
 
 void AShooterCharacter::FireButtonPressed(const FInputActionValue& Value)
 {
-	bFireButtonPressed = true;
-	StartFireTimer();
+	if (EquippedWeapon && EquippedWeapon->HasAmmo())
+	{
+		bFireButtonPressed = true;
+		StartFireTimer();	
+	}
 }
 
 void AShooterCharacter::FireButtonReleased(const FInputActionValue& Value)
@@ -532,11 +535,13 @@ void AShooterCharacter::StartFireTimer()
 
 void AShooterCharacter::AutomaticFireReset()
 {
-	bShouldFire = true;
-
-	if (bFireButtonPressed)
+	if (EquippedWeapon && EquippedWeapon->HasAmmo())
 	{
-		StartFireTimer();
+		bShouldFire = true;
+		if (bFireButtonPressed)
+		{
+			StartFireTimer();
+		}	
 	}
 }
 
