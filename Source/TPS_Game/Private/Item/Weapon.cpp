@@ -9,7 +9,8 @@ AWeapon::AWeapon() :
 	MaxAmmoAmount(30),
 	CurrentAmmoAmount(MaxAmmoAmount),
 	ThrowWeaponTime(0.85),
-	bIsFalling(false)
+	bIsFalling(false),
+	WeaponType(EWeaponType::EWT_SubmachineGun)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }

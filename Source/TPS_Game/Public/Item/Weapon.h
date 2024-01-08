@@ -6,6 +6,15 @@
 #include "Item/BaseItem.h"
 #include "Weapon.generated.h"
 
+UENUM()
+enum class EWeaponType : uint8
+{
+	EWT_SubmachineGun UMETA(DisplayName = "SubmachineGun"),
+	EWT_AssaultRifle UMETA(DisplayName = "AssaultRifle"),
+
+	EWT_MAX UMETA(DisplayName = "Default"),
+};
+
 UCLASS()
 class TPS_GAME_API AWeapon : public ABaseItem
 {
@@ -32,15 +41,19 @@ private: // Variables
 	float ThrowWeaponTime;
 	bool bIsFalling;
 
+	EWeaponType WeaponType;
+	
 public:
 	void DecremenetAmmo();
 
+	// Setters
 	void SetReloadedAmmo(int32& StoredAmmo);
 	
-	// Getters and Setters
+	// Getters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
 	uint8 GetBulletRoom();
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; } 
 	FORCEINLINE uint32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
 	FORCEINLINE bool HasAmmo() const { return GetCurrentAmmo() > 0; }
 	FORCEINLINE bool IsMagazineFull() const { return CurrentAmmoAmount == MaxAmmoAmount; }
