@@ -78,10 +78,8 @@ private:
 	void CloseScope(const FInputActionValue& Value);
 	UFUNCTION()
 	void SelectButtonPressed(const FInputActionValue& Value);
-	/*
 	UFUNCTION()
 	void ReloadButtonPressed(const FInputActionValue& Value); // This function is for when Press R key then Reload weapon.
-	*/
 	
 	/** Combat Functions*/
 	// FTransform GetGunBarrelSocketTransform();
@@ -90,7 +88,7 @@ private:
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void LineTraceForInformationPopUp();
 	void PlayGunFireMontage();
-	//void PlayReloadWeaponMontage();
+	void PlayReloadWeaponMontage();
 	void PlayHitParticle(const FVector& HitLocation);
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void PlayFireSoundCue();
@@ -120,7 +118,7 @@ private:
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
-	/*void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty*/ 
+	void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty 
 
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -147,8 +145,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UAnimMontage> ReloadMontage;*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAnimMontage> ReloadMontage;
 	
 	/** Item Holder to control the widget visibility */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess="true"))
@@ -227,8 +225,8 @@ private:
 	TObjectPtr<UInputAction> ScopeAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SelectAction;
-	/*UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> ReloadAction;*/
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ReloadAction;
 	
 	/** Weapon Ammo Variables */
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))

@@ -158,10 +158,10 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &AShooterCharacter::SelectButtonPressed);
 		}
 
-		/*if (ReloadAction)
+		if (ReloadAction)
 		{
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AShooterCharacter::ReloadButtonPressed);
-		}*/
+		}
 	}
 }
 
@@ -246,14 +246,14 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 	}
 }
 
-/*void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
+void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 {
 	bool bIsReloaded = Value.Get<bool>();
 	if (bIsReloaded)
 	{
 		ReloadWeapon();
 	}
-}*/
+}
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
 {
@@ -371,7 +371,7 @@ void AShooterCharacter::PlayGunFireMontage()
 	}
 }
 
-/*void AShooterCharacter::PlayReloadWeaponMontage()
+void AShooterCharacter::PlayReloadWeaponMontage()
 {
 	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
 
@@ -380,7 +380,7 @@ void AShooterCharacter::PlayGunFireMontage()
 		AnimInstance->Montage_Play(ReloadMontage);
 		AnimInstance->Montage_JumpToSection(FName("Reload SMG"));
 	}
-}*/
+}
 
 void AShooterCharacter::PlayHitParticle(const FVector& HitLocation)
 {
@@ -570,7 +570,7 @@ void AShooterCharacter::AutomaticFireReset()
 
 	else
 	{
-		//ReloadWeapon();
+		ReloadWeapon();
 	}
 }
 
@@ -621,7 +621,7 @@ void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 	}
 }
 
-/*void AShooterCharacter::ReloadWeapon()
+void AShooterCharacter::ReloadWeapon()
 {
 	if (CombatState != ECombatState::ECS_Unoccupied) { return; }
 	
@@ -631,7 +631,7 @@ void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 		EquippedWeapon->SetReloadedAmmo(Starting9mmAmmo);
 		PlayReloadWeaponMontage();
 	}
-}*/
+}
 
 void AShooterCharacter::FinishReloading()
 {
