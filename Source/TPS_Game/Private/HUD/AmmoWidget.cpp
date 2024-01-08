@@ -2,9 +2,7 @@
 
 
 #include "HUD/AmmoWidget.h"
-
 #include "Character/ShooterCharacter.h"
-#include "Components/TextBlock.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -26,13 +24,18 @@ FText UAmmoWidget::UpdateCurrentAmmoText()
 {
 	if (ShooterRef == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
 
-	FString CurrentAmmoInt = FString::FromInt(ShooterRef->GetEquippedWeapon()->GetCurrentAmmo());
-	FText CurrentAmmo = FText::FromString(CurrentAmmoInt);
+	FString CurrentAmmoString = FString::FromInt(ShooterRef->GetEquippedWeapon()->GetCurrentAmmo());
+	FText CurrentAmmoText = FText::FromString(CurrentAmmoString);
 
-	return CurrentAmmo;
+	return CurrentAmmoText;
 }
 
-void UAmmoWidget::UpdateMaxAmmoText()
+FText UAmmoWidget::UpdateMaxAmmoText()
 {
+	if (ShooterRef == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
 
+	FString CurrentMaxAmmoString = FString::FromInt(ShooterRef->GetStarting9mmAmmo());
+	FText CurrentMaxAmmoText = FText::FromString(CurrentMaxAmmoString);
+
+	return CurrentMaxAmmoText;
 }

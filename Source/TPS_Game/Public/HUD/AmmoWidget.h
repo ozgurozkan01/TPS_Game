@@ -20,13 +20,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FText UpdateCurrentAmmoText();
 	UFUNCTION(BlueprintCallable)
-	void UpdateMaxAmmoText();
+	FText UpdateMaxAmmoText();
 private:
 
 	TObjectPtr<AShooterCharacter> ShooterRef;
-	
-	UPROPERTY(meta=(BindWidget), meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UTextBlock> CurrentAmmoText;
-	UPROPERTY(meta=(BindWidget), meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UTextBlock> StoredAmmoText;
 };
