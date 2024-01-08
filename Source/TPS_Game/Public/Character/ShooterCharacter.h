@@ -27,6 +27,16 @@ enum class EAmmoType : uint8
 	EAT_MAX UMETA(DisplayName = "Default")
 };
 
+UENUM(BlueprintType)
+enum class ECombatState
+{
+	ECS_Unoccupied UMETA(DisplayName = "Unoccupied"),
+	ECS_FireTimerInProgress UMETA(DisplayName = "FireTimerInProgress"),
+	ECS_Reloading UMETA(DisplayName = "Reloading"),
+
+	ECS_MAX UMETA(DisplayName = "Default"),
+};
+
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
 {
@@ -49,6 +59,9 @@ public:
 	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
 	/** Ammo Type Functions */
 	void InitializeAmmoMap();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
 	
 private:
 
@@ -65,6 +78,10 @@ private:
 	void CloseScope(const FInputActionValue& Value);
 	UFUNCTION()
 	void SelectButtonPressed(const FInputActionValue& Value);
+	/*
+	UFUNCTION()
+	void ReloadButtonPressed(const FInputActionValue& Value); // This function is for when Press R key then Reload weapon.
+	*/
 	
 	/** Combat Functions*/
 	// FTransform GetGunBarrelSocketTransform();
@@ -73,11 +90,11 @@ private:
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void LineTraceForInformationPopUp();
 	void PlayGunFireMontage();
+	//void PlayReloadWeaponMontage();
 	void PlayHitParticle(const FVector& HitLocation);
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
-	void Shoot();
 	void CrosshairStartFireBullet();
 	void CrosshairFinishFireBullet();
 	
@@ -103,7 +120,8 @@ private:
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
-	
+	/*void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty*/ 
+
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -129,6 +147,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> GunFireMontage;
 
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAnimMontage> ReloadMontage;*/
+	
 	/** Item Holder to control the widget visibility */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<ABaseItem> HeldItem;
@@ -178,7 +199,6 @@ private:
 
 	/** Automatic Fire Factors*/
 	bool bFireButtonPressed;
-	bool bShouldFire;
 	float AutomaticFireRate;
 	FTimerHandle AutomaticFireHandle;
 
@@ -207,7 +227,9 @@ private:
 	TObjectPtr<UInputAction> ScopeAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SelectAction;
-
+	/*UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ReloadAction;*/
+	
 	/** Weapon Ammo Variables */
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	TMap<EAmmoType, int32> AmmoMap;
@@ -215,6 +237,9 @@ private:
 	int32 Starting9mmAmmo;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	int32 StartingARAmmo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=State, meta=(AllowPrivateAccess = "true"))
+	ECombatState CombatState;
 	
 public:
 	
@@ -223,7 +248,8 @@ public:
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE bool GetIsAiming() const { return bAiming; }
-	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
 	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+	FORCEINLINE uint32 GetStarting9mmAmmo() const { return Starting9mmAmmo; }
 };
