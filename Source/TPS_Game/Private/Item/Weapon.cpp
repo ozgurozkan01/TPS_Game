@@ -68,13 +68,37 @@ void AWeapon::StopFalling()
 
 void AWeapon::DecremenetAmmo()
 {
-	if (CurrentAmmoAmount - 1 <= 0)
+	if (CurrentAmmoAmount <= 0)
 	{
 		CurrentAmmoAmount = 0;
-		return;
 	}
 
 	CurrentAmmoAmount--;
+}
+
+void AWeapon::SetReloadedAmmo(int32& StoredAmmo)
+{
+	if (StoredAmmo <= 0 ) { return; }
+
+	int32 BulletRoom = MaxAmmoAmount - CurrentAmmoAmount;
+	
+	if (StoredAmmo >= MaxAmmoAmount)
+	{
+		StoredAmmo -= BulletRoom; 
+		CurrentAmmoAmount = MaxAmmoAmount;
+	}
+
+	else if (StoredAmmo >= BulletRoom)
+	{
+		StoredAmmo -= BulletRoom;
+		CurrentAmmoAmount += BulletRoom;
+	}
+
+	else if (StoredAmmo < BulletRoom)
+	{
+		StoredAmmo = 0;
+		CurrentAmmoAmount += StoredAmmo;
+	}
 }
 
 const USkeletalMeshSocket* AWeapon::GetBarrelSocket() const
@@ -95,4 +119,10 @@ FTransform AWeapon::GetBarrelSocketTransform() const
 	}
 
 	return FTransform();
+}
+
+uint8 AWeapon::GetBulletRoom()
+{
+	uint8 BulletRoom = MaxAmmoAmount - GetCurrentAmmo();
+	return BulletRoom;
 }

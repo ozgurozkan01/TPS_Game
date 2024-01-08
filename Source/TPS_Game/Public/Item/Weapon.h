@@ -23,9 +23,9 @@ private: // Variables
 
 	/** Weapon Ammo values */
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
-	uint8 MaxAmmoAmount;
+	int32 MaxAmmoAmount;
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
-	uint8 CurrentAmmoAmount;
+	int32 CurrentAmmoAmount;
 
 	/** Throwing Control Values */
 	FTimerHandle ThrowWeaponTimer;
@@ -34,11 +34,14 @@ private: // Variables
 
 public:
 	void DecremenetAmmo();
+
+	void SetReloadedAmmo(int32& StoredAmmo);
 	
 	// Getters and Setters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
-	
-	FORCEINLINE uint8 GetCurrentAmmo() const { return CurrentAmmoAmount; }
-	FORCEINLINE bool HasAmmo() { return GetCurrentAmmo() > 0; }
+	uint8 GetBulletRoom();
+	FORCEINLINE uint32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
+	FORCEINLINE bool HasAmmo() const { return GetCurrentAmmo() > 0; }
+	FORCEINLINE bool IsMagazineFull() const { return CurrentAmmoAmount == MaxAmmoAmount; }
 };
