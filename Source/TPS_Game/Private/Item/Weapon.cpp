@@ -6,11 +6,13 @@
 #include "HUD/InformationPopUp.h"
 
 AWeapon::AWeapon() :
-	MaxAmmoAmount(30),
-	CurrentAmmoAmount(MaxAmmoAmount),
+	MagazineCapacity(30),
+	CurrentAmmoAmount(MagazineCapacity),
 	ThrowWeaponTime(0.85),
 	bIsFalling(false),
-	WeaponType(EWeaponType::EWT_SubmachineGun)
+	WeaponType(EWeaponType::EWT_SubmachineGun),
+	AmmoType(EAmmoType::EAT_9mm),
+	ReloadingMontageSection(FName(TEXT("Reload SMG")))
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -69,37 +71,17 @@ void AWeapon::StopFalling()
 
 void AWeapon::DecremenetAmmo()
 {
+	CurrentAmmoAmount--;
+
 	if (CurrentAmmoAmount <= 0)
 	{
 		CurrentAmmoAmount = 0;
 	}
-
-	CurrentAmmoAmount--;
 }
 
-void AWeapon::SetReloadedAmmo(int32& StoredAmmo)
+void AWeapon::ReloadAmmo(int32 Ammo)
 {
-	if (StoredAmmo <= 0 ) { return; }
-
-	int32 BulletRoom = MaxAmmoAmount - CurrentAmmoAmount;
-	
-	if (StoredAmmo >= MaxAmmoAmount)
-	{
-		StoredAmmo -= BulletRoom; 
-		CurrentAmmoAmount = MaxAmmoAmount;
-	}
-
-	else if (StoredAmmo >= BulletRoom)
-	{
-		StoredAmmo -= BulletRoom;
-		CurrentAmmoAmount += BulletRoom;
-	}
-
-	else if (StoredAmmo < BulletRoom)
-	{
-		StoredAmmo = 0;
-		CurrentAmmoAmount += StoredAmmo;
-	}
+	CurrentAmmoAmount += Ammo;
 }
 
 const USkeletalMeshSocket* AWeapon::GetBarrelSocket() const
@@ -120,10 +102,4 @@ FTransform AWeapon::GetBarrelSocketTransform() const
 	}
 
 	return FTransform();
-}
-
-uint8 AWeapon::GetBulletRoom()
-{
-	uint8 BulletRoom = MaxAmmoAmount - GetCurrentAmmo();
-	return BulletRoom;
 }

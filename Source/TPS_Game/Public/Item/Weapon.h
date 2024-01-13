@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item/BaseItem.h"
+#include "AmmoType.h"
 #include "Weapon.generated.h"
 
 UENUM()
@@ -32,7 +33,7 @@ private: // Variables
 
 	/** Weapon Ammo values */
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
-	int32 MaxAmmoAmount;
+	int32 MagazineCapacity;
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	int32 CurrentAmmoAmount;
 
@@ -42,19 +43,20 @@ private: // Variables
 	bool bIsFalling;
 
 	EWeaponType WeaponType;
-	
+	EAmmoType AmmoType;
+	FName ReloadingMontageSection;
 public:
 	void DecremenetAmmo();
 
 	// Setters
-	void SetReloadedAmmo(int32& StoredAmmo);
+	void ReloadAmmo(int32 Ammo);
 	
 	// Getters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
-	uint8 GetBulletRoom();
-	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; } 
-	FORCEINLINE uint32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
-	FORCEINLINE bool HasAmmo() const { return GetCurrentAmmo() > 0; }
-	FORCEINLINE bool IsMagazineFull() const { return CurrentAmmoAmount == MaxAmmoAmount; }
+	FORCEINLINE int32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
+	FORCEINLINE int32 GetMagazineCapacity() const { return MagazineCapacity; }
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
+	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
 };
