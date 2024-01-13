@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1849c240-67a6-4eb5-83cf-c82516f164a0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimBP/ABP_ShooterCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimBP/ABP_ShooterCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimMontage/AM_BelicaReload.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimMontage/AM_BelicaReload.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/AnimBP/ABP_ShooterCharacter.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/AnimMontage/AM_GunFire.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/BlendSpace/BS_JogStart.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/BlendSpace/BS_JogStop.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/BlendSpace/BS_Locomotion.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/AnimationAssets/IK/IK_BelicaRig.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/BP_ShooterCharacter.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/GunMeshes/BelicaGuns.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/GunMeshes/BelicaGuns_PhysicsAsset.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/GunMeshes/BelicaGuns_Skeleton.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/GunMeshes/Transparent.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Fire.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Jump.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Look.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Move.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Select.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Actions/IA_Zoom.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Character/Input/Mappings/IM_ShooterCharacterMapping.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/GameMode/BP_TPS_GameModeBase.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/HUD/Shooter/BP_ShooterHUD.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/HUD/Weapon/BP_InformationPopUp.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Item/Weapon/BP_BaseWeapon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Item/Weapon/BP_BaseWeapon.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Maps/DefaultLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Maps/DefaultLevel.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Private/Character/ShooterCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Private/Character/ShooterCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Private/HUD/AmmoWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Private/HUD/AmmoWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Private/Item/Weapon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Private/Item/Weapon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Public/Character/ShooterCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Public/Character/ShooterCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Public/Item/Weapon.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Public/Item/Weapon.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="2atvzhC3xogSNqLQSsrg4Yx9D5J" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1849c240-67a6-4eb5-83cf-c82516f164a0" name="Changes" comment="" />
+      <created>1705150955162</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1705150955162</updated>
+      <workItem from="1705150959151" duration="12000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
