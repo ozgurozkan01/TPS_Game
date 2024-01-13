@@ -236,7 +236,6 @@ public:
 	
 	/** Getter Functıons */
 	int32 GetAmmoCountByWeaponType();
-	FString GetWeaponName();
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
