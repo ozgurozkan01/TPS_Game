@@ -44,7 +44,7 @@ FText UWeaponWidget::UpdateWeaponNameText()
 {
 	if (ShooterRef == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
 
-	FString CurrentMaxAmmoString = ShooterRef->GetWeaponName();
+	FString CurrentMaxAmmoString = ShooterRef->GetEquippedWeapon()->GetItemName();
 	FText CurrentMaxAmmoText = FText::FromString(CurrentMaxAmmoString);
 
 	return CurrentMaxAmmoText;
