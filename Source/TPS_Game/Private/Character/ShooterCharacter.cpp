@@ -191,7 +191,6 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 void AShooterCharacter::Fire()
 {
 	if (EquippedWeapon == nullptr ||
-			(EquippedWeapon && !EquippedWeapon->HasAmmo()) ||
 			CombatState != ECombatState::ECS_Unoccupied)
 	{ return; }
 
@@ -373,12 +372,14 @@ void AShooterCharacter::PlayGunFireMontage()
 
 void AShooterCharacter::PlayReloadWeaponMontage()
 {
+	if (EquippedWeapon == nullptr) { return; }
+	
 	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
 
 	if (AnimInstance && ReloadMontage)
 	{
 		AnimInstance->Montage_Play(ReloadMontage);
-		AnimInstance->Montage_JumpToSection(FName("Reload SMG"));
+		AnimInstance->Montage_JumpToSection(EquippedWeapon->GetReloadingWeaponSection());
 	}
 }
 
@@ -559,8 +560,9 @@ void AShooterCharacter::StartFireTimer()
 void AShooterCharacter::AutomaticFireReset()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
+	if (EquippedWeapon == nullptr) return;
 	
-	if (EquippedWeapon && EquippedWeapon->HasAmmo())
+	if (EquippedWeapon->GetCurrentAmmo() > 0)
 	{
 		if (bFireButtonPressed)
 		{
@@ -625,17 +627,73 @@ void AShooterCharacter::ReloadWeapon()
 {
 	if (CombatState != ECombatState::ECS_Unoccupied) { return; }
 	
-	if (EquippedWeapon && !EquippedWeapon->IsMagazineFull() && Starting9mmAmmo > 0)
+	if (CarryingAmmo())
 	{
 		CombatState = ECombatState::ECS_Reloading;
-		EquippedWeapon->SetReloadedAmmo(Starting9mmAmmo);
 		PlayReloadWeaponMontage();
 	}
+}
+
+bool AShooterCharacter::CarryingAmmo()
+{
+	if (EquippedWeapon == nullptr) { return false; }
+
+	EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
+
+	if (AmmoMap.Contains(AmmoType))
+	{
+		/** return true if we have ammo corresponding to the AmmoType */
+		return AmmoMap[AmmoType] > 0;
+	}
+	return false;
+}
+
+int32 AShooterCharacter::GetAmmoCountByWeaponType()
+{
+	if (EquippedWeapon == nullptr) { return -1; }
+
+	const auto AmmoType = EquippedWeapon->GetAmmoType();
+	
+	if (AmmoMap.Contains(AmmoType))
+	{
+		return AmmoMap[AmmoType];
+	}
+
+	return -1;
 }
 
 void AShooterCharacter::FinishReloading()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
+
+	if (EquippedWeapon == nullptr) { return; }
+
+	const EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
+
+	if (AmmoMap.Contains(AmmoType))
+	{
+		// Returns to us useable ammo amount of that AmmoType
+		int32 CarriedAmmo = AmmoMap[AmmoType];
+		// Space left in the magazine of EquippedWeapon
+		const int32 MagazineEmptySpace = EquippedWeapon->GetMagazineCapacity() - EquippedWeapon->GetCurrentAmmo();
+
+		if (MagazineEmptySpace > CarriedAmmo)
+		{
+			// Reload the weapon with carried ammo
+			EquippedWeapon->ReloadAmmo(CarriedAmmo);
+			CarriedAmmo = 0;
+			AmmoMap.Add(AmmoType, CarriedAmmo);
+		}
+
+		else
+		{
+			// Fill the weapon
+			EquippedWeapon->ReloadAmmo(MagazineEmptySpace);
+			CarriedAmmo -= MagazineEmptySpace;
+			AmmoMap.Add(AmmoType, CarriedAmmo);
+		}
+	}
+	
 }
 
 void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)

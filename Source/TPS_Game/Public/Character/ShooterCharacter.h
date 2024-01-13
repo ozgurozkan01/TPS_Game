@@ -111,7 +111,8 @@ private:
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
 	void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty 
-
+	bool CarryingAmmo();
+	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -234,6 +235,7 @@ private:
 public:
 	
 	/** Getter Functıons */
+	int32 GetAmmoCountByWeaponType();
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
@@ -241,5 +243,4 @@ public:
 	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
 	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
-	FORCEINLINE uint32 GetStarting9mmAmmo() const { return Starting9mmAmmo; }
 };
