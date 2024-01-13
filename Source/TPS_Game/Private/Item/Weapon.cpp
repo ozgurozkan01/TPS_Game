@@ -12,7 +12,9 @@ AWeapon::AWeapon() :
 	bIsFalling(false),
 	WeaponType(EWeaponType::EWT_SubmachineGun),
 	AmmoType(EAmmoType::EAT_9mm),
-	ReloadingMontageSection(FName(TEXT("Reload SMG")))
+	ReloadingMontageSection(FName(TEXT("Reload SMG"))),
+	MagazineBoneName("smg_clip"),
+	bIsMovingMagazine(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }

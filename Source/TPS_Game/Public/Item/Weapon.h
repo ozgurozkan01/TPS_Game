@@ -45,11 +45,16 @@ private: // Variables
 	EWeaponType WeaponType;
 	EAmmoType AmmoType;
 	FName ReloadingMontageSection;
+	FName MagazineBoneName;
+
+	bool bIsMovingMagazine;
+
 public:
 	void DecremenetAmmo();
 
 	// Setters
 	void ReloadAmmo(int32 Ammo);
+	FORCEINLINE void SetbIsMovingMagazine(bool bIsMoving) { bIsMovingMagazine = bIsMoving; }
 	
 	// Getters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
@@ -59,4 +64,5 @@ public:
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
 	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
+	FORCEINLINE FName GetMagazineBoneName() const { return MagazineBoneName; }
 };
