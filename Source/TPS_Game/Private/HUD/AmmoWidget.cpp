@@ -34,7 +34,7 @@ FText UAmmoWidget::UpdateMaxAmmoText()
 {
 	if (ShooterRef == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
 
-	FString CurrentMaxAmmoString = FString::FromInt(ShooterRef->GetStarting9mmAmmo());
+	FString CurrentMaxAmmoString = FString::FromInt(ShooterRef->GetAmmoCountByWeaponType());
 	FText CurrentMaxAmmoText = FText::FromString(CurrentMaxAmmoString);
 
 	return CurrentMaxAmmoText;
