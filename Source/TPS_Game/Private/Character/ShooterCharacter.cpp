@@ -662,6 +662,21 @@ int32 AShooterCharacter::GetAmmoCountByWeaponType()
 	return -1;
 }
 
+FString AShooterCharacter::GetWeaponName()
+{
+	if (EquippedWeapon == nullptr) { return TEXT("None"); }
+
+	switch (EquippedWeapon->GetWeaponType())
+	{
+		case EWeaponType::EWT_AssaultRifle:
+			return TEXT("Assault Rifle");
+		case EWeaponType::EWT_SubmachineGun:
+			return TEXT("Submachine Gun");
+		default:
+			return TEXT("None");
+	}
+}
+
 void AShooterCharacter::FinishReloading()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
