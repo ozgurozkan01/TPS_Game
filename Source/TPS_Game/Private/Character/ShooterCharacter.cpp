@@ -696,6 +696,29 @@ void AShooterCharacter::FinishReloading()
 	
 }
 
+void AShooterCharacter::GrabMagazine()
+{
+	if (EquippedWeapon == nullptr) { return; }
+	if (EquippedWeapon->GetItemMesh() == nullptr) {return;}
+
+	FName MagazineName = EquippedWeapon->GetMagazineBoneName();
+	int32 MagazineIndex = EquippedWeapon->GetItemMesh()->GetBoneIndex(MagazineName);
+	MagazineTransform = EquippedWeapon->GetItemMesh()->GetBoneTransform(MagazineIndex);
+
+	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+	// SceneComponent attached to the character mesh socket via the socket.
+	LeftHandSceneComponent->AttachToComponent(GetMesh(), AttachmentTransformRules, FName(TEXT("hand_l")));
+	// 
+	LeftHandSceneComponent->SetWorldTransform(MagazineTransform);
+
+	EquippedWeapon->SetbIsMovingMagazine(true);
+}
+
+void AShooterCharacter::ReplaceMagazine()
+{
+	EquippedWeapon->SetbIsMovingMagazine(false);
+}
+
 void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 {
 	TObjectPtr<AWeapon> PickedUpWeapon = Cast<AWeapon>(PickedUpItem);

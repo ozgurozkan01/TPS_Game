@@ -54,6 +54,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+	UFUNCTION(BlueprintCallable)
+	void GrabMagazine();
+	UFUNCTION(BlueprintCallable)
+	void ReplaceMagazine();
 	
 private:
 
@@ -231,7 +235,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=State, meta=(AllowPrivateAccess = "true"))
 	ECombatState CombatState;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
+	FTransform MagazineTransform;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> LeftHandSceneComponent;	
 public:
 	
 	/** Getter Functıons */
