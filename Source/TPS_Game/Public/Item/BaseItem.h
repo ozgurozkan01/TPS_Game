@@ -149,6 +149,7 @@ public:
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemMesh() const { return ItemMesh; }
+	FORCEINLINE FString GetItemName() const { return ItemName; };
 	uint8 GetActivateStarNumber();
 		
 };
