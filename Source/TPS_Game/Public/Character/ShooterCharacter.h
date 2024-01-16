@@ -250,4 +250,5 @@ public:
 	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
 	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetLeftHandSceneComp() const { return LeftHandSceneComponent; }
 };
