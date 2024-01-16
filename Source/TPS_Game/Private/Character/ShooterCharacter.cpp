@@ -77,6 +77,8 @@ AShooterCharacter::AShooterCharacter() :
 	GetCharacterMovement()->MaxAcceleration = 1250.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 315.f;
 	GetCharacterMovement()->GroundFriction = 3.f;
+
+	LeftHandSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("LeftHandSceneComponent"));
 }
 
 void AShooterCharacter::BeginPlay()
@@ -700,7 +702,8 @@ void AShooterCharacter::GrabMagazine()
 {
 	if (EquippedWeapon == nullptr) { return; }
 	if (EquippedWeapon->GetItemMesh() == nullptr) {return;}
-
+	if (LeftHandSceneComponent == nullptr) { return; }
+	
 	FName MagazineName = EquippedWeapon->GetMagazineBoneName();
 	int32 MagazineIndex = EquippedWeapon->GetItemMesh()->GetBoneIndex(MagazineName);
 	MagazineTransform = EquippedWeapon->GetItemMesh()->GetBoneTransform(MagazineIndex);
@@ -708,9 +711,12 @@ void AShooterCharacter::GrabMagazine()
 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	// SceneComponent attached to the character mesh socket via the socket.
 	LeftHandSceneComponent->AttachToComponent(GetMesh(), AttachmentTransformRules, FName(TEXT("hand_l")));
-	// 
+	/** when leftHandSceneComponent is attached to the hand_l bone, leftHandSceneComponent center is the bone center.
+	 * But when character holds the weapon magazine, magazine location and rotation is updated by using of leftHandSceneComp transform.
+	 * In this process, leftHandSceneComponent is the center of hand_l bone and because of that, magazine looks like overlapping with
+	 * mesh. To fix this, at the time of grabbing magazine, we update component transform as magazine transform. Because when character close its hand
+	 * and grab magazine, magazine looks like the center of the closed hand. */
 	LeftHandSceneComponent->SetWorldTransform(MagazineTransform);
-
 	EquippedWeapon->SetbIsMovingMagazine(true);
 }
 
