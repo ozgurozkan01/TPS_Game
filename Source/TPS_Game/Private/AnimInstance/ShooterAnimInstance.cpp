@@ -6,10 +6,22 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+UShooterAnimInstance::UShooterAnimInstance() :
+	Speed(0.f),
+	MovementOffsetYaw(0.f),
+	LastFrameMovementOffsetYaw(0.f),
+	bIsInAir(false),
+	bIsAccelerating(false),
+	bAiming(false),
+	CharacterCurrentYaw(0.f),
+	CharacterLastFrameYaw(0.f),
+	RootYawOffset(0.f)
+{
+}
+
 void UShooterAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-
 	ShooterCharacter = Cast<AShooterCharacter>(TryGetPawnOwner());
 }
 
@@ -46,6 +58,8 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		SetMovementOffsetYaw();
 		bAiming = ShooterCharacter->GetIsAiming();
 	}
+
+	TurnInPlace();
 }
 
 FRotator UShooterAnimInstance::GetAimRotation()
@@ -73,4 +87,17 @@ void UShooterAnimInstance::SetMovementOffsetYaw()
 	
 	MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 	//UE_LOG(LogTemp, Warning, TEXT("Movement Offset Yaw : %f"), MovementOffsetYaw);
+}
+
+void UShooterAnimInstance::TurnInPlace()
+{
+	if (ShooterCharacter == nullptr) { return; }
+
+	CharacterLastFrameYaw = CharacterCurrentYaw;
+	CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
+	/** Delta yaw value which is just one frame */
+	const float DeltaYaw = CharacterCurrentYaw - CharacterLastFrameYaw;
+
+	/** Offset Value to provide root bone yaw rotation does not change (be used in AnimBP to rotate root bone) */ 
+	RootYawOffset -= DeltaYaw;
 }
