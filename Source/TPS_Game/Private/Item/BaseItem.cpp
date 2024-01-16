@@ -10,6 +10,7 @@
 #include "Components/WidgetComponent.h"
 #include "HUD/InformationPopUp.h"
 #include "Character/ShooterCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseItem::ABaseItem() :
 	SinusodialSpeed(2.f),
@@ -214,6 +215,22 @@ void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
 	const double ItemYawRotation {GetActorRotation().Yaw};
 	// Yaw rotation offset between item and camera (angle difference)
 	ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;
+}
+
+void ABaseItem::PlayPickupSoundCue()
+{
+	if (PickupSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, PickupSoundCue);
+	}
+}
+
+void ABaseItem::PlayEquipSoundCue()
+{
+	if (EquipSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, EquipSoundCue);
+	}
 }
 
 void ABaseItem::SetActiveStarts()

@@ -242,6 +242,7 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 	if (TraceHitItem && bIsPressed)
 	{
 		TraceHitItem->StartItemCurve(this);
+		TraceHitItem->PlayPickupSoundCue();
 		// we set it to nullptr again, because otherwise it can call StartItemCurrve repeatedly.
 		TraceHitItem = nullptr;
 	}
@@ -727,6 +728,10 @@ void AShooterCharacter::ReplaceMagazine()
 
 void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 {
+	if (PickedUpItem)
+	{
+		PickedUpItem->PlayEquipSoundCue();
+	}
 	TObjectPtr<AWeapon> PickedUpWeapon = Cast<AWeapon>(PickedUpItem);
 
 	if (PickedUpWeapon)

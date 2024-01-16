@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class USoundCue;
 class UInformationPopUp;
 class USphereComponent;
 class UWidgetComponent;
@@ -127,14 +128,19 @@ private:
 	float SinusodialSpeed;
 	float AmplitudeMultiplier;
 	float YawRotationRate;
-
-	/**  */
 	float ItemInitialYawOffset;
 
 	bool bCanIdleMove;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> PickupSoundCue;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> EquipSoundCue;
 public:
 	/** Start curve from the shooter class */
 	void StartItemCurve(TObjectPtr<AShooterCharacter> Shooter);
+	void PlayPickupSoundCue();
+	void PlayEquipSoundCue();
 	
 	// Setter
 	void SetActiveStarts();
