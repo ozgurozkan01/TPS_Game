@@ -93,11 +93,26 @@ void UShooterAnimInstance::TurnInPlace()
 {
 	if (ShooterCharacter == nullptr) { return; }
 
-	CharacterLastFrameYaw = CharacterCurrentYaw;
-	CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
-	/** Delta yaw value which is just one frame */
-	const float DeltaYaw = CharacterCurrentYaw - CharacterLastFrameYaw;
+	if (Speed > 0)
+	{
+		
+	}
 
-	/** Offset Value to provide root bone yaw rotation does not change (be used in AnimBP to rotate root bone) */ 
-	RootYawOffset -= DeltaYaw;
+	else
+	{
+		CharacterLastFrameYaw = CharacterCurrentYaw;
+		CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
+		/** Delta yaw value which is just one frame */
+		const float DeltaYaw = CharacterCurrentYaw - CharacterLastFrameYaw;
+
+		/** Offset Value to provide root bone yaw rotation does not change (be used in AnimBP to rotate root bone) */ 
+		RootYawOffset -= DeltaYaw;
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("Current Yaw : %f"), CharacterCurrentYaw));
+			GEngine->AddOnScreenDebugMessage(2, -1, FColor::Green, FString::Printf(TEXT("Root Offset : %f"), RootYawOffset));
+
+		}
+	}
 }
