@@ -2,7 +2,6 @@
 
 
 #include "AnimInstance/WeaponAnimInstance.h"
-
 #include "Character/ShooterCharacter.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
@@ -38,9 +37,7 @@ void UWeaponAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	if (ShooterRef && OwningWeaponRef)
 	{
-		/** Update Hand Scene Component Transform every frame */
-		LeftHandSceneCompTransform = ShooterRef->GetLeftHandSceneComp()->GetComponentTransform();
-		/** Update moving bool controller every frame */
+		LeftHandSceneCompTransform = ShooterRef->GetLeftHandSceneCompTransform();
 		bIsMovingMagazine = OwningWeaponRef->IsMovingClip();
 	}
 }
