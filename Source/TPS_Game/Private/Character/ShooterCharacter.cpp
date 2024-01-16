@@ -707,7 +707,7 @@ void AShooterCharacter::GrabMagazine()
 	FName MagazineName = EquippedWeapon->GetMagazineBoneName();
 	int32 MagazineIndex = EquippedWeapon->GetItemMesh()->GetBoneIndex(MagazineName);
 	MagazineTransform = EquippedWeapon->GetItemMesh()->GetBoneTransform(MagazineIndex);
-
+	/** KeepRelative does the attached component hold its position by getting parent object as a center point. */
 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	// SceneComponent attached to the character mesh socket via the socket.
 	LeftHandSceneComponent->AttachToComponent(GetMesh(), AttachmentTransformRules, FName(TEXT("hand_l")));
