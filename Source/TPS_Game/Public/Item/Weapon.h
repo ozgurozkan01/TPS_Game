@@ -65,4 +65,5 @@ public:
 	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
 	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
 	FORCEINLINE FName GetMagazineBoneName() const { return MagazineBoneName; }
+	FORCEINLINE bool IsMovingClip() const { return bIsMovingMagazine; }
 };

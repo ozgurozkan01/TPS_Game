@@ -19,12 +19,16 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 private:
 
+	/** Character Reference to get the scene component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AShooterCharacter> ShooterRef;
+	/** Weapon Reference which is animated in the AnimBP */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AWeapon> OwningWeaponRef;
+	/** Hand Scene Component that magazine follows */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
 	FTransform LeftHandSceneCompTransform;
+	/** Controller for magazine movement while reloading */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
 	bool bIsMovingMagazine;
 };

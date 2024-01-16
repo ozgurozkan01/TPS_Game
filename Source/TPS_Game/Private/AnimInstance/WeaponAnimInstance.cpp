@@ -4,6 +4,7 @@
 #include "AnimInstance/WeaponAnimInstance.h"
 
 #include "Character/ShooterCharacter.h"
+#include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
 void UWeaponAnimInstance::NativeInitializeAnimation()
@@ -13,6 +14,11 @@ void UWeaponAnimInstance::NativeInitializeAnimation()
 	if (ShooterRef == nullptr)
 	{
 		ShooterRef = Cast<AShooterCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
+	}
+
+	if (OwningWeaponRef == nullptr)
+	{
+		OwningWeaponRef = Cast<AWeapon>(GetOwningActor());
 	}
 }
 
@@ -25,8 +31,16 @@ void UWeaponAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		ShooterRef = Cast<AShooterCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 	}
 
-	if (ShooterRef)
+	if (OwningWeaponRef == nullptr)
 	{
+		OwningWeaponRef = Cast<AWeapon>(GetOwningActor());
+	}
+	
+	if (ShooterRef && OwningWeaponRef)
+	{
+		/** Update Hand Scene Component Transform every frame */
 		LeftHandSceneCompTransform = ShooterRef->GetLeftHandSceneComp()->GetComponentTransform();
+		/** Update moving bool controller every frame */
+		bIsMovingMagazine = OwningWeaponRef->IsMovingClip();
 	}
 }
