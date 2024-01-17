@@ -81,6 +81,11 @@ void AWeapon::DecremenetAmmo()
 	}
 }
 
+bool AWeapon::IsMagazineFull()
+{
+	return CurrentAmmoAmount >= MagazineCapacity;
+}
+
 void AWeapon::ReloadAmmo(int32 Ammo)
 {
 	CurrentAmmoAmount += Ammo;

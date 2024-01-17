@@ -51,7 +51,8 @@ private: // Variables
 
 public:
 	void DecremenetAmmo();
-
+	bool IsMagazineFull();
+	
 	// Setters
 	void ReloadAmmo(int32 Ammo);
 	FORCEINLINE void SetbIsMovingMagazine(bool bIsMoving) { bIsMovingMagazine = bIsMoving; }
