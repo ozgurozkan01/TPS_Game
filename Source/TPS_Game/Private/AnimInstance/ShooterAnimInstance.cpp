@@ -17,7 +17,9 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	CharacterLastFrameYaw(0.f),
 	RootYawOffset(0.f),
 	CurrentDistanceCurve(0.f),
-	LastFrameDistanceCurve(0.f)
+	LastFrameDistanceCurve(0.f),
+	AimOffsetPitch(0.f),
+	bIsReloading(false)
 {
 }
 
@@ -51,7 +53,8 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			/** Whether or not the character is accelerating?*/
 			ShooterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? bIsAccelerating = true : bIsAccelerating = false;
 		}
-		
+
+		bIsReloading = 	ShooterCharacter->GetCombatState() == ECombatState::ECS_Reloading;
 		SetMovementOffsetYaw();
 		bAiming = ShooterCharacter->GetIsAiming();
 	}
@@ -86,7 +89,6 @@ void UShooterAnimInstance::SetMovementOffsetYaw()
 void UShooterAnimInstance::TurnInPlace()
 {
 	if (ShooterCharacter == nullptr) { return; }
-
 	/*/** If character is moving or falling down, RootYawOffset should be zero #1#
 	if (Speed > 0 || bIsInAir)
 	{
@@ -140,6 +142,10 @@ void UShooterAnimInstance::TurnInPlace()
 	{
 		GEngine->AddOnScreenDebugMessage(2, -1, FColor::Green, FString::Printf(TEXT("Root Offset : %f"), RootYawOffset));
 	}*/
+
+	AimOffsetPitch = ShooterCharacter->GetBaseAimRotation().Pitch;
+	GEngine->AddOnScreenDebugMessage(3, -1, FColor::Blue, FString::Printf(TEXT("AimOffsetPitch : %f"), AimOffsetPitch));
+
 	
 	 if (Speed > 0)
 	{
