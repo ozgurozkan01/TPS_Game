@@ -251,4 +251,5 @@ public:
 	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
+	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
 };
