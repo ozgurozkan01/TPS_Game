@@ -7,9 +7,18 @@
 #include "ShooterAnimInstance.generated.h"
 
 class AShooterCharacter;
-/**
- * 
- */
+
+UENUM(BlueprintType)
+enum class EOffsetState : uint8
+{
+	EOS_Aiming UMETA(DisplayName = "Aiming"),
+	EOS_Idle UMETA(DisplayName = "Idle"),
+	EOS_Reloading UMETA(DisplayName = "Reloading"),
+	EOS_InAir UMETA(DisplayName = "InAir"),
+
+	EOS_MAX UMETA(DisplayName = "Default"),
+};
+
 UCLASS()
 class TPS_GAME_API UShooterAnimInstance : public UAnimInstance
 {
@@ -29,8 +38,14 @@ private:
 	FRotator GetMovementRotation();
 	/** Set the movement offset yaw value */
 	void SetMovementOffsetYaw();
-	/**  */
+	/** Control body rotation when character stands still */
 	void TurnInPlace();
+	/** Control body leaning while character is running */
+	void Lean();
+	/** Set the Offset State tp update aimOffset animation */
+	void UpdateOffsetState();
+	/** Set the transition variables to update animation transition */
+	void UpdateAnimationTransitionVariables();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<AShooterCharacter> ShooterCharacter;
@@ -49,9 +64,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsReloading;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
-	float CharacterCurrentYaw;
+	float TIP_CharacterCurrentYaw;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
-	float CharacterLastFrameYaw;
+	float TIP_CharacterLastFrameYaw;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	float RootYawOffset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
@@ -60,4 +75,12 @@ private:
 	float LastFrameDistanceCurve;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	float AimOffsetPitch;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
+	EOffsetState OffsetState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
+	FRotator LeanCharacterRotation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
+	FRotator LeanCharacterRotationLastFrame;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
+	double LeanDeltaYawOffset;	
 };

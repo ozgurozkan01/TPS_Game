@@ -13,13 +13,17 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	bIsInAir(false),
 	bIsAccelerating(false),
 	bAiming(false),
-	CharacterCurrentYaw(0.f),
-	CharacterLastFrameYaw(0.f),
+	TIP_CharacterCurrentYaw(0.f),
+	TIP_CharacterLastFrameYaw(0.f),
 	RootYawOffset(0.f),
 	CurrentDistanceCurve(0.f),
 	LastFrameDistanceCurve(0.f),
 	AimOffsetPitch(0.f),
-	bIsReloading(false)
+	bIsReloading(false),
+	OffsetState(EOffsetState::EOS_Idle),
+	LeanCharacterRotation(FRotator::ZeroRotator),
+	LeanCharacterRotationLastFrame(FRotator::ZeroRotator),
+	LeanDeltaYawOffset(0.f)
 {
 }
 
@@ -32,34 +36,8 @@ void UShooterAnimInstance::NativeInitializeAnimation()
 void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
-	if (ShooterCharacter == nullptr)
-	{
-		ShooterCharacter = Cast<AShooterCharacter>(TryGetPawnOwner());
-	}
-
-	if (ShooterCharacter)
-	{
-		if (ShooterCharacter->GetCharacterMovement())
-		{
-			/** Set the speed of character */
-			FVector CurrentVelocity = ShooterCharacter->GetCharacterMovement()->Velocity;
-			CurrentVelocity.Z = 0.f;
-			Speed = CurrentVelocity.Size();
-
-			/** Whether or not the character is in air?*/
-			bIsInAir = ShooterCharacter->GetCharacterMovement()->IsFalling();
-		
-			/** Whether or not the character is accelerating?*/
-			ShooterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? bIsAccelerating = true : bIsAccelerating = false;
-		}
-
-		bIsReloading = 	ShooterCharacter->GetCombatState() == ECombatState::ECS_Reloading;
-		SetMovementOffsetYaw();
-		bAiming = ShooterCharacter->GetIsAiming();
-	}
-
-	TurnInPlace();
+	
+	UpdateAnimationTransitionVariables();
 }
 
 FRotator UShooterAnimInstance::GetAimRotation()
@@ -88,7 +66,6 @@ void UShooterAnimInstance::SetMovementOffsetYaw()
 
 void UShooterAnimInstance::TurnInPlace()
 {
-	if (ShooterCharacter == nullptr) { return; }
 	/*/** If character is moving or falling down, RootYawOffset should be zero #1#
 	if (Speed > 0 || bIsInAir)
 	{
@@ -144,28 +121,26 @@ void UShooterAnimInstance::TurnInPlace()
 	}*/
 
 	AimOffsetPitch = ShooterCharacter->GetBaseAimRotation().Pitch;
-	GEngine->AddOnScreenDebugMessage(3, -1, FColor::Blue, FString::Printf(TEXT("AimOffsetPitch : %f"), AimOffsetPitch));
-
 	
-	 if (Speed > 0)
+	 if (Speed > 0 || bIsInAir)
 	{
 		RootYawOffset = FMath::FInterpTo(RootYawOffset, 0.f, GetDeltaSeconds(), 15.f);
-		CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
-		CharacterLastFrameYaw = CharacterCurrentYaw;
+		TIP_CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
+		TIP_CharacterLastFrameYaw = TIP_CharacterCurrentYaw;
 		LastFrameDistanceCurve = 0.f;
 		CurrentDistanceCurve = 0.f;
 	} 
 
 	else
 	{
-		CharacterLastFrameYaw = CharacterCurrentYaw;
-		CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
+		TIP_CharacterLastFrameYaw = TIP_CharacterCurrentYaw;
+		TIP_CharacterCurrentYaw = ShooterCharacter->GetActorRotation().Yaw;
 		/** Delta yaw value which is just one frame */
-		const float DeltaYaw = CharacterCurrentYaw - CharacterLastFrameYaw;
+		const float TIP_DeltaYaw = TIP_CharacterCurrentYaw - TIP_CharacterLastFrameYaw;
 
 		/** Offset Value to provide root bone yaw rotation does not change (be used in AnimBP to rotate root bone)
 		 * This value is clamped between [180, -180] */ 
-		RootYawOffset = UKismetMathLibrary::NormalizeAxis(RootYawOffset - DeltaYaw);
+		RootYawOffset = UKismetMathLibrary::NormalizeAxis(RootYawOffset - TIP_DeltaYaw);
 
 		/** Returns the key value of the current animation frame
 		 * Turning is meta data curve, for this reason, it might be just 0 (not animated) or 1 (animated).
@@ -192,19 +167,66 @@ void UShooterAnimInstance::TurnInPlace()
 			{
 				/** Extra rotation that was taken while rotating */
 				const float YawExcess { AbsRootYawOffset - 90.f} ;
-				UE_LOG(LogTemp, Warning, TEXT("YawExcess : %f"), YawExcess);
 				/** Do not take extra rotation, we need to subtract or add YaxExcess value to RootYawOffset
 				 *  By doing this, we are turning closer to 90 degrees. Not more */
 				RootYawOffset > 0 ? RootYawOffset -= YawExcess : RootYawOffset += YawExcess;
 			}
 		}
-		
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("Current Yaw : %f"), CharacterCurrentYaw));
-			GEngine->AddOnScreenDebugMessage(2, -1, FColor::Green, FString::Printf(TEXT("Root Offset : %f"), RootYawOffset));
-
-		}
 	}
 }
+
+void UShooterAnimInstance::Lean()
+{
+	if (ShooterCharacter == nullptr) { return; }
+
+	LeanCharacterRotationLastFrame = LeanCharacterRotation;
+	LeanCharacterRotation = ShooterCharacter->GetActorRotation();
+	FRotator DeltaRotation { UKismetMathLibrary::NormalizedDeltaRotator(LeanCharacterRotation, LeanCharacterRotationLastFrame) };
+	/** Division is for making the target more bigger. Because we want to lean even in small rotations. */
+	const double Target { DeltaRotation.Yaw / GetDeltaSeconds() };
+	/** Smooth transition */
+	const double Interp { FMath::FInterpTo(LeanDeltaYawOffset, Target, GetDeltaSeconds(), 6.f)};
+	/** Set the offset range */
+	LeanDeltaYawOffset = FMath::Clamp(Interp, -90.f, 90.f);
+}
+
+void UShooterAnimInstance::UpdateOffsetState()
+{
+	if (bIsReloading) { OffsetState = EOffsetState::EOS_Reloading; return;}
+	if (bIsInAir) { OffsetState = EOffsetState::EOS_InAir; return; }
+	if (bAiming) { OffsetState = EOffsetState::EOS_Aiming; return; }
+
+	OffsetState = EOffsetState::EOS_Idle;
+}
+
+void UShooterAnimInstance::UpdateAnimationTransitionVariables()
+{
+	if (ShooterCharacter == nullptr)
+	{
+		ShooterCharacter = Cast<AShooterCharacter>(TryGetPawnOwner());
+	}
+	
+	if (ShooterCharacter == nullptr) { return; }
+	
+	if (ShooterCharacter->GetCharacterMovement())
+	{
+		/** Set the speed of character */
+		FVector CurrentVelocity = ShooterCharacter->GetCharacterMovement()->Velocity;
+		CurrentVelocity.Z = 0.f;
+		Speed = CurrentVelocity.Size();
+
+		/** Whether or not the character is in air?*/
+		bIsInAir = ShooterCharacter->GetCharacterMovement()->IsFalling();
 		
+		/** Whether or not the character is accelerating?*/
+		ShooterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? bIsAccelerating = true : bIsAccelerating = false;
+	}
+
+	bIsReloading = 	ShooterCharacter->GetCombatState() == ECombatState::ECS_Reloading;
+	bAiming = ShooterCharacter->GetIsAiming();
+
+	SetMovementOffsetYaw();
+	UpdateOffsetState();
+	TurnInPlace();
+	Lean();
+}
