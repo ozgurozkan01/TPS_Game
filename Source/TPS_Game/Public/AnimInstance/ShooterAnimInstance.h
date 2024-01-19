@@ -60,9 +60,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsAccelerating;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
-	bool bAiming;
+	bool bIsAiming;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsReloading;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
+	bool bIsCrouching;	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	float TIP_CharacterCurrentYaw;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
@@ -82,5 +84,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
 	FRotator LeanCharacterRotationLastFrame;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
-	double LeanDeltaYawOffset;	
+	double LeanDeltaYawOffset;
 };
