@@ -45,7 +45,8 @@ AShooterCharacter::AShooterCharacter() :
 	bAiming(false),
 	Starting9mmAmmo(90),
 	StartingARAmmo(120),
-	CombatState(ECombatState::ECS_Unoccupied)
+	CombatState(ECombatState::ECS_Unoccupied),
+	bIsCrouching(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -254,6 +255,16 @@ void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 	if (bIsReloaded)
 	{
 		ReloadWeapon();
+	}
+}
+
+void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
+{
+	bool bCrouching = Value.Get<bool>();
+
+	if (bCrouching && !GetCharacterMovement()->IsFalling())
+	{
+		bIsCrouching = !bIsCrouching;
 	}
 }
 

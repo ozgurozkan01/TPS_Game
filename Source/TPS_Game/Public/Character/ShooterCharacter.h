@@ -76,6 +76,8 @@ private:
 	void SelectButtonPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void ReloadButtonPressed(const FInputActionValue& Value); // This function is for when Press R key then Reload weapon.
+	UFUNCTION()
+	void CrouchingButtonPressed(const FInputActionValue& Value);
 	
 	/** Combat Functions*/
 	// FTransform GetGunBarrelSocketTransform();
@@ -224,6 +226,8 @@ private:
 	TObjectPtr<UInputAction> SelectAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ReloadAction;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> CrouchingAction;
 	
 	/** Weapon Ammo Variables */
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
@@ -238,7 +242,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	FTransform MagazineTransform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<USceneComponent> LeftHandSceneComponent;	
+	TObjectPtr<USceneComponent> LeftHandSceneComponent;
+
+	bool bIsCrouching;
 public:
 	
 	/** Getter Functıons */
@@ -247,6 +253,7 @@ public:
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE bool GetIsAiming() const { return bAiming; }
+	FORCEINLINE bool GetIsCrouching() const { return bIsCrouching; }
 	FORCEINLINE float GetCrosshairSpreadValue() const { return CrosshairSpreadMultiplier; }
 	FORCEINLINE float GetCrosshairSpreadMax() const { return CrosshairSpreadMax; };
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
