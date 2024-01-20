@@ -78,6 +78,8 @@ private:
 	void ReloadButtonPressed(const FInputActionValue& Value); // This function is for when Press R key then Reload weapon.
 	UFUNCTION()
 	void CrouchingButtonPressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void CrouchingButtonReleased(const FInputActionValue& Value);
 	
 	/** Combat Functions*/
 	// FTransform GetGunBarrelSocketTransform();

@@ -165,6 +165,12 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		{
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AShooterCharacter::ReloadButtonPressed);
 		}
+
+		if (CrouchingAction)
+		{
+			EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Triggered, this, &AShooterCharacter::CrouchingButtonPressed);
+			EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonPressed);
+		}
 	}
 }
 
@@ -260,12 +266,20 @@ void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 
 void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
 {
+	if (GetCharacterMovement()->IsFalling()) { return; }
+	
 	bool bCrouching = Value.Get<bool>();
 
-	if (bCrouching && !GetCharacterMovement()->IsFalling())
-	{
-		bIsCrouching = !bIsCrouching;
-	}
+	bIsCrouching = bCrouching;
+}
+
+void AShooterCharacter::CrouchingButtonReleased(const FInputActionValue& Value)
+{
+	if (GetCharacterMovement()->IsFalling()) { return; }
+	
+	bool bCrouching = Value.Get<bool>();
+
+	bIsCrouching = !bCrouching;
 }
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
