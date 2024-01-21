@@ -46,7 +46,9 @@ AShooterCharacter::AShooterCharacter() :
 	Starting9mmAmmo(90),
 	StartingARAmmo(120),
 	CombatState(ECombatState::ECS_Unoccupied),
-	bIsCrouching(false)
+	bIsCrouching(false),
+	RunningSpeed(650.f),
+	CrouchingSpeed(300.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -75,7 +77,7 @@ AShooterCharacter::AShooterCharacter() :
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.15f; // Control percent when the character is in air
-	GetCharacterMovement()->MaxAcceleration = 1250.f;
+	GetCharacterMovement()->MaxAcceleration = 1750.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 315.f;
 	GetCharacterMovement()->GroundFriction = 3.f;
 
@@ -114,7 +116,7 @@ void AShooterCharacter::BeginPlay()
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	CameraInterpZoom(DeltaTime);
 	SetLookRates();
 	CalculateCrosshairSpreadMultiplier(DeltaTime);
@@ -141,7 +143,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		
 		if (JumpAction)
 		{
-			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this,  &ACharacter::Jump);
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this,  &AShooterCharacter::Jump);
 		}
 
 		if (FireAction)
@@ -169,9 +171,18 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		if (CrouchingAction)
 		{
 			EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Triggered, this, &AShooterCharacter::CrouchingButtonPressed);
-			EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonPressed);
+			EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonReleased);
 		}
 	}
+}
+
+void AShooterCharacter::Jump()
+{
+	if (!bIsCrouching)
+	{
+		Super::Jump();
+	}
+
 }
 
 void AShooterCharacter::Movement(const FInputActionValue& Value)
@@ -231,7 +242,6 @@ void AShooterCharacter::Fire()
 void AShooterCharacter::OpenScope(const FInputActionValue& Value)
 {
 	bool bCrosshairShouldZoom = Value.Get<bool>();
-
 	bAiming = bCrosshairShouldZoom;
 }
 
@@ -268,18 +278,22 @@ void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
 {
 	if (GetCharacterMovement()->IsFalling()) { return; }
 	
-	bool bCrouching = Value.Get<bool>();
+	bool bCrouchingPressed = Value.Get<bool>();
 
-	bIsCrouching = bCrouching;
+	bIsCrouching = bCrouchingPressed;
+	GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
+	GetCharacterMovement()->GroundFriction = 5.f;
 }
 
 void AShooterCharacter::CrouchingButtonReleased(const FInputActionValue& Value)
 {
 	if (GetCharacterMovement()->IsFalling()) { return; }
 	
-	bool bCrouching = Value.Get<bool>();
+	bool bCrouchingReleased = Value.Get<bool>();
 
-	bIsCrouching = !bCrouching;
+	bIsCrouching = bCrouchingReleased;
+	GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
+	GetCharacterMovement()->GroundFriction = .75f;
 }
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)

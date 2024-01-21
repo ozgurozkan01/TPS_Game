@@ -43,6 +43,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Jump() override;
 	
 	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
 	void IncrementOverlappedItemCount(int8 Amount);
@@ -80,9 +81,7 @@ private:
 	void CrouchingButtonPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void CrouchingButtonReleased(const FInputActionValue& Value);
-	
 	/** Combat Functions*/
-	// FTransform GetGunBarrelSocketTransform();
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
@@ -95,7 +94,6 @@ private:
 	void PlayBarrelMuzzleFlash();
 	void CrosshairStartFireBullet();
 	void CrosshairFinishFireBullet();
-	
 	/** Aiming Functions */
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
@@ -106,13 +104,11 @@ private:
 	float CalculateCrosshairInAirMultiplier(float DeltaTime);
 	float CalculateCrosshairAimingMultiplier(float DeltaTime);
 	float CalculateCrosshairFireAimingMultiplier(float DeltaTime);
-
 	/** Automatic Gun Fire Functions */
 	void FireButtonPressed(const FInputActionValue& Value);
 	void FireButtonReleased(const FInputActionValue& Value);
 	void StartFireTimer();
 	void AutomaticFireReset();
-
 	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
@@ -210,6 +206,10 @@ private:
 	float CameraForwardDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	float CameraUpDistance;
+
+	/** Speed */
+	float RunningSpeed;
+	float CrouchingSpeed;
 	
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
