@@ -46,6 +46,8 @@ private:
 	void UpdateOffsetState();
 	/** Set the transition variables to update animation transition */
 	void UpdateAnimationTransitionVariables();
+	/** Update Recoil Weight value to control animation blending accordingly current state */
+	void UpdateRecoilWeight();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<AShooterCharacter> ShooterCharacter;
@@ -64,7 +66,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsReloading;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
-	bool bIsCrouching;	
+	bool bIsCrouching;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
+	bool bIsTurningInPlace;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	float TIP_CharacterCurrentYaw;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
@@ -77,6 +81,8 @@ private:
 	float LastFrameDistanceCurve;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	float AimOffsetPitch;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
+	float RecoilWeight;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn In Place", meta=(AllowPrivateAccess = "true"))
 	EOffsetState OffsetState;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))

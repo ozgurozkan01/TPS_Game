@@ -24,7 +24,9 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	OffsetState(EOffsetState::EOS_Idle),
 	LeanCharacterRotation(FRotator::ZeroRotator),
 	LeanCharacterRotationLastFrame(FRotator::ZeroRotator),
-	LeanDeltaYawOffset(0.f)
+	LeanDeltaYawOffset(0.f),
+	bIsTurningInPlace(false),
+	RecoilWeight(0.f)
 {
 }
 
@@ -90,13 +92,13 @@ void UShooterAnimInstance::TurnInPlace()
 
 		/** Returns the key value of the current animation frame
 		 * Turning is meta data curve, for this reason, it might be just 0 (not animated) or 1 (animated).
-		 * If the FName using as parameter is normal curve, then returns the value which corresponds to the frame
-		 */
+		 * If the FName using as parameter is normal curve, then returns the value which corresponds to the frame */
 		const float IsTurning { GetCurveValue(FName(TEXT("Turning"))) };
 
 		// Turning
 		if (IsTurning > 0)
 		{
+			bIsTurningInPlace = true;
 			LastFrameDistanceCurve = CurrentDistanceCurve;
 			CurrentDistanceCurve = GetCurveValue(FName(TEXT("DistanceCurve")));
 			/** Value difference between 2 frame */
@@ -118,7 +120,13 @@ void UShooterAnimInstance::TurnInPlace()
 				RootYawOffset > 0 ? RootYawOffset -= YawExcess : RootYawOffset += YawExcess;
 			}
 		}
+		else
+		{
+			bIsTurningInPlace = false;
+		}
 	}
+
+	UpdateRecoilWeight();
 }
 
 void UShooterAnimInstance::Lean()
@@ -151,7 +159,6 @@ void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 	
 	if (ShooterCharacter->GetCharacterMovement())
 	{
-		/** Set the speed of character */
 		FVector CurrentVelocity = ShooterCharacter->GetCharacterMovement()->Velocity;
 		CurrentVelocity.Z = 0.f;
 		Speed = CurrentVelocity.Size();
@@ -169,4 +176,27 @@ void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 	UpdateOffsetState();
 	TurnInPlace();
 	Lean();
+}
+
+void UShooterAnimInstance::UpdateRecoilWeight()
+{
+	if (bIsTurningInPlace)
+	{
+		if (bIsReloading) { RecoilWeight = 1.f; }
+		else { RecoilWeight = 0.f; }
+	}
+	else
+	{
+		if (bIsCrouching)
+		{
+			if (bIsReloading) { RecoilWeight = 1.f; }
+			else { RecoilWeight = 0.1f; }
+		}
+
+		else
+		{
+			if (bIsAiming || bIsReloading) { RecoilWeight = 1.f; }
+			else { RecoilWeight = 0.5f; }			
+		}
+	}
 }
