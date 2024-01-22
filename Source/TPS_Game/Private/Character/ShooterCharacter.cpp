@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -48,7 +49,9 @@ AShooterCharacter::AShooterCharacter() :
 	CombatState(ECombatState::ECS_Unoccupied),
 	bIsCrouching(false),
 	RunningSpeed(650.f),
-	CrouchingSpeed(300.f)
+	CrouchingSpeed(300.f),
+	RunningHalfHeight(88.f),
+	CrouchingHalfHeight(44.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -121,6 +124,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 	SetLookRates();
 	CalculateCrosshairSpreadMultiplier(DeltaTime);
 	LineTraceForInformationPopUp();
+	UpdateCapsuleHalfHeight(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -688,6 +692,32 @@ bool AShooterCharacter::CarryingAmmo()
 		return AmmoMap[AmmoType] > 0;
 	}
 	return false;
+}
+
+void AShooterCharacter::UpdateCapsuleHalfHeight(float DeltaTime)
+{
+	
+	if (bIsCrouching)
+	{
+		TargetHalfHeight = CrouchingHalfHeight;
+	}
+	else
+	{
+		TargetHalfHeight = RunningHalfHeight;
+	}
+
+	const float InterpHalfHeight { FMath::FInterpTo(
+		GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
+		TargetHalfHeight,
+		DeltaTime,
+		20.f)};
+
+	const float DeltaCapsuleHalfHeight { InterpHalfHeight - GetCapsuleComponent()->GetScaledCapsuleHalfHeight() };
+	const FVector MeshOffset { 0.f, 0.f, -DeltaCapsuleHalfHeight};
+	GetMesh()->AddLocalOffset(MeshOffset);
+	
+	GetCapsuleComponent()->SetCapsuleHalfHeight(InterpHalfHeight);
+
 }
 
 int32 AShooterCharacter::GetAmmoCountByWeaponType()

@@ -116,6 +116,9 @@ private:
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
 	void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty 
 	bool CarryingAmmo();
+
+	void UpdateCapsuleHalfHeight(float DeltaTime);
+	void UpdateMeshPositionByHalfHeight();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -247,6 +250,13 @@ private:
 	TObjectPtr<USceneComponent> LeftHandSceneComponent;
 
 	bool bIsCrouching;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	float RunningHalfHeight;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	float CrouchingHalfHeight;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	float TargetHalfHeight;
 public:
 	
 	/** Getter Functıons */
