@@ -186,22 +186,25 @@ void AShooterCharacter::Jump()
 	{
 		Super::Jump();
 	}
-
 }
 
 void AShooterCharacter::Movement(const FInputActionValue& Value)
 {
-	if (GetCharacterMovement()->IsFalling()) { return; }
-	
-	const FVector2D MovementDirection = Value.Get<FVector2D>();
-
-	const FRotator ControllerRotation = GetControlRotation();
-	const FRotator YawRotation = FRotator(0.f, ControllerRotation.Yaw, 0.f);
-
-	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	AddMovementInput(ForwardVector, MovementDirection.Y);
-	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	AddMovementInput(RightVector, MovementDirection.X);
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		/** Movement Direction Vector comes from the keyboard */
+		const FVector2D MovementDirection = Value.Get<FVector2D>();
+		/** Controller Rotation which is chanhing by the mouse or etc. */
+		const FRotator ControllerRotation = GetControlRotation();
+		/** Yaw component of the controller rotation value. */
+		const FRotator YawRotation = FRotator(0.f, ControllerRotation.Yaw, 0.f);
+		/** Set forward vector by using the rotation matrix. */
+		const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(ForwardVector, MovementDirection.Y);
+		/** Set right vector by using the rotation matrix. */
+		const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(RightVector, MovementDirection.X);	
+	}
 }
 
 void AShooterCharacter::LookAround(const FInputActionValue& Value)
@@ -214,32 +217,32 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::Fire()
 {
-	if (EquippedWeapon == nullptr ||
-			CombatState != ECombatState::ECS_Unoccupied)
-	{ return; }
-
-	FVector CrosshairWorldPosition;
-	FVector CrosshairWorldDirection;
-
-	bool bScreenToWorld = IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection);
-	
-	if (bScreenToWorld)
+	if (EquippedWeapon &&
+			CombatState == ECombatState::ECS_Unoccupied)
 	{
-		FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
+		FVector CrosshairWorldPosition;
+		FVector CrosshairWorldDirection;
+
+		bool bScreenToWorld = IsConvertedScreenToWorld(CrosshairWorldPosition, CrosshairWorldDirection);
+	
+		if (bScreenToWorld)
+		{
+			FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
 		
-		FVector BeamEndPoint { FVector::ZeroVector };
-		LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
-		LineTraceFromTheGunBarrel(BarrelSocketTransform.GetLocation(), BeamEndPoint);
+			FVector BeamEndPoint { FVector::ZeroVector };
+			LineTraceFromTheScreen(CrosshairWorldPosition, CrosshairWorldDirection, BeamEndPoint);
+			LineTraceFromTheGunBarrel(BarrelSocketTransform.GetLocation(), BeamEndPoint);
 
-		PlayGunFireMontage();
-		PlayHitParticle(BeamEndPoint);
-		PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
-		PlayFireSoundCue();
-		PlayBarrelMuzzleFlash();
-		CrosshairStartFireBullet();
+			PlayGunFireMontage();
+			PlayHitParticle(BeamEndPoint);
+			PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
+			PlayFireSoundCue();
+			PlayBarrelMuzzleFlash();
+			CrosshairStartFireBullet();
 
-		EquippedWeapon->DecremenetAmmo();
-		StartFireTimer();
+			EquippedWeapon->DecremenetAmmo();
+			StartFireTimer();
+		}	
 	}
 }
 
@@ -280,24 +283,26 @@ void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 
 void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
 {
-	if (GetCharacterMovement()->IsFalling()) { return; }
-	
-	bool bCrouchingPressed = Value.Get<bool>();
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		bool bCrouchingPressed = Value.Get<bool>();
 
-	bIsCrouching = bCrouchingPressed;
-	GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
-	GetCharacterMovement()->GroundFriction = 5.f;
+		bIsCrouching = bCrouchingPressed;
+		GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
+		GetCharacterMovement()->GroundFriction = 5.f;
+	}
 }
 
 void AShooterCharacter::CrouchingButtonReleased(const FInputActionValue& Value)
 {
-	if (GetCharacterMovement()->IsFalling()) { return; }
-	
-	bool bCrouchingReleased = Value.Get<bool>();
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		bool bCrouchingReleased = Value.Get<bool>();
 
-	bIsCrouching = bCrouchingReleased;
-	GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
-	GetCharacterMovement()->GroundFriction = .75f;
+		bIsCrouching = bCrouchingReleased;
+		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
+		GetCharacterMovement()->GroundFriction = .75f;	
+	}
 }
 
 bool AShooterCharacter::IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection)
@@ -364,7 +369,6 @@ void AShooterCharacter::LineTraceForInformationPopUp()
 		{
 			HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 		}
-		
 		return;
 	}
 	
@@ -418,14 +422,15 @@ void AShooterCharacter::PlayGunFireMontage()
 
 void AShooterCharacter::PlayReloadWeaponMontage()
 {
-	if (EquippedWeapon == nullptr) { return; }
-	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
-
-	if (AnimInstance && ReloadMontage)
+	if (EquippedWeapon)
 	{
-		AnimInstance->Montage_Play(ReloadMontage);
-		AnimInstance->Montage_JumpToSection(EquippedWeapon->GetReloadingWeaponSection());
+		TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+
+		if (AnimInstance && ReloadMontage)
+		{
+			AnimInstance->Montage_Play(ReloadMontage);
+			AnimInstance->Montage_JumpToSection(EquippedWeapon->GetReloadingWeaponSection());
+		}
 	}
 }
 
@@ -587,9 +592,10 @@ void AShooterCharacter::FireButtonPressed(const FInputActionValue& Value)
 {
 	bFireButtonPressed = Value.Get<bool>();
 
-	if (!bFireButtonPressed) return;
-
-	Fire();
+	if (bFireButtonPressed)
+	{
+		Fire();
+	}
 }
 
 void AShooterCharacter::FireButtonReleased(const FInputActionValue& Value)
@@ -606,19 +612,20 @@ void AShooterCharacter::StartFireTimer()
 void AShooterCharacter::AutomaticFireReset()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
-	if (EquippedWeapon == nullptr) return;
-	
-	if (EquippedWeapon->GetCurrentAmmo() > 0)
+	if (EquippedWeapon)
 	{
-		if (bFireButtonPressed)
+		if (EquippedWeapon->GetCurrentAmmo() > 0)
 		{
-			Fire();
-		}	
-	}
+			if (bFireButtonPressed)
+			{
+				Fire();
+			}	
+		}
 
-	else
-	{
-		ReloadWeapon();
+		else
+		{
+			ReloadWeapon();
+		}	
 	}
 }
 
@@ -635,29 +642,31 @@ TObjectPtr<AWeapon> AShooterCharacter::SpawnDefaultWeapon()
 
 void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 {
-	if (WeaponToEquip == nullptr) { return; }
-	
-	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
-
-	if (HandSocket)
+	if (WeaponToEquip)
 	{
-		HandSocket->AttachActor(WeaponToEquip, GetMesh());
-		WeaponToEquip->SetIdleMovement(false);
-		WeaponToEquip->SetItemCollisions(false);
-	}
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 
-	EquippedWeapon = WeaponToEquip;
-	EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
+		if (HandSocket)
+		{
+			HandSocket->AttachActor(WeaponToEquip, GetMesh());
+			WeaponToEquip->SetIdleMovement(false);
+			WeaponToEquip->SetItemCollisions(false);
+		}
+
+		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);	
+	}
 }
 
 void AShooterCharacter::DropWeapon()
 {
-	if (EquippedWeapon == nullptr) { return; }
-
-	FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
-	EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
-	EquippedWeapon->SetItemState(EItemState::EIS_Falling);
-	EquippedWeapon->ThrowWeapon();
+	if (EquippedWeapon)
+	{
+		FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
+		EquippedWeapon->SetItemState(EItemState::EIS_Falling);
+		EquippedWeapon->ThrowWeapon();
+	}
 }
 
 void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
@@ -671,9 +680,7 @@ void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 
 void AShooterCharacter::ReloadWeapon()
 {
-	if (CombatState != ECombatState::ECS_Unoccupied) { return; }
-	
-	if (CarryingAmmo() && !EquippedWeapon->IsMagazineFull())
+	if (CombatState == ECombatState::ECS_Unoccupied && CarryingAmmo() && !EquippedWeapon->IsMagazineFull())
 	{
 		CombatState = ECombatState::ECS_Reloading;
 		PlayReloadWeaponMontage();
@@ -682,21 +689,22 @@ void AShooterCharacter::ReloadWeapon()
 
 bool AShooterCharacter::CarryingAmmo()
 {
-	if (EquippedWeapon == nullptr) { return false; }
-
-	EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
-
-	if (AmmoMap.Contains(AmmoType))
+	if (EquippedWeapon)
 	{
-		/** return true if we have ammo corresponding to the AmmoType */
-		return AmmoMap[AmmoType] > 0;
+		EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
+
+		if (AmmoMap.Contains(AmmoType))
+		{
+			/** return true if we have ammo corresponding to the AmmoType */
+			return AmmoMap[AmmoType] > 0;
+		}
+		return false;	
 	}
 	return false;
 }
 
 void AShooterCharacter::UpdateCapsuleHalfHeight(float DeltaTime)
 {
-	
 	if (bIsCrouching)
 	{
 		TargetHalfHeight = CrouchingHalfHeight;
@@ -722,15 +730,14 @@ void AShooterCharacter::UpdateCapsuleHalfHeight(float DeltaTime)
 
 int32 AShooterCharacter::GetAmmoCountByWeaponType()
 {
-	if (EquippedWeapon == nullptr) { return -1; }
-
-	const auto AmmoType = EquippedWeapon->GetAmmoType();
-	
-	if (AmmoMap.Contains(AmmoType))
+	if (EquippedWeapon)
 	{
-		return AmmoMap[AmmoType];
+		const auto AmmoType = EquippedWeapon->GetAmmoType();
+		if (AmmoMap.Contains(AmmoType))
+		{
+			return AmmoMap[AmmoType];
+		}	
 	}
-
 	return -1;
 }
 
@@ -738,34 +745,34 @@ void AShooterCharacter::FinishReloading()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
 
-	if (EquippedWeapon == nullptr) { return; }
-
-	const EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
-
-	if (AmmoMap.Contains(AmmoType))
+	if (EquippedWeapon)
 	{
-		// Returns to us useable ammo amount of that AmmoType
-		int32 CarriedAmmo = AmmoMap[AmmoType];
-		// Space left in the magazine of EquippedWeapon
-		const int32 MagazineEmptySpace = EquippedWeapon->GetMagazineCapacity() - EquippedWeapon->GetCurrentAmmo();
+		const EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
 
-		if (MagazineEmptySpace > CarriedAmmo)
+		if (AmmoMap.Contains(AmmoType))
 		{
-			// Reload the weapon with carried ammo
-			EquippedWeapon->ReloadAmmo(CarriedAmmo);
-			CarriedAmmo = 0;
-			AmmoMap.Add(AmmoType, CarriedAmmo);
-		}
+			// Returns to us useable ammo amount of that AmmoType
+			int32 CarriedAmmo = AmmoMap[AmmoType];
+			// Space left in the magazine of EquippedWeapon
+			const int32 MagazineEmptySpace = EquippedWeapon->GetMagazineCapacity() - EquippedWeapon->GetCurrentAmmo();
 
-		else
-		{
-			// Fill the weapon
-			EquippedWeapon->ReloadAmmo(MagazineEmptySpace);
-			CarriedAmmo -= MagazineEmptySpace;
-			AmmoMap.Add(AmmoType, CarriedAmmo);
-		}
+			if (MagazineEmptySpace > CarriedAmmo)
+			{
+				// Reload the weapon with carried ammo
+				EquippedWeapon->ReloadAmmo(CarriedAmmo);
+				CarriedAmmo = 0;
+				AmmoMap.Add(AmmoType, CarriedAmmo);
+			}
+
+			else
+			{
+				// Fill the weapon
+				EquippedWeapon->ReloadAmmo(MagazineEmptySpace);
+				CarriedAmmo -= MagazineEmptySpace;
+				AmmoMap.Add(AmmoType, CarriedAmmo);
+			}
+		}	
 	}
-	
 }
 
 void AShooterCharacter::GrabMagazine()
