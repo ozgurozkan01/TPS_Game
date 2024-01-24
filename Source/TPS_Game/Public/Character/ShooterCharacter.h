@@ -81,6 +81,11 @@ private:
 	void CrouchingButtonPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void CrouchingButtonReleased(const FInputActionValue& Value);
+	UFUNCTION()
+	void FireButtonPressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void FireButtonReleased(const FInputActionValue& Value);
+	
 	/** Combat Functions*/
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
@@ -105,8 +110,6 @@ private:
 	float CalculateCrosshairAimingMultiplier(float DeltaTime);
 	float CalculateCrosshairFireAimingMultiplier(float DeltaTime);
 	/** Automatic Gun Fire Functions */
-	void FireButtonPressed(const FInputActionValue& Value);
-	void FireButtonReleased(const FInputActionValue& Value);
 	void StartFireTimer();
 	void AutomaticFireReset();
 	/** Weapon */
