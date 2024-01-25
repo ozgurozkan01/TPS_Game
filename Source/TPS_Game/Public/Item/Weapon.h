@@ -50,6 +50,7 @@ private: // Variables
 	bool bIsMovingMagazine;
 
 public:
+	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
 	bool IsMagazineFull();
 	

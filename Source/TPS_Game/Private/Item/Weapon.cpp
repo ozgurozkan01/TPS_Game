@@ -2,6 +2,7 @@
 
 #include "Item/Weapon.h"
 
+#include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "HUD/InformationPopUp.h"
 
@@ -69,6 +70,51 @@ void AWeapon::StopFalling()
 {
 	bIsFalling = false;
 	SetItemState(EItemState::EIS_Pickup);
+}
+
+void AWeapon::SetItemProperties(EItemState CurrentState)
+{
+	Super::SetItemProperties(CurrentState);
+		switch (CurrentState)
+	{
+	case EItemState::EIS_Pickup:
+		// Set Mesh Properties
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		break;
+	
+	case EItemState::EIS_Equipped:
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		break;
+	case EItemState::EIS_Falling:
+		ItemMesh->SetSimulatePhysics(true);
+		ItemMesh->SetEnableGravity(true);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+		break;
+	case EItemState::EIS_EquipInterping:
+		InformationWidgetComponent->SetVisibility(false);
+		
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
+		ItemMesh->SetVisibility(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		break;
+	case EItemState::EIS_PickedUp:
+		break;
+	case EItemState::EIS_MAX:
+		break;
+	}
 }
 
 void AWeapon::DecremenetAmmo()
