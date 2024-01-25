@@ -19,7 +19,7 @@
 AShooterCharacter::AShooterCharacter() :
 	// Turn Rates for aiming/not aiming
 	HipTurnAndLookUpRates(1.f, 1.f),
-	AimingTurnAndLookUpRates(0.2f, 0.2f),
+	AimingTurnAndLookUpRates(0.5f, 0.5f),
 	// Automatic Gun Fire Factors
 	AutomaticFireRate(0.1f),
 	bFireButtonPressed(false),
@@ -39,7 +39,7 @@ AShooterCharacter::AShooterCharacter() :
 	RunningSpeed(650.f),
 	CrouchingSpeed(300.f),
 	RunningHalfHeight(88.f),
-	CrouchingHalfHeight(44.f)
+	CrouchingHalfHeight(50.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -47,7 +47,7 @@ AShooterCharacter::AShooterCharacter() :
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 300.f;
 	CameraBoom->bUsePawnControlRotation = true;
-	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);
+	CameraBoom->SocketOffset = FVector(0.f, 35.f, 70.f);
 	
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -237,15 +237,18 @@ void AShooterCharacter::Fire()
 
 void AShooterCharacter::OpenScope(const FInputActionValue& Value)
 {
-	bool bCrosshairShouldZoom = Value.Get<bool>();
-	bAiming = bCrosshairShouldZoom;
+	bIsScopeOpen = Value.Get<bool>();
+
+	if (bIsScopeOpen && CombatState != ECombatState::ECS_Reloading)
+	{
+		StartAim();
+	}
 }
 
 void AShooterCharacter::CloseScope(const FInputActionValue& Value)
 {
-	bool bCrosshairShouldZoom = Value.Get<bool>();
-	
-	bAiming = bCrosshairShouldZoom;
+	bIsScopeOpen = Value.Get<bool>();
+	StopAim();	
 }
 
 void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
@@ -385,6 +388,10 @@ void AShooterCharacter::ReloadWeapon()
 {
 	if (CombatState == ECombatState::ECS_Unoccupied && CarryingAmmo() && !EquippedWeapon->IsMagazineFull())
 	{
+		if (bAiming)
+		{
+			StopAim();
+		}
 		CombatState = ECombatState::ECS_Reloading;
 		PlayReloadWeaponMontage();
 	}
@@ -439,6 +446,11 @@ int32 AShooterCharacter::GetAmmoCountByWeaponType()
 void AShooterCharacter::FinishReloading()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
+
+	if (bIsScopeOpen)
+	{
+		StartAim();
+	}
 
 	if (EquippedWeapon)
 	{
@@ -627,5 +639,20 @@ void AShooterCharacter::PlayBarrelMuzzleFlash()
 	{
 		FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
+	}
+}
+
+void AShooterCharacter::StartAim()
+{
+	bAiming = true;
+	GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
+}
+
+void AShooterCharacter::StopAim()
+{
+	bAiming = false;
+	if (!bIsCrouching)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
 	}
 }
