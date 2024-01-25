@@ -114,6 +114,9 @@ private:
 	void PlayBeamParticle(const FTransform& Start, const FVector& End);
 	void PlayFireSoundCue();
 	void PlayBarrelMuzzleFlash();
+
+	void StartAim();
+	void StopAim();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -131,7 +134,8 @@ private:
 	float CameraZoomInterpSpeed;
 
 	bool bAiming; 
-
+	bool bIsScopeOpen;
+	
 	/** Default Weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AWeapon> EquippedWeapon;
