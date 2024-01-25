@@ -4,6 +4,7 @@
 #include "HUD/ShooterHUD.h"
 
 #include "Character/ShooterCharacter.h"
+#include "Components/CrosshairAnimatorComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AShooterHUD::BeginPlay()
@@ -39,9 +40,10 @@ FVector2D AShooterHUD::CalculateCrosshairLocation(int32 ScreenWidth, int32 Scree
 
 float AShooterHUD::CalculateCrosshairSpreadValue()
 {
-	if (ShooterCharacter)
+	if (ShooterCharacter && ShooterCharacter->GetCrosshairAnimatorComponent())
 	{
-		return ShooterCharacter->GetCrosshairSpreadValue() * ShooterCharacter->GetCrosshairSpreadMax();
+		float CrosshairSpreadMultiplier = ShooterCharacter->GetCrosshairAnimatorComponent()->GetCrosshairSpreadMultiplier() * ShooterCharacter->GetCrosshairAnimatorComponent()->GetCrosshairSpreadMax();
+		return CrosshairSpreadMultiplier;
 	}
 
 	return 0.f;
