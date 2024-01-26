@@ -1,13 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Item/Ammo.h"
 
+#include "Character/ShooterCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "HUD/AmmoWidget.h"
 
-AAmmo::AAmmo()
+AAmmo::AAmmo() :
+	AmmoType(EAmmoType::EAT_9mm),
+	AmmoCount(30)
+	
 {
 	AmmoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AmmoMesh"));
 	SetRootComponent(AmmoMesh);
@@ -15,11 +17,34 @@ AAmmo::AAmmo()
 	CollisionBox->SetupAttachment(GetRootComponent());
 	InformationWidgetComponent->SetupAttachment(GetRootComponent());
 	TraceCheckSphere->SetupAttachment(GetRootComponent());
+
+	AmmoPickUpCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AmmoPickupCollision"));
+	AmmoPickUpCollision->SetupAttachment(GetRootComponent());
 }
 
 void AAmmo::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AmmoPickUpCollision->OnComponentBeginOverlap.AddDynamic(this, &AAmmo::AmmoOverlapBegin);
+	
+	AmmoWidget = Cast<UAmmoWidget>(InformationWidgetComponent->GetUserWidgetObject());
+	
+	if (AmmoWidget)
+	{
+		if (AmmoIcon)
+		{
+			AmmoWidget->SetAmmoIcon(AmmoIcon);
+		}
+		AmmoWidget->SetAmmoAmount(AmmoCount);
+	}
+
+	if (InformationWidgetComponent)
+	{
+		InformationWidgetComponent->SetVisibility(false);
+	}
+
+	ItemType = EItemType::EIT_Ammo;
 }
 
 void AAmmo::Tick(float DeltaSeconds)
@@ -68,5 +93,19 @@ void AAmmo::SetItemProperties(EItemState CurrentState)
 		break;
 	case EItemState::EIS_MAX:
 		break;
+	}
+}
+
+void AAmmo::AmmoOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+		TObjectPtr<AShooterCharacter> ShooterChar = Cast<AShooterCharacter>(OtherActor);
+		if (ShooterChar)
+		{
+			StartItemCurve(ShooterChar);
+			AmmoPickUpCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
 	}
 }
