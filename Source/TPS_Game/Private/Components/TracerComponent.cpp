@@ -160,7 +160,7 @@ void UTracerComponent::CrosshairFinishFireBullet()
 
 void UTracerComponent::PickUpItem()
 {
-	if (MainCharacter)
+	if (MainCharacter && TraceHitItem)
 	{
 		TraceHitItem->StartItemCurve(MainCharacter);
 		TraceHitItem->PlayPickupSoundCue();
