@@ -7,6 +7,7 @@
 #include "AmmoType.h"
 #include "ShooterCharacter.generated.h"
 
+class AAmmo;
 class UShooterAnimInstance;
 class UTracerComponent;
 class UCrosshairAnimatorComponent;
@@ -32,6 +33,17 @@ enum class ECombatState
 	ECS_MAX UMETA(DisplayName = "Default"),
 };
 
+USTRUCT(BlueprintType)
+struct FInterpLocation
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USceneComponent> InterpLocation;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 InterpingItemCount;	
+};
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
 {
@@ -106,7 +118,6 @@ private:
 	bool CarryingAmmo();
 
 	void UpdateCapsuleHalfHeight(float DeltaTime);
-	void UpdateMeshPositionByHalfHeight();
 
 	void PlayGunFireMontage();
 	void PlayReloadWeaponMontage();
@@ -117,6 +128,8 @@ private:
 
 	void StartAim();
 	void StopAim();
+
+	void PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -204,6 +217,22 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UTracerComponent> TracerComponent;
 
+	/** Scene Components of Camera to interpolate items when they are picked up */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> WeaponInterpTargetComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp2;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp3;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp4;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp5;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> ItemInterpTargetComp6;
+	
 	bool bIsCrouching;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	FVector2D BaseTurnAndLoopUpRates;
@@ -218,10 +247,18 @@ private:
 	float CrouchingHalfHeight;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
 	float TargetHalfHeight;
+
+	TArray<FInterpLocation> ItemInterpLocations;
 public:
+
+	/** Interpolation Methods */
+	void InitializeInterpLocationContainer();
+	void UpdateInterpingItemCount(int32 Index, int32 Amount);
+	int32 GetInterpLocationIndex();
 	
 	/** Getter Functıons */
 	int32 GetAmmoCountByWeaponType();
+	FInterpLocation GetInterpLocation(int32 Index);
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }

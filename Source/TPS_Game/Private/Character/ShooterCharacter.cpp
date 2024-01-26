@@ -11,6 +11,7 @@
 #include "Components/CrosshairAnimatorComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/Ammo.h"
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
@@ -75,6 +76,21 @@ AShooterCharacter::AShooterCharacter() :
 	LeftHandSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("LeftHandSceneComponent"));
 	CrosshairAnimatorComponent = CreateDefaultSubobject<UCrosshairAnimatorComponent>(TEXT("CrosshairAnimatorComponent"));
 	TracerComponent = CreateDefaultSubobject<UTracerComponent>(TEXT("TracerComponent"));
+
+	WeaponInterpTargetComp = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponInterpTarget"));
+	WeaponInterpTargetComp->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp1 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp1"));
+	ItemInterpTargetComp1->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp2 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp2"));
+	ItemInterpTargetComp2->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp3 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp3"));
+	ItemInterpTargetComp3->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp4 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp4"));
+	ItemInterpTargetComp4->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp5 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp5"));
+	ItemInterpTargetComp5->SetupAttachment(FollowCamera);
+	ItemInterpTargetComp6 = CreateDefaultSubobject<USceneComponent>(TEXT("ItemInterpTargetComp6"));
+	ItemInterpTargetComp6->SetupAttachment(FollowCamera);
 }
 
 void AShooterCharacter::BeginPlay()
@@ -114,6 +130,8 @@ void AShooterCharacter::BeginPlay()
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
+
+	InitializeInterpLocationContainer();
 }
 
 void AShooterCharacter::Tick(float DeltaTime)
@@ -443,6 +461,15 @@ int32 AShooterCharacter::GetAmmoCountByWeaponType()
 	return -1;
 }
 
+FInterpLocation AShooterCharacter::GetInterpLocation(int32 Index)
+{
+	if (Index < ItemInterpLocations.Num() && Index >= 0)
+	{
+		return ItemInterpLocations[Index];
+	}
+	return FInterpLocation();
+}
+
 void AShooterCharacter::FinishReloading()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
@@ -511,17 +538,87 @@ void AShooterCharacter::ReplaceMagazine()
 
 void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 {
-	if (PickedUpItem)
-	{
-		PickedUpItem->PlayEquipSoundCue();
-	}
 	TObjectPtr<AWeapon> PickedUpWeapon = Cast<AWeapon>(PickedUpItem);
 
 	if (PickedUpWeapon)
 	{
 		SwapWeapon(PickedUpWeapon);
 	}
+
+	TObjectPtr<AAmmo> PickedUpAmmo = Cast<AAmmo>(PickedUpItem);
+	if (PickedUpAmmo)
+	{
+		PickUpAmmo(PickedUpAmmo);
+	}
 }
+
+void AShooterCharacter::PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo)
+{
+	if (AmmoMap.Contains(PickedUpAmmo->GetAmmoType()))
+	{
+		// Get the existing ammo count in the map correspond to the ammo type
+		int32 ExistingAmmoCount = AmmoMap[PickedUpAmmo->GetAmmoType()];
+		// Add the picked up ammo count to the existing
+		ExistingAmmoCount += PickedUpAmmo->GetAmmoCount();
+		// Set the new value to the value corresponding to the ammo type on the map
+		AmmoMap[PickedUpAmmo->GetAmmoType()] = ExistingAmmoCount;
+	}
+	// Autamatic Reloading the weapon when it is empty
+	if (EquippedWeapon->GetAmmoType() == PickedUpAmmo->GetAmmoType() && EquippedWeapon->GetCurrentAmmo() == 0)
+	{
+		ReloadWeapon();
+	}
+	PickedUpAmmo->Destroy();
+}
+
+void AShooterCharacter::InitializeInterpLocationContainer()
+{
+	/** Weapon Item interp location */
+	FInterpLocation WeaponLocation = {WeaponInterpTargetComp, 0};
+	ItemInterpLocations.Add(WeaponLocation);
+	/** Non-Weapon Item interp locations */
+	FInterpLocation ItemInterpLocation1 = {ItemInterpTargetComp1, 0};
+	ItemInterpLocations.Add(ItemInterpLocation1);
+	FInterpLocation ItemInterpLocation2 = {ItemInterpTargetComp2, 0};
+	ItemInterpLocations.Add(ItemInterpLocation2);
+	FInterpLocation ItemInterpLocation3 = {ItemInterpTargetComp3, 0};
+	ItemInterpLocations.Add(ItemInterpLocation3);
+	FInterpLocation ItemInterpLocation4 = {ItemInterpTargetComp4, 0};
+	ItemInterpLocations.Add(ItemInterpLocation4);
+	FInterpLocation ItemInterpLocation5 = {ItemInterpTargetComp5, 0};
+	ItemInterpLocations.Add(ItemInterpLocation5);
+	FInterpLocation ItemInterpLocation6 = {ItemInterpTargetComp6, 0};
+	ItemInterpLocations.Add(ItemInterpLocation6);
+}
+
+void AShooterCharacter::UpdateInterpingItemCount(int32 Index, int32 Amount)
+{
+	/** Amount should be in range of [-1, 1] */
+	if (Amount < -1 || Amount > 1) { return; }
+
+	if (Index < ItemInterpLocations.Num() && Index >= 0)
+	{
+		ItemInterpLocations[Index].InterpingItemCount += Amount;
+	}
+}
+
+int32 AShooterCharacter::GetInterpLocationIndex()
+{
+	int32 LowestCountIndex = 1;
+	int32 LowestCount = INT_MAX;
+
+	for (int i = 1; i < ItemInterpLocations.Num(); i++)
+	{
+		if (LowestCount > ItemInterpLocations[i].InterpingItemCount)
+		{
+			LowestCount = ItemInterpLocations[i].InterpingItemCount;
+			LowestCountIndex = i;
+		}
+	}
+	
+	return LowestCountIndex;
+}
+
 
 void AShooterCharacter::InitializeAmmoMap()
 {
