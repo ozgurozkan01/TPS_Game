@@ -8,6 +8,7 @@
 
 AWeapon::AWeapon() :
 	MagazineCapacity(30),
+	InformationWidgetObject(nullptr),
 	CurrentAmmoAmount(MagazineCapacity),
 	ThrowWeaponTime(0.85),
 	bIsFalling(false),
@@ -24,9 +25,25 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetInformationWidgetObject())
+	for (uint8 i = 0; i < 5; i++)
 	{
-		GetInformationWidgetObject()->SetAmmoAmountText(CurrentAmmoAmount);
+		ActiveStars.Add(false);
+	}
+
+	SetActiveStars();
+	
+	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
+
+	if (InformationWidgetObject)
+	{
+		InformationWidgetObject->SetAmmoAmountText(CurrentAmmoAmount);
+		InformationWidgetObject->SetItemNameText(ItemName);
+		InformationWidgetObject->SetStarsImagesVisibility(ActiveStars);
+	}
+
+	if (InformationWidgetComponent)
+	{
+		InformationWidgetComponent->SetVisibility(false);
 	}
 }
 
@@ -155,4 +172,14 @@ FTransform AWeapon::GetBarrelSocketTransform() const
 	}
 
 	return FTransform();
+}
+
+void AWeapon::SetActiveStars()
+{
+	uint8 ActiveStarAmount = GetActivateStarNumber();
+	
+	for (uint8 i = 0; i < ActiveStarAmount; i++)
+	{
+		ActiveStars[i] = true;
+	}
 }

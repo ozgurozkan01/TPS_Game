@@ -31,6 +31,8 @@ protected:
 	
 private: // Variables
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInformationPopUp> InformationWidgetObject;
 	/** Weapon Ammo values */
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	int32 MagazineCapacity;
@@ -48,12 +50,15 @@ private: // Variables
 	FName MagazineBoneName;
 
 	bool bIsMovingMagazine;
+	
+	TArray<bool> ActiveStars;
 
 public:
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
 	bool IsMagazineFull();
-	
+	void SetActiveStars();
+
 	// Setters
 	void ReloadAmmo(int32 Ammo);
 	FORCEINLINE void SetbIsMovingMagazine(bool bIsMoving) { bIsMovingMagazine = bIsMoving; }
@@ -68,4 +73,5 @@ public:
 	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
 	FORCEINLINE FName GetMagazineBoneName() const { return MagazineBoneName; }
 	FORCEINLINE bool IsMovingClip() const { return bIsMovingMagazine; }
+	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 };
