@@ -26,7 +26,7 @@ enum class EItemState : uint8
 	EIS_MAX UMETA(DisplayName = "DefaultMAX"),
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItemRarity : uint8
 {
 	EIR_Damaged UMETA(DisplayName = "Damaged"),
@@ -36,6 +36,15 @@ enum class EItemRarity : uint8
 	EIR_Legendary UMETA(DisplayName = "Legendary"),
 
 	EIR_MAX UMETA(DisplayName = "DefaultMAX"),
+};
+
+UENUM(BlueprintType)
+enum class EItemType
+{
+	EIT_Ammo UMETA(DisplayName = "Ammo"),
+	EIT_Weapon UMETA(DisplayName = "Weapon"),
+	
+	EIT_Default UMETA(DisplayName = "Default")
 };
 
 UCLASS()
@@ -60,10 +69,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> InformationWidgetComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UInformationPopUp> InformationWidgetObject;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> TraceCheckSphere;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	FString ItemName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	EItemType ItemType; 
 private:
 	void SinusodialMovement();
 	void Rotate();
@@ -73,8 +83,6 @@ private:
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	FString ItemName;	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemRarity ItemRarity;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
@@ -103,9 +111,6 @@ private:
 	float ItemInterpingY;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<AShooterCharacter> ShooterRef;	
-
-	TArray<bool> ActiveStars;
-
 	float SinusodialSpeed;
 	float AmplitudeMultiplier;
 	float YawRotationRate;
@@ -116,14 +121,19 @@ private:
 	TObjectPtr<USoundBase> PickupSoundCue;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> EquipSoundCue;
+
+	int32 InterpLocationIndex;
+	
 public:
+
+	FVector GetInterpLocCorrespondItemType();
+	
 	/** Start curve from the shooter class */
 	void StartItemCurve(TObjectPtr<AShooterCharacter> Shooter);
 	void PlayPickupSoundCue();
 	void PlayEquipSoundCue();
 	
 	// Setter
-	void SetActiveStarts();
 	void SetItemCollisions(bool bCanCollide);
 	virtual void SetItemProperties(EItemState CurrentState);
 	void SetItemState(EItemState CurrentState);
@@ -131,7 +141,6 @@ public:
 
 	// Getter
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };
-	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemMesh() const { return ItemMesh; }

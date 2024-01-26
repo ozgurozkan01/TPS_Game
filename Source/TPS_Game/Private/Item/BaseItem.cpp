@@ -7,7 +7,6 @@
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "HUD/InformationPopUp.h"
 #include "Character/ShooterCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,7 +15,6 @@ ABaseItem::ABaseItem() :
 	AmplitudeMultiplier(2.5f),
 	YawRotationRate(0.4f),
 	ItemName("Default"),
-	InformationWidgetObject(nullptr),
 	ItemRarity(EItemRarity::EIR_Common),
 	ItemState(EItemState::EIS_Pickup),
 	bCanIdleMove(true),
@@ -27,7 +25,9 @@ ABaseItem::ABaseItem() :
 	ItemStartInterpLocation(FVector(0.f)),
 	ItemInterpingX(0.f),
 	ItemInterpingY(0.f),
-	ItemInitialYawOffset(0.f)
+	ItemInitialYawOffset(0.f),
+	InterpLocationIndex(0),
+	ItemType(EItemType::EIT_Default)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -58,26 +58,6 @@ void ABaseItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (uint8 i = 0; i < 5; i++)
-	{
-		ActiveStars.Add(false);
-	}
-
-	SetActiveStarts();
-	
-	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
-
-	if (InformationWidgetObject)
-	{
-		InformationWidgetObject->SetItemNameText(ItemName);
-		InformationWidgetObject->SetStarsImagesVisibility(ActiveStars);
-	}
-
-	if (InformationWidgetComponent)
-	{
-		InformationWidgetComponent->SetVisibility(false);
-	}
-
 	TraceCheckSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnSphereBeginOverlap);
 	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
 
@@ -101,11 +81,14 @@ void ABaseItem::FinishInterping()
 	if (ShooterRef)
 	{
 		ShooterRef->GetPickUpItem(this);
+		// Update the location interping item count 
+		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
 	}
 
 	bIsInterping = false;
 
 	SetActorScale3D(FVector(1.f));
+	PlayEquipSoundCue();
 }
 
 void ABaseItem::SinusodialMovement()
@@ -137,7 +120,7 @@ void ABaseItem::ItemInterp(float DeltaTime)
 	const float CurveValue = ItemZCurve->GetFloatValue(ElapsedTime); // Returns the corresponding value to the elapsed time
 	FVector ItemLocation = ItemStartInterpLocation; // CurrentLocation
 
-	CameraTargetLocation = ShooterRef->GetCameraInterpLocation();
+	CameraTargetLocation = GetInterpLocCorrespondItemType();
 	// Vector from the ItemLocation to the Camera but at only Z direction. X and Y iz zero
 	const FVector ItemToCamera {FVector(0.f, 0.f, (CameraTargetLocation - ItemLocation).Z)};
 	// Scale Factor to muliply with CurveValue
@@ -195,25 +178,45 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	}
 }
 
+FVector ABaseItem::GetInterpLocCorrespondItemType()
+{
+	switch (ItemType)
+	{
+	case EItemType::EIT_Ammo:
+		return ShooterRef->GetInterpLocation(InterpLocationIndex).InterpLocation->GetComponentLocation();
+	case EItemType::EIT_Weapon:
+		return ShooterRef->GetInterpLocation(0).InterpLocation->GetComponentLocation();
+	}
+	
+	return FVector::ZeroVector;
+}
+
 void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
 {
-	if (Shooter == nullptr) { return; }
+	if (Shooter)
+	{
+		PlayPickupSoundCue();
+		// Set Shooter ref to use after
+		ShooterRef = Shooter;
+		// Get correct interping location index to start curve behaviour
+		InterpLocationIndex = ShooterRef->GetInterpLocationIndex();
+		// Update the location interping item count 
+		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, 1);
 
-	// Set Shooter ref to use after
-	ShooterRef = Shooter;
-	// Set Interpolation variables
-	ItemStartInterpLocation = GetActorLocation();
-	bIsInterping = true;
-	SetItemState(EItemState::EIS_EquipInterping);
+		// Set Interpolation variables
+		ItemStartInterpLocation = GetActorLocation();
+		bIsInterping = true;
+		SetItemState(EItemState::EIS_EquipInterping);
 
-	GetWorldTimerManager().SetTimer(ItemInterpTimer, this, &ABaseItem::FinishInterping, ZCurveTime);
+		GetWorldTimerManager().SetTimer(ItemInterpTimer, this, &ABaseItem::FinishInterping, ZCurveTime);
 
-	// Yaw value of camera rotation value
-	const double CameraYawRotation { ShooterRef->GetFollowCamera()->GetComponentRotation().Yaw };
-	// Yaw value of item rotation value
-	const double ItemYawRotation {GetActorRotation().Yaw};
-	// Yaw rotation offset between item and camera (angle difference)
-	ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;
+		// Yaw value of camera rotation value
+		const double CameraYawRotation { ShooterRef->GetFollowCamera()->GetComponentRotation().Yaw };
+		// Yaw value of item rotation value
+		const double ItemYawRotation {GetActorRotation().Yaw};
+		// Yaw rotation offset between item and camera (angle difference)
+		ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;	
+	}
 }
 
 void ABaseItem::PlayPickupSoundCue()
@@ -229,16 +232,6 @@ void ABaseItem::PlayEquipSoundCue()
 	if (EquipSoundCue)
 	{
 		UGameplayStatics::PlaySound2D(this, EquipSoundCue);
-	}
-}
-
-void ABaseItem::SetActiveStarts()
-{
-	uint8 ActiveStarAmount = GetActivateStarNumber();
-	
-	for (uint8 i = 0; i < ActiveStarAmount; i++)
-	{
-		ActiveStars[i] = true;
 	}
 }
 
