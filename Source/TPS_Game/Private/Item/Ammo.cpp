@@ -109,3 +109,9 @@ void AAmmo::AmmoOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 		}
 	}
 }
+
+void AAmmo::SetCustomDepthEnabled(bool bIsEnabled)
+{
+	Super::SetCustomDepthEnabled(bIsEnabled);
+	AmmoMesh->SetRenderCustomDepth(bIsEnabled);
+}

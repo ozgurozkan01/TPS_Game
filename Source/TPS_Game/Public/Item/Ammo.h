@@ -18,7 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 private:
 	virtual void SetItemProperties(EItemState CurrentState);
-
+	
 	UFUNCTION()
 	void AmmoOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	
@@ -36,6 +36,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> AmmoPickUpCollision;
 public:
+	virtual void SetCustomDepthEnabled(bool bIsEnabled) override;
 	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
 	FORCEINLINE int32 GetAmmoCount() const { return AmmoCount; }
 };

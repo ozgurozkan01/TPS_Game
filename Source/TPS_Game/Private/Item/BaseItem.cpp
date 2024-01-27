@@ -62,6 +62,7 @@ void ABaseItem::BeginPlay()
 	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
 
 	SetItemState(ItemState);
+	InitializeCustomDepth();
 }
 
 void ABaseItem::Tick(float DeltaTime)
@@ -89,6 +90,19 @@ void ABaseItem::FinishInterping()
 
 	SetActorScale3D(FVector(1.f));
 	PlayEquipSoundCue();
+}
+
+void ABaseItem::SetCustomDepthEnabled(bool bIsEnabled)
+{
+	if (ItemMesh)
+	{
+		ItemMesh->SetRenderCustomDepth(bIsEnabled);
+	}
+}
+
+void ABaseItem::InitializeCustomDepth()
+{
+	SetCustomDepthEnabled(false);
 }
 
 void ABaseItem::SinusodialMovement()

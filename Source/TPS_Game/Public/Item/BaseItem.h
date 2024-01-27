@@ -73,8 +73,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	FString ItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	EItemType ItemType; 
+	EItemType ItemType;
 private:
+
+	virtual void InitializeCustomDepth();
 	void SinusodialMovement();
 	void Rotate();
 	/** Handle interpolation and curve motion when in the EquipInterping state */
@@ -83,6 +85,7 @@ private:
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemRarity ItemRarity;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
@@ -126,6 +129,7 @@ private:
 	
 public:
 
+	virtual void SetCustomDepthEnabled(bool bIsEnabled);
 	FVector GetInterpLocCorrespondItemType();
 	
 	/** Start curve from the shooter class */
