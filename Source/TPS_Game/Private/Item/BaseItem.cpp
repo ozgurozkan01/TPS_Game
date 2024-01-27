@@ -54,6 +54,17 @@ ABaseItem::ABaseItem() :
 	TraceCheckSphere->SetSphereRadius(200.f);
 }
 
+void ABaseItem::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	if (MaterialInstance)
+	{
+		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
+		ItemMesh->SetMaterial(0, DynamicMaterialInstance);
+	}
+
+}
+
 void ABaseItem::BeginPlay()
 {
 	Super::BeginPlay();

@@ -54,6 +54,7 @@ class TPS_GAME_API ABaseItem : public AActor
 	
 public:	
 	ABaseItem();
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Tick(float DeltaTime) override;
 	
 protected:
@@ -126,6 +127,13 @@ private:
 	TObjectPtr<USoundBase> EquipSoundCue;
 
 	int32 InterpLocationIndex;
+
+	/** Material instance that we can change at runtime */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterialInstance;
+	/** Material instance  */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMaterialInstance> MaterialInstance;
 	
 public:
 
