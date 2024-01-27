@@ -63,6 +63,7 @@ void ABaseItem::OnConstruction(const FTransform& Transform)
 		ItemMesh->SetMaterial(0, DynamicMaterialInstance);
 	}
 
+	SetGlowMaterialEnabled(1.f);
 }
 
 void ABaseItem::BeginPlay()
@@ -100,6 +101,7 @@ void ABaseItem::FinishInterping()
 	bIsInterping = false;
 
 	SetActorScale3D(FVector(1.f));
+	SetGlowMaterialEnabled(1.f);
 	PlayEquipSoundCue();
 }
 
@@ -108,6 +110,14 @@ void ABaseItem::SetCustomDepthEnabled(bool bIsEnabled)
 	if (ItemMesh)
 	{
 		ItemMesh->SetRenderCustomDepth(bIsEnabled);
+	}
+}
+
+void ABaseItem::SetGlowMaterialEnabled(float Value)
+{
+	if (DynamicMaterialInstance)
+	{
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowBlendAlpha"), Value);
 	}
 }
 

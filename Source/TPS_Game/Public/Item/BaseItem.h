@@ -138,6 +138,7 @@ private:
 public:
 
 	virtual void SetCustomDepthEnabled(bool bIsEnabled);
+	virtual void SetGlowMaterialEnabled(float Value);
 	FVector GetInterpLocCorrespondItemType();
 	
 	/** Start curve from the shooter class */
