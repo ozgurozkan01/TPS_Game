@@ -128,12 +128,14 @@ void UTracerComponent::LineTraceForInformationPopUp()
 			{	
 				TraceHitItem->GetInformationWidgetComponent()->SetVisibility(true);
 				TraceHitItem->SetCustomDepthEnabled(true);
+				TraceHitItem->SetGlowMaterialEnabled(0.1f);
 			}
 
 			if (HeldItem && HeldItem != TraceHitItem)
 			{
 				HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 				HeldItem->SetCustomDepthEnabled(false);
+				HeldItem->SetGlowMaterialEnabled(1.f);
 			}
 			
 			HeldItem = TraceHitItem;
@@ -145,6 +147,7 @@ void UTracerComponent::LineTraceForInformationPopUp()
 			{
 				HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 				HeldItem->SetCustomDepthEnabled(false);
+				HeldItem->SetGlowMaterialEnabled(1.f);
 			}
 		}
 	}
@@ -153,6 +156,7 @@ void UTracerComponent::LineTraceForInformationPopUp()
 	{
 		HeldItem->GetInformationWidgetComponent()->SetVisibility(false);
 		HeldItem->SetCustomDepthEnabled(false);
+		HeldItem->SetGlowMaterialEnabled(1.f);
 	}
 }
 
