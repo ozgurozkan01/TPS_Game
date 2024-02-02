@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
+class UCurveVector;
 class USoundCue;
 class UInformationPopUp;
 class USphereComponent;
@@ -61,6 +62,7 @@ protected:
 	virtual void BeginPlay() override;
 	/** Called when is interping finished */
 	void FinishInterping();
+	void StartGlowPulseTimer();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
@@ -77,7 +79,6 @@ protected:
 	EItemType ItemType;
 private:
 
-	virtual void InitializeCustomDepth();
 	void SinusodialMovement();
 	void Rotate();
 	/** Handle interpolation and curve motion when in the EquipInterping state */
@@ -134,6 +135,23 @@ private:
 	/** Material instance  */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UMaterialInstance> MaterialInstance;
+
+	/** Material Glowing Pulse Variables */
+	FTimerHandle PulseTimerHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	float PulseCurveTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	float GlowAmount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	float FresnelExponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	float FresnelReflectFraction;
+	/** Curve to update dynamic material scalar parameters */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCurveVector> GlowPulseCurve;
+
+	void ResetGlowPulseTimer();
+	void UpdateGlowPulseScalars();
 	
 public:
 
