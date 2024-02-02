@@ -107,6 +107,17 @@ void AShooterCharacter::BeginPlay()
 		TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
 		ShooterAnimInstance = Cast<UShooterAnimInstance>(AnimInstance);
 	}
+
+	if (FollowCamera)
+	{
+		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
+		CameraCurrentFOV = CameraDefaultFOV;
+	}
+
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->SetGlowMaterialEnabled(1.f);
+	}
 	
 	InitializeAmmoMap();
 	// Set the animation BP class of character mesh
@@ -125,12 +136,6 @@ void AShooterCharacter::BeginPlay()
 		}
 	}
 	
-	if (FollowCamera)
-	{
-		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
-		CameraCurrentFOV = CameraDefaultFOV;
-	}
-
 	InitializeInterpLocationContainer();
 }
 
@@ -233,15 +238,10 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::Fire()
 {
-	if (!TracerComponent)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 2, FColor::Cyan, FString::Printf(TEXT("Combat is not valid")));
-	}
 	if (EquippedWeapon &&
 			CombatState == ECombatState::ECS_Unoccupied && TracerComponent)
 	{
 		FVector BeamEndPoint = TracerComponent->GetBeamEndPoint();
-		GEngine->AddOnScreenDebugMessage(1, 2, FColor::Cyan, FString::Printf(TEXT("Fire : %f, %f, %f"), BeamEndPoint.X, BeamEndPoint.Y, BeamEndPoint.Z));
 		FTransform BarrelSocketTransform = EquippedWeapon->GetBarrelSocketTransform();
 		PlayGunFireMontage();
 		PlayHitParticle(BeamEndPoint);
