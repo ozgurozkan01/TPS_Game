@@ -8,6 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Character/ShooterCharacter.h"
+#include "Curves/CurveVector.h"
 #include "Kismet/GameplayStatics.h"
 
 ABaseItem::ABaseItem() :
@@ -27,7 +28,12 @@ ABaseItem::ABaseItem() :
 	ItemInterpingY(0.f),
 	ItemInitialYawOffset(0.f),
 	InterpLocationIndex(0),
-	ItemType(EItemType::EIT_Default)
+	ItemType(EItemType::EIT_Default),
+	// Dynamic Material Parameters
+	GlowAmount(150.f),
+	FresnelExponent(3.f),
+	FresnelReflectFraction(4.f),
+	PulseCurveTime(5.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -74,7 +80,10 @@ void ABaseItem::BeginPlay()
 	TraceCheckSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnSphereEndOverlap);
 
 	SetItemState(ItemState);
-	InitializeCustomDepth();
+	SetCustomDepthEnabled(false);
+	SetGlowMaterialEnabled(0.1f);
+
+	StartGlowPulseTimer();
 }
 
 void ABaseItem::Tick(float DeltaTime)
@@ -87,6 +96,8 @@ void ABaseItem::Tick(float DeltaTime)
 	{
 		ItemInterp(DeltaTime);
 	}
+
+	UpdateGlowPulseScalars();
 }
 
 void ABaseItem::FinishInterping()
@@ -102,7 +113,34 @@ void ABaseItem::FinishInterping()
 
 	SetActorScale3D(FVector(1.f));
 	SetGlowMaterialEnabled(1.f);
+	SetCustomDepthEnabled(false);
 	PlayEquipSoundCue();
+}
+
+void ABaseItem::StartGlowPulseTimer()
+{
+	if(ItemState == EItemState::EIS_Pickup)
+	{
+		GetWorldTimerManager().SetTimer(PulseTimerHandle, this, &ABaseItem::ResetGlowPulseTimer, PulseCurveTime);
+	}
+}
+
+void ABaseItem::ResetGlowPulseTimer()
+{
+	StartGlowPulseTimer();
+}
+
+void ABaseItem::UpdateGlowPulseScalars()
+{
+	if (ItemState == EItemState::EIS_Pickup && GlowPulseCurve)
+	{
+		const float ElapsedTime { GetWorldTimerManager().GetTimerElapsed(PulseTimerHandle)};
+		const FVector PulseCurve { GlowPulseCurve->GetVectorValue(ElapsedTime)}; 
+		
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), GlowAmount * PulseCurve.X);
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelExponent"), FresnelExponent * PulseCurve.Y);
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelReflectFraction"), FresnelReflectFraction * PulseCurve.Z);
+	}
 }
 
 void ABaseItem::SetCustomDepthEnabled(bool bIsEnabled)
@@ -119,11 +157,6 @@ void ABaseItem::SetGlowMaterialEnabled(float Value)
 	{
 		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowBlendAlpha"), Value);
 	}
-}
-
-void ABaseItem::InitializeCustomDepth()
-{
-	SetCustomDepthEnabled(false);
 }
 
 void ABaseItem::SinusodialMovement()
@@ -250,7 +283,9 @@ void ABaseItem::StartItemCurve(TObjectPtr<AShooterCharacter> Shooter)
 		// Yaw value of item rotation value
 		const double ItemYawRotation {GetActorRotation().Yaw};
 		// Yaw rotation offset between item and camera (angle difference)
-		ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;	
+		ItemInitialYawOffset = ItemYawRotation - CameraYawRotation;
+		SetCustomDepthEnabled(false);
+		SetGlowMaterialEnabled(1.f);
 	}
 }
 
