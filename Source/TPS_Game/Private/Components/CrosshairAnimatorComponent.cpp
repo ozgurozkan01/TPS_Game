@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Components/CrosshairAnimatorComponent.h"
-
 #include "Character/ShooterCharacter.h"
+#include "Components/CombatComponent.h"
 #include "Components/TracerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -75,7 +72,7 @@ float UCrosshairAnimatorComponent::CalculateCrosshairInAirMultiplier(float Delta
 
 float UCrosshairAnimatorComponent::CalculateCrosshairAimingMultiplier(float DeltaTime)
 {
-	if (MainCharacter && MainCharacter->GetIsAiming())
+	if (MainCharacter && MainCharacter->GetCombatComponent() && MainCharacter->GetCombatComponent()->GetIsAiming())
 	{
 		CrosshairAimingMultiplier = FMath::FInterpTo(CrosshairAimingMultiplier, 0.35f, DeltaTime, 6.f); 
 	}
