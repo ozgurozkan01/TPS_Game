@@ -3,6 +3,8 @@
 
 #include "AnimInstance/ShooterAnimInstance.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/CombatComponent.h"
+#include "Components/MotionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -168,9 +170,16 @@ void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 		ShooterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? bIsAccelerating = true : bIsAccelerating = false;
 	}
 
-	bIsReloading = 	ShooterCharacter->GetCombatState() == ECombatState::ECS_Reloading;
-	bIsAiming = ShooterCharacter->GetIsAiming();
-	bIsCrouching = ShooterCharacter->GetIsCrouching();
+	if (ShooterCharacter->GetCombatComponent())
+	{
+		bIsReloading = 	ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Reloading;
+		bIsAiming = ShooterCharacter->GetCombatComponent()->GetIsAiming();
+	}
+
+	if (ShooterCharacter->GetMotionComponent())
+	{
+		bIsCrouching = ShooterCharacter->GetMotionComponent()->GetIsCrouching();
+	}
 	
 	SetMovementOffsetYaw();
 	UpdateOffsetState();
