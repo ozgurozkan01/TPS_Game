@@ -7,8 +7,11 @@
 #include "AmmoType.h"
 #include "ShooterCharacter.generated.h"
 
+class UEffectPlayerComponent;
+class UAnimatorComponent;
+class UCombatComponent;
+class UMotionComponent;
 class AAmmo;
-class UShooterAnimInstance;
 class UTracerComponent;
 class UCrosshairAnimatorComponent;
 class AWeapon;
@@ -18,20 +21,6 @@ class UInputAction;
 class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
-class USoundCue;
-class UAnimMontage;
-class UParticleSystem;
-class UParticleSystemComponent;
-
-UENUM(BlueprintType)
-enum class ECombatState
-{
-	ECS_Unoccupied UMETA(DisplayName = "Unoccupied"),
-	ECS_FireTimerInProgress UMETA(DisplayName = "FireTimerInProgress"),
-	ECS_Reloading UMETA(DisplayName = "Reloading"),
-
-	ECS_MAX UMETA(DisplayName = "Default"),
-};
 
 USTRUCT(BlueprintType)
 struct FInterpLocation
@@ -58,7 +47,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void Jump() override;
 	
 	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
 	void IncrementOverlappedItemCount(int8 Amount);
@@ -67,9 +55,7 @@ public:
 	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
 	/** Ammo Type Functions */
 	void InitializeAmmoMap();
-
-	UFUNCTION(BlueprintCallable)
-	void FinishReloading();
+	
 	UFUNCTION(BlueprintCallable)
 	void GrabMagazine();
 	UFUNCTION(BlueprintCallable)
@@ -82,8 +68,6 @@ private:
 	void Movement(const FInputActionValue& Value);
 	UFUNCTION()
 	void LookAround(const FInputActionValue& Value);
-	UFUNCTION()
-	void Fire();
 	UFUNCTION()
 	void OpenScope(const FInputActionValue& Value);
 	UFUNCTION()
@@ -100,64 +84,55 @@ private:
 	void FireButtonPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void FireButtonReleased(const FInputActionValue& Value);
-	
+
+	void Jump();
+
 	/** Aiming Functions */
-	void SetLookRates();
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
 	
 	/** Automatic Gun Fire Functions */
-	void StartFireTimer();
-	void AutomaticFireReset();
+
 	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	void DropWeapon();
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
-	void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty 
-	bool CarryingAmmo();
-
-	void UpdateCapsuleHalfHeight(float DeltaTime);
-
-	void PlayGunFireMontage();
-	void PlayReloadWeaponMontage();
-	void PlayHitParticle(const FVector& HitLocation);
-	void PlayBeamParticle(const FTransform& Start, const FVector& End);
-	void PlayFireSoundCue();
-	void PlayBarrelMuzzleFlash();
-
-	void StartAim();
-	void StopAim();
-
 	void PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo);
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
-	UPROPERTY(EditDefaultsOnly, Category=Animation)
-	TSubclassOf<UAnimInstance> AnimationClass;
-	UPROPERTY(EditDefaultsOnly, Category=Animation)
-	TObjectPtr<UShooterAnimInstance> ShooterAnimInstance;	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMotionComponent> MotionComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCrosshairAnimatorComponent> CrosshairAnimatorComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UTracerComponent> TracerComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCombatComponent> CombatComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimatorComponent> AnimatorComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UEffectPlayerComponent> EffectPlayerComponent;
 	
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;
 	float CameraCurrentFOV;
 	float CameraZoomInterpSpeed;
 
-	bool bAiming; 
-	bool bIsScopeOpen;
-	
+	bool bFireButtonPressed;
+
 	/** Default Weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AWeapon> EquippedWeapon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;	
-	/** Automatic Fire Factors*/
-	bool bFireButtonPressed;
-	float AutomaticFireRate;
-	FTimerHandle AutomaticFireHandle;
+
 	/** Trace Control Values */
 	int8 OverlappedItemCount;
 	/** Camera Interp Destination Values */
@@ -166,8 +141,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	float CameraUpDistance;
 	/** Speed */
-	float RunningSpeed;
-	float CrouchingSpeed;
+
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> ShooterInputMapping;
@@ -194,29 +168,13 @@ private:
 	int32 Starting9mmAmmo;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	int32 StartingARAmmo;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=State, meta=(AllowPrivateAccess = "true"))
-	ECombatState CombatState;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	FTransform MagazineTransform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> LeftHandSceneComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	USoundBase* FireSoundCue;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UParticleSystem> MuzzleFlash;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UParticleSystem> HitParticle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UParticleSystem> SmokeBeamParticle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UAnimMontage> GunFireMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UAnimMontage> ReloadMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UCrosshairAnimatorComponent> CrosshairAnimatorComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UTracerComponent> TracerComponent;
-
+	UPROPERTY(EditDefaultsOnly, Category=Animation)
+	TSubclassOf<UAnimInstance> AnimationClass;
+	
 	/** Scene Components of Camera to interpolate items when they are picked up */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> WeaponInterpTargetComp;
@@ -232,28 +190,14 @@ private:
 	TObjectPtr<USceneComponent> ItemInterpTargetComp5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> ItemInterpTargetComp6;
-	
-	bool bIsCrouching;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
-	FVector2D BaseTurnAndLoopUpRates;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
-	FVector2D HipTurnAndLookUpRates;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"), meta=(ClampMin  = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
-	FVector2D AimingTurnAndLookUpRates;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
-	float RunningHalfHeight;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
-	float CrouchingHalfHeight;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Capsule", meta=(AllowPrivateAccess = "true"))
-	float TargetHalfHeight;
 
 	TArray<FInterpLocation> ItemInterpLocations;
 public:
-
+	bool CarryingAmmo();
 	/** Interpolation Methods */
 	void InitializeInterpLocationContainer();
 	void UpdateInterpingItemCount(int32 Index, int32 Amount);
+	void UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount);
 	int32 GetInterpLocationIndex();
 	
 	/** Getter Functıons */
@@ -262,11 +206,15 @@ public:
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
-	FORCEINLINE TObjectPtr<UCrosshairAnimatorComponent> GetCrosshairAnimatorComponent() const { return CrosshairAnimatorComponent;}
-	FORCEINLINE TObjectPtr<UTracerComponent> GetTracerComponent() const { return TracerComponent;}
-	FORCEINLINE bool GetIsAiming() const { return bAiming; }
-	FORCEINLINE bool GetIsCrouching() const { return bIsCrouching; }
+	FORCEINLINE TObjectPtr<UCrosshairAnimatorComponent> GetCrosshairAnimatorComponent() const { return CrosshairAnimatorComponent; }
+	FORCEINLINE TObjectPtr<UTracerComponent> GetTracerComponent() const { return TracerComponent; }
+	FORCEINLINE TObjectPtr<UMotionComponent> GetMotionComponent() const { return MotionComponent; }
+	FORCEINLINE TObjectPtr<UCombatComponent> GetCombatComponent() const { return CombatComponent; }
+	FORCEINLINE TObjectPtr<UAnimatorComponent> GetAnimatorComponent() const { return AnimatorComponent; }
+	FORCEINLINE TObjectPtr<UEffectPlayerComponent> GetEffectPlayerComponent() const { return EffectPlayerComponent; }
+	 
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
-	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
+	FORCEINLINE bool GetIsFireButtonPressed() const { return bFireButtonPressed; }
+	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
 };
