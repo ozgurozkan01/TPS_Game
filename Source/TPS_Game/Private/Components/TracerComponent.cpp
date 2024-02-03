@@ -14,7 +14,8 @@ UTracerComponent::UTracerComponent() :
 	FireBulletDuration(0.05f),
 	bFiring(false),
 	bShouldTraceForItems(false),
-	BeamEnd(FVector::ZeroVector)
+	BeamEnd(FVector::ZeroVector),
+	OverlappedItemCount(0)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -171,7 +172,7 @@ void UTracerComponent::CrosshairFinishFireBullet()
 	bFiring = false;
 }
 
-void UTracerComponent::PickUpItem()
+void UTracerComponent::InterpolateItem()
 {
 	if (MainCharacter && TraceHitItem)
 	{
@@ -206,3 +207,17 @@ FVector UTracerComponent::GetBeamEndPoint()
 		return FVector::ZeroVector;
 }
 
+void UTracerComponent::IncrementOverlappedItemCount(int8 Amount)
+{
+	if (OverlappedItemCount + Amount <= 0)
+	{
+		SetShouldTraceItem(false);			
+		OverlappedItemCount = 0;
+	}
+
+	else
+	{
+		SetShouldTraceItem(true);
+		OverlappedItemCount += Amount;
+	}
+}

@@ -35,16 +35,20 @@ private:
 
 	FTimerHandle FireBulletHandle;
 	FVector BeamEnd;
+	/** Trace Control Values */
+	int8 OverlappedItemCount;
 public:
 	FORCEINLINE void SetShouldTraceItem(bool bIsTrace) { bShouldTraceForItems = bIsTrace; }
 	FORCEINLINE bool GetIsFiring() const { return bFiring; }
-	/** Combat Functions*/
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void LineTraceForInformationPopUp();
 	void CrosshairStartFireBullet();
 	void CrosshairFinishFireBullet();
-	void PickUpItem();
+	void InterpolateItem();
+	void IncrementOverlappedItemCount(int8 Amount);
 	FVector GetBeamEndPoint();
 };
