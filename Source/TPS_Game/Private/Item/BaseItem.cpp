@@ -8,6 +8,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/InventoryComponent.h"
+#include "Components/TracerComponent.h"
 #include "Curves/CurveVector.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -102,9 +104,9 @@ void ABaseItem::Tick(float DeltaTime)
 
 void ABaseItem::FinishInterping()
 {
-	if (ShooterRef)
+	if (ShooterRef && ShooterRef->GetInventoryComponent())
 	{
-		ShooterRef->GetPickUpItem(this);
+		ShooterRef->GetInventoryComponent()->GetPickUpItem(this);
 		// Update the location interping item count 
 		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
 	}
@@ -225,9 +227,9 @@ void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
 		
-		if (ShooterCharacter)
+		if (ShooterCharacter && ShooterCharacter->GetTracerComponent())
 		{
-			ShooterCharacter->IncrementOverlappedItemCount(1);
+			ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(1);
 		}
 	}	
 }
@@ -239,9 +241,9 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
 
-		if (ShooterCharacter)
+		if (ShooterCharacter && ShooterCharacter->GetTracerComponent())
 		{
-			ShooterCharacter->IncrementOverlappedItemCount(-1);
+			ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(-1);
 		}
 	}
 }

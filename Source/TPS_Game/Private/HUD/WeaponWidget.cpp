@@ -3,6 +3,7 @@
 
 #include "HUD/WeaponWidget.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/InventoryComponent.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -32,9 +33,9 @@ FText UWeaponWidget::UpdateCurrentAmmoText()
 
 FText UWeaponWidget::UpdateMaxAmmoText()
 {
-	if (ShooterRef == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
+	if (ShooterRef == nullptr || ShooterRef->GetInventoryComponent() == nullptr || ShooterRef->GetEquippedWeapon() == nullptr) { return FText(); }
 
-	FString CurrentMaxAmmoString = FString::FromInt(ShooterRef->GetAmmoCountByWeaponType());
+	FString CurrentMaxAmmoString = FString::FromInt(ShooterRef->GetInventoryComponent()->GetAmmoCountByWeaponType());
 	FText CurrentMaxAmmoText = FText::FromString(CurrentMaxAmmoString);
 
 	return CurrentMaxAmmoText;
