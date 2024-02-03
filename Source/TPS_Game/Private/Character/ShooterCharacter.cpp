@@ -10,10 +10,10 @@
 #include "Components/TracerComponent.h"
 #include "Components/CrosshairAnimatorComponent.h"
 #include "Components/EffectPlayerComponent.h"
+#include "Components/InventoryComponent.h"
 #include "Components/MotionComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Item/Ammo.h"
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
 
@@ -23,11 +23,8 @@ AShooterCharacter::AShooterCharacter() :
 	CameraZoomedFOV(25.f),
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
-	OverlappedItemCount(0),
 	CameraForwardDistance(120.f),
-	CameraUpDistance(30.f),
-	Starting9mmAmmo(90),
-	StartingARAmmo(120)
+	CameraUpDistance(30.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -67,6 +64,7 @@ AShooterCharacter::AShooterCharacter() :
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	AnimatorComponent = CreateDefaultSubobject<UAnimatorComponent>(TEXT("AnimatorComponent"));
 	EffectPlayerComponent = CreateDefaultSubobject<UEffectPlayerComponent>(TEXT("EffectPlayerComponent"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
 	WeaponInterpTargetComp = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponInterpTarget"));
 	WeaponInterpTargetComp->SetupAttachment(FollowCamera);
@@ -99,10 +97,14 @@ void AShooterCharacter::BeginPlay()
 		EquippedWeapon->SetGlowMaterialEnabled(1.f);
 	}
 	
-	InitializeAmmoMap();
 	// Set the animation BP class of character mesh
 	GetMesh()->SetAnimClass(AnimationClass);
 	EquipWeapon(SpawnDefaultWeapon());
+
+	if (InventoryComponent)
+	{
+		InventoryComponent->AddElementToInventory(EquippedWeapon);
+	}
 	
 	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
 
@@ -188,7 +190,7 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 {
 	bool bIsPressed = Value.Get<bool>();
 
-	if (bIsPressed && TracerComponent) { TracerComponent->PickUpItem(); }
+	if (bIsPressed && TracerComponent) { TracerComponent->InterpolateItem(); }
 }
 
 void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
@@ -262,55 +264,6 @@ void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 	}
 }
 
-void AShooterCharacter::DropWeapon()
-{
-	if (EquippedWeapon)
-	{
-		FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
-		EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
-		EquippedWeapon->SetItemState(EItemState::EIS_Falling);
-		EquippedWeapon->ThrowWeapon();
-	}
-}
-
-void AShooterCharacter::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
-{
-	if (WeaponToSwap)
-	{
-		DropWeapon();
-		EquipWeapon(WeaponToSwap);
-	}
-}
-
-bool AShooterCharacter::CarryingAmmo()
-{
-	if (EquippedWeapon)
-	{
-		EAmmoType AmmoType = EquippedWeapon->GetAmmoType();
-
-		if (AmmoMap.Contains(AmmoType))
-		{
-			/** return true if we have ammo corresponding to the AmmoType */
-			return AmmoMap[AmmoType] > 0;
-		}
-		return false;	
-	}
-	return false;
-}
-
-int32 AShooterCharacter::GetAmmoCountByWeaponType()
-{
-	if (EquippedWeapon)
-	{
-		const auto AmmoType = EquippedWeapon->GetAmmoType();
-		if (AmmoMap.Contains(AmmoType))
-		{
-			return AmmoMap[AmmoType];
-		}	
-	}
-	return -1;
-}
-
 FInterpLocation AShooterCharacter::GetInterpLocation(int32 Index)
 {
 	if (Index < ItemInterpLocations.Num() && Index >= 0) { return ItemInterpLocations[Index]; }
@@ -342,34 +295,6 @@ void AShooterCharacter::GrabMagazine()
 void AShooterCharacter::ReplaceMagazine()
 {
 	EquippedWeapon->SetbIsMovingMagazine(false);
-}
-
-void AShooterCharacter::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
-{
-	TObjectPtr<AWeapon> PickedUpWeapon = Cast<AWeapon>(PickedUpItem);
-	if (PickedUpWeapon) { SwapWeapon(PickedUpWeapon); }
-
-	TObjectPtr<AAmmo> PickedUpAmmo = Cast<AAmmo>(PickedUpItem);
-	if (PickedUpAmmo) { PickUpAmmo(PickedUpAmmo); }
-}
-
-void AShooterCharacter::PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo)
-{
-	if (AmmoMap.Contains(PickedUpAmmo->GetAmmoType()))
-	{
-		// Get the existing ammo count in the map correspond to the ammo type
-		int32 ExistingAmmoCount = AmmoMap[PickedUpAmmo->GetAmmoType()];
-		// Add the picked up ammo count to the existing
-		ExistingAmmoCount += PickedUpAmmo->GetAmmoCount();
-		// Set the new value to the value corresponding to the ammo type on the map
-		AmmoMap[PickedUpAmmo->GetAmmoType()] = ExistingAmmoCount;
-	}
-	// Autamatic Reloading the weapon when it is empty
-	if (EquippedWeapon->GetAmmoType() == PickedUpAmmo->GetAmmoType() && EquippedWeapon->GetCurrentAmmo() == 0)
-	{
-		CombatComponent->ReloadWeapon();
-	}
-	PickedUpAmmo->Destroy();
 }
 
 void AShooterCharacter::FinishReloading()
@@ -408,11 +333,6 @@ void AShooterCharacter::UpdateInterpingItemCount(int32 Index, int32 Amount)
 	}
 }
 
-void AShooterCharacter::UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount)
-{
-	AmmoMap.Add(AmmoType, AmmoAmount);
-}
-
 int32 AShooterCharacter::GetInterpLocationIndex()
 {
 	int32 LowestCountIndex = 1;
@@ -428,31 +348,6 @@ int32 AShooterCharacter::GetInterpLocationIndex()
 	}
 	
 	return LowestCountIndex;
-}
-
-
-void AShooterCharacter::InitializeAmmoMap()
-{
-	AmmoMap.Add(EAmmoType::EAT_9mm, Starting9mmAmmo);
-	AmmoMap.Add(EAmmoType::EAT_AR, StartingARAmmo);
-}
-
-void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
-{
-	if (OverlappedItemCount + Amount <= 0)
-	{
-		if (TracerComponent)
-		{
-			TracerComponent->SetShouldTraceItem(false);			
-		}
-		OverlappedItemCount = 0;
-	}
-
-	else
-	{
-		if (TracerComponent) { TracerComponent->SetShouldTraceItem(true); }
-		OverlappedItemCount += Amount;
-	}
 }
 
 FVector AShooterCharacter::GetCameraInterpLocation()

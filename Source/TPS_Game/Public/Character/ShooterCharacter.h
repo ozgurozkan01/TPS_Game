@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "AmmoType.h"
 #include "ShooterCharacter.generated.h"
 
+class UInventoryComponent;
 class UEffectPlayerComponent;
 class UAnimatorComponent;
 class UCombatComponent;
 class UMotionComponent;
-class AAmmo;
 class UTracerComponent;
 class UCrosshairAnimatorComponent;
 class AWeapon;
@@ -47,20 +46,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
-	void IncrementOverlappedItemCount(int8 Amount);
-	/** Camera Interp Location */
-	FVector GetCameraInterpLocation();
-	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
-	/** Ammo Type Functions */
-	void InitializeAmmoMap();
-	
-	UFUNCTION(BlueprintCallable)
-	void GrabMagazine();
-	UFUNCTION(BlueprintCallable)
-	void ReplaceMagazine();
-	
 private:
 
 	/** Input Functions */
@@ -95,10 +80,6 @@ private:
 
 	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
-	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
-	void DropWeapon();
-	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
-	void PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo);
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
 	
@@ -109,16 +90,18 @@ private:
 	TObjectPtr<UCameraComponent> FollowCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UMotionComponent> MotionComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCrosshairAnimatorComponent> CrosshairAnimatorComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UTracerComponent> TracerComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCombatComponent> CombatComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimatorComponent> AnimatorComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UEffectPlayerComponent> EffectPlayerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInventoryComponent> InventoryComponent;
 	
 	float CameraDefaultFOV;
 	float CameraZoomedFOV;
@@ -132,9 +115,7 @@ private:
 	TObjectPtr<AWeapon> EquippedWeapon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;	
-
-	/** Trace Control Values */
-	int8 OverlappedItemCount;
+	
 	/** Camera Interp Destination Values */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	float CameraForwardDistance;
@@ -161,13 +142,7 @@ private:
 	TObjectPtr<UInputAction> ReloadAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> CrouchingAction;
-	/** Weapon Ammo Variables */
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
-	TMap<EAmmoType, int32> AmmoMap;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
-	int32 Starting9mmAmmo;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
-	int32 StartingARAmmo;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	FTransform MagazineTransform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
@@ -193,28 +168,37 @@ private:
 
 	TArray<FInterpLocation> ItemInterpLocations;
 public:
-	bool CarryingAmmo();
+	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
+	
+	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
+	/** Camera Interp Location */
+	FVector GetCameraInterpLocation();
+
+
+	UFUNCTION(BlueprintCallable)
+	void GrabMagazine();
+	UFUNCTION(BlueprintCallable)
+	void ReplaceMagazine();
 	/** Interpolation Methods */
 	void InitializeInterpLocationContainer();
 	void UpdateInterpingItemCount(int32 Index, int32 Amount);
-	void UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount);
+
 	int32 GetInterpLocationIndex();
 	
 	/** Getter Functıons */
-	int32 GetAmmoCountByWeaponType();
 	FInterpLocation GetInterpLocation(int32 Index);
+
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
-	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE TObjectPtr<UCrosshairAnimatorComponent> GetCrosshairAnimatorComponent() const { return CrosshairAnimatorComponent; }
 	FORCEINLINE TObjectPtr<UTracerComponent> GetTracerComponent() const { return TracerComponent; }
 	FORCEINLINE TObjectPtr<UMotionComponent> GetMotionComponent() const { return MotionComponent; }
 	FORCEINLINE TObjectPtr<UCombatComponent> GetCombatComponent() const { return CombatComponent; }
 	FORCEINLINE TObjectPtr<UAnimatorComponent> GetAnimatorComponent() const { return AnimatorComponent; }
 	FORCEINLINE TObjectPtr<UEffectPlayerComponent> GetEffectPlayerComponent() const { return EffectPlayerComponent; }
-	 
-	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+	FORCEINLINE TObjectPtr<UInventoryComponent> GetInventoryComponent() const { return InventoryComponent; }
+	
+	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
 	FORCEINLINE bool GetIsFireButtonPressed() const { return bFireButtonPressed; }
-	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
 };
