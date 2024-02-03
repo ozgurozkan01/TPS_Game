@@ -15,6 +15,11 @@ void UAnimatorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (OwnerRef == nullptr)
+	{
+		OwnerRef = Cast<AShooterCharacter>(GetOwner());
+	}
+	
 	if (ShooterAnimInstance == nullptr && OwnerRef)
 	{
 		TObjectPtr<UAnimInstance> AnimInstance = OwnerRef->GetMesh()->GetAnimInstance();
