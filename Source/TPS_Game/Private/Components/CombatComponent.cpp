@@ -34,35 +34,47 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::ShootingStart()
 {
-	FVector BeamEndPoint = OwnerRef->GetTracerComponent()->GetBeamEndPoint();
-	FTransform BarrelSocketTransform = OwnerRef->GetEquippedWeapon()->GetBarrelSocketTransform();
-	OwnerRef->GetAnimatorComponent()->PlayGunFireMontage();
-	OwnerRef->GetEffectPlayerComponent()->PlayHitParticle(BeamEndPoint);
-	OwnerRef->GetEffectPlayerComponent()->PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
-	OwnerRef->GetEffectPlayerComponent()->PlayFireSoundCue();
-	OwnerRef->GetEffectPlayerComponent()->PlayBarrelMuzzleFlash();
-	OwnerRef->GetEquippedWeapon()->DecremenetAmmo();
-	StartFireTimer();
+	if (OwnerRef)
+	{
+		FVector BeamEndPoint = OwnerRef->GetTracerComponent()->GetBeamEndPoint();
+		FTransform BarrelSocketTransform = OwnerRef->GetEquippedWeapon()->GetBarrelSocketTransform();
+		OwnerRef->GetAnimatorComponent()->PlayGunFireMontage();
+		OwnerRef->GetEffectPlayerComponent()->PlayHitParticle(BeamEndPoint);
+		OwnerRef->GetEffectPlayerComponent()->PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
+		OwnerRef->GetEffectPlayerComponent()->PlayFireSoundCue();
+		OwnerRef->GetEffectPlayerComponent()->PlayBarrelMuzzleFlash();
+		OwnerRef->GetEquippedWeapon()->DecremenetAmmo();
+		StartFireTimer();	
+	}
 }
 
 void UCombatComponent::StartAim()
 {
-	SetIsScopeOpen(true);
-	SetIsAiming(true);
-	OwnerRef->GetCharacterMovement()->MaxWalkSpeed = OwnerRef->GetMotionComponent()->GetCrouchingSpeed();
+	if (OwnerRef)
+	{
+		SetIsScopeOpen(true);
+		SetIsAiming(true);
+		OwnerRef->GetCharacterMovement()->MaxWalkSpeed = OwnerRef->GetMotionComponent()->GetCrouchingSpeed();
+	}
 }
 
 void UCombatComponent::StopAim()
 {
-	SetIsAiming(false);
-	SetIsScopeOpen(false);
-	OwnerRef->GetCharacterMovement()->MaxWalkSpeed = OwnerRef->GetMotionComponent()->GetRunningSpeed();
+	if (OwnerRef)
+	{
+		SetIsAiming(false);
+		SetIsScopeOpen(false);
+		OwnerRef->GetCharacterMovement()->MaxWalkSpeed = OwnerRef->GetMotionComponent()->GetRunningSpeed();
+	}
 }
 
 void UCombatComponent::StartFireTimer()
 {
-	CombatState = ECombatState::ECS_FireTimerInProgress;
-	OwnerRef->GetWorldTimerManager().SetTimer(AutomaticFireHandle, this, &UCombatComponent::AutomaticFireReset, AutomaticFireRate);
+	if (OwnerRef)
+	{
+		CombatState = ECombatState::ECS_FireTimerInProgress;
+		OwnerRef->GetWorldTimerManager().SetTimer(AutomaticFireHandle, this, &UCombatComponent::AutomaticFireReset, AutomaticFireRate);
+	}
 }
 
 void UCombatComponent::AutomaticFireReset()
@@ -87,7 +99,7 @@ void UCombatComponent::AutomaticFireReset()
 
 void UCombatComponent::ReloadWeapon()
 {
-	if (CombatState == ECombatState::ECS_Unoccupied && OwnerRef->CarryingAmmo() && !OwnerRef->GetEquippedWeapon()->IsMagazineFull())
+	if (CombatState == ECombatState::ECS_Unoccupied && OwnerRef && OwnerRef->CarryingAmmo() && !OwnerRef->GetEquippedWeapon()->IsMagazineFull())
 	{
 		if (GetIsAiming())
 		{
@@ -108,7 +120,7 @@ void UCombatComponent::FinishReloading()
 		StartAim();
 	}
 
-	if (OwnerRef->GetEquippedWeapon())
+	if (OwnerRef && OwnerRef->GetEquippedWeapon())
 	{
 		const EAmmoType AmmoType = OwnerRef->GetEquippedWeapon()->GetAmmoType();
 

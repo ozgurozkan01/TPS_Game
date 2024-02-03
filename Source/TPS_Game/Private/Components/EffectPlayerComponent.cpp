@@ -13,7 +13,7 @@ void UEffectPlayerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (OwnerRef)
+	if (OwnerRef == nullptr)
 	{
 		OwnerRef = Cast<AShooterCharacter>(GetOwner());
 	}
@@ -54,7 +54,7 @@ void UEffectPlayerComponent::PlayFireSoundCue()
 
 void UEffectPlayerComponent::PlayBarrelMuzzleFlash()
 {
-	if (MuzzleFlash && OwnerRef->GetEquippedWeapon())
+	if (MuzzleFlash && OwnerRef && OwnerRef->GetEquippedWeapon())
 	{
 		FTransform BarrelSocketTransform = OwnerRef->GetEquippedWeapon()->GetBarrelSocketTransform();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
