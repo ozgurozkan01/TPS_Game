@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HUD/WeaponWidget.h"
+#include "HUD/Item/WeaponWidget.h"
 #include "Character/ShooterCharacter.h"
 #include "Components/InventoryComponent.h"
 #include "Item/Weapon.h"

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HUD/ShooterHUD.h"
+#include "HUD/Shooter/ShooterHUD.h"
 
 #include "Character/ShooterCharacter.h"
 #include "Components/CrosshairAnimatorComponent.h"
