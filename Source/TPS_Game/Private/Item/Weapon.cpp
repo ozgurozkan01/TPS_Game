@@ -4,7 +4,7 @@
 
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
-#include "HUD/InformationPopUp.h"
+#include "HUD/Item/InformationPopUp.h"
 
 AWeapon::AWeapon() :
 	MagazineCapacity(30),

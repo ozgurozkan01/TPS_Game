@@ -40,6 +40,7 @@ private:
 	const int32 InventoryCapacity{6};
 public:
 	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
+	FORCEINLINE TArray<TObjectPtr<ABaseItem>> GetInventory() const { return Inventory; }
 	int32 GetAmmoCountByWeaponType();
 	bool CarryingAmmo();
 

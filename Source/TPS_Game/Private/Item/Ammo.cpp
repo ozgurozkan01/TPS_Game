@@ -4,7 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "HUD/AmmoWidget.h"
+#include "HUD/Item/AmmoWidget.h"
 
 AAmmo::AAmmo() :
 	AmmoType(EAmmoType::EAT_9mm),
