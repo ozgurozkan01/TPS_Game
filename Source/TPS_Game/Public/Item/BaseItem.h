@@ -49,7 +49,7 @@ enum class EItemType
 };
 
 UCLASS()
-class TPS_GAME_API ABaseItem : public AActor
+class TPS_GAME_API  ABaseItem : public AActor
 {
 	GENERATED_BODY()
 	
@@ -173,9 +173,11 @@ public:
 	// Getter
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetInformationWidgetComponent() const { return InformationWidgetComponent; };
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemSkeletalMesh() const { return ItemMesh; };
-	FORCEINLINE EItemState GetItemState() const { return ItemState; }
 	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetItemMesh() const { return ItemMesh; }
 	FORCEINLINE FString GetItemName() const { return ItemName; };
+	FORCEINLINE EItemRarity GetItemRarity() const { return ItemRarity; }
+	FORCEINLINE EItemState GetItemState() const { return ItemState; }
+
 	uint8 GetActivateStarNumber();
 		
 };
