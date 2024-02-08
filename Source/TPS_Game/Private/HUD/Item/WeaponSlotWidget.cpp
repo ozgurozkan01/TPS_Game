@@ -3,8 +3,11 @@
 
 #include "HUD/Item/WeaponSlotWidget.h"
 
+#include "Brushes/SlateImageBrush.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/Image.h"
 #include "Components/InventoryComponent.h"
+#include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
 void UWeaponSlotWidget::NativeOnInitialized()
@@ -17,11 +20,61 @@ void UWeaponSlotWidget::NativeOnInitialized()
 	}
 }
 
-bool UWeaponSlotWidget::WeaponInSlot(int32 Index)
+bool UWeaponSlotWidget::IsWeaponInSlot()
 {
+	bool bWeaponInSlot = false;
 	if (ShooterRef && ShooterRef->GetInventoryComponent())
 	{
-		return ShooterRef->GetInventoryComponent()->GetInventory().IsValidIndex(Index);
+		if (ShooterRef->GetInventoryComponent()->GetInventory().IsValidIndex(SlotIndex))
+		{
+			TObjectPtr<AWeapon> WeaponInSlot = Cast<AWeapon>(ShooterRef->GetInventoryComponent()->GetInventory()[SlotIndex]);
+			if (WeaponInSlot)
+			{
+				WeaponRef = WeaponInSlot;
+				bWeaponInSlot = true;
+			}
+		}
 	}
-	return false;
+	return bWeaponInSlot;
+}
+
+UTexture2D* UWeaponSlotWidget::GetBackgrounImage()
+{
+	if (IsWeaponInSlot())
+	{
+		 return BackgroundImageMap[WeaponRef->GetItemRarity()];
+	}
+
+	return nullptr;
+}
+
+UTexture2D* UWeaponSlotWidget::GetAmmoIcon()
+{
+	if (IsWeaponInSlot())
+	{
+		return AmmoIconMap[WeaponRef->GetWeaponType()];
+	}
+
+	return nullptr;
+}
+
+UTexture2D* UWeaponSlotWidget::GetWeaponIcon()
+{
+	if (IsWeaponInSlot())
+	{
+		return WeaponIconMap[WeaponRef->GetWeaponType()];
+	}
+
+	return nullptr;
+}
+
+FText UWeaponSlotWidget::GetAmmoText()
+{
+	if (IsWeaponInSlot())
+	{
+		FString AmmoString = FString::FromInt(WeaponRef->GetCurrentAmmo());
+		return FText::FromString(AmmoString);
+	}
+
+	return FText();
 }
