@@ -74,6 +74,7 @@ void UInventoryComponent::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 	{
 		if (Inventory.Num() < InventoryCapacity)
 		{
+			PickedUpWeapon->SetSlotIndex(Inventory.Num());
 			AddElementToInventory(PickedUpWeapon);
 			PickedUpWeapon->SetItemProperties(EItemState::EIS_PickedUp);
 		}
