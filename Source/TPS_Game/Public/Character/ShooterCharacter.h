@@ -79,16 +79,10 @@ private:
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
 	
-	/** Automatic Gun Fire Functions */
-
 	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
-
-	/** Delegate Functions */
-	UFUNCTION()
-	void EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -195,7 +189,7 @@ public:
 	
 	/** Getter Functıons */
 	FInterpLocation GetInterpLocation(int32 Index);
-
+	FORCEINLINE FEquipItemDelegate& GetEquipItemDelegate() { return EquipItemDelegate; }
 	FORCEINLINE TObjectPtr<USpringArmComponent> GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const {return FollowCamera; }
 	FORCEINLINE TObjectPtr<UCrosshairAnimatorComponent> GetCrosshairAnimatorComponent() const { return CrosshairAnimatorComponent; }
