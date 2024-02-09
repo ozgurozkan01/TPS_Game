@@ -21,6 +21,8 @@ class UInputMappingContext;
 class UCameraComponent;
 class USpringArmComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquipItemDelegate, int32, CurrentSlotIndex, int32, NewSlotIndex);
+
 USTRUCT(BlueprintType)
 struct FInterpLocation
 {
@@ -32,6 +34,7 @@ struct FInterpLocation
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 InterpingItemCount;	
 };
+
 UCLASS()
 class TPS_GAME_API AShooterCharacter : public ACharacter
 {
@@ -82,6 +85,10 @@ private:
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+
+	/** Delegate Functions */
+	UFUNCTION()
+	void EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex);
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -121,7 +128,6 @@ private:
 	float CameraForwardDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	float CameraUpDistance;
-	/** Speed */
 
 	/** Input */
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -167,6 +173,8 @@ private:
 	TObjectPtr<USceneComponent> ItemInterpTargetComp6;
 
 	TArray<FInterpLocation> ItemInterpLocations;
+
+	FEquipItemDelegate EquipItemDelegate;
 public:
 	void EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip);
 	

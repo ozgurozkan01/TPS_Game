@@ -102,7 +102,7 @@ void AShooterCharacter::BeginPlay()
 	EquipWeapon(SpawnDefaultWeapon());
 
 	if (InventoryComponent)
-	{
+	{ 
 		InventoryComponent->AddElementToInventory(EquippedWeapon);
 	}
 	
@@ -119,6 +119,7 @@ void AShooterCharacter::BeginPlay()
 	}
 	
 	InitializeInterpLocationContainer();
+	EquipItemDelegate.AddDynamic(this, &AShooterCharacter::EquipItemEvent);
 }
 
 void AShooterCharacter::Tick(float DeltaTime)
@@ -300,6 +301,11 @@ void AShooterCharacter::ReplaceMagazine()
 void AShooterCharacter::FinishReloading()
 {
 	if (CombatComponent) { CombatComponent->FinishReloading(); }
+}
+
+void AShooterCharacter::EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex)
+{
+	
 }
 
 void AShooterCharacter::InitializeInterpLocationContainer()
