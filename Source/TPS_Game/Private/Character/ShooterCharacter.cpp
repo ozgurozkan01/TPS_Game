@@ -95,12 +95,12 @@ void AShooterCharacter::BeginPlay()
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->SetGlowMaterialEnabled(1.f);
+		EquippedWeapon->SetSlotIndex(0);
 	}
 	
 	// Set the animation BP class of character mesh
 	GetMesh()->SetAnimClass(AnimationClass);
 	EquipWeapon(SpawnDefaultWeapon());
-
 	if (InventoryComponent)
 	{ 
 		InventoryComponent->AddElementToInventory(EquippedWeapon);
@@ -119,7 +119,6 @@ void AShooterCharacter::BeginPlay()
 	}
 	
 	InitializeInterpLocationContainer();
-	EquipItemDelegate.AddDynamic(this, &AShooterCharacter::EquipItemEvent);
 }
 
 void AShooterCharacter::Tick(float DeltaTime)
@@ -260,6 +259,16 @@ void AShooterCharacter::EquipWeapon(TObjectPtr<AWeapon> WeaponToEquip)
 			WeaponToEquip->SetItemCollisions(false);
 		}
 
+		if (EquippedWeapon == nullptr)
+		{
+			EquipItemDelegate.Broadcast(-1, WeaponToEquip->GetSlotIndex());
+		}
+
+		else
+		{
+			EquipItemDelegate.Broadcast(EquippedWeapon->GetSlotIndex(), WeaponToEquip->GetSlotIndex());
+			}
+		
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);	
 	}
@@ -301,11 +310,6 @@ void AShooterCharacter::ReplaceMagazine()
 void AShooterCharacter::FinishReloading()
 {
 	if (CombatComponent) { CombatComponent->FinishReloading(); }
-}
-
-void AShooterCharacter::EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex)
-{
-	
 }
 
 void AShooterCharacter::InitializeInterpLocationContainer()
