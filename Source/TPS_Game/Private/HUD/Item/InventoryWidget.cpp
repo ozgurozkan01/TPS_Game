@@ -47,3 +47,17 @@ void UInventoryWidget::NativeOnInitialized()
 		InventorySlotArray.Add(WeaponSlot5);
 	}
 }
+
+void UInventoryWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	
+	if (ShooterRef)
+	{
+		ShooterRef->GetEquipItemDelegate().AddDynamic(this, &UInventoryWidget::EquipItemEvent);
+	}	
+}
+
+void UInventoryWidget::EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex)
+{
+}
