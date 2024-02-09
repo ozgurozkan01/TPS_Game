@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Item/BaseItem.h"
-#include "AmmoType.h"
 #include "Weapon.generated.h"
+
+enum class EAmmoType : uint8;
 
 UENUM()
 enum class EWeaponType : uint8
@@ -31,7 +32,7 @@ protected:
 	
 private: // Variables
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInformationPopUp> InformationWidgetObject;
 	/** Weapon Ammo values */
 	UPROPERTY(EditAnywhere, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
@@ -53,6 +54,9 @@ private: // Variables
 	
 	TArray<bool> ActiveStars;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
+	int32 SlotIndex;
+	
 public:
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
@@ -62,12 +66,13 @@ public:
 	// Setters
 	void ReloadAmmo(int32 Ammo);
 	FORCEINLINE void SetbIsMovingMagazine(bool bIsMoving) { bIsMovingMagazine = bIsMoving; }
-	
+	FORCEINLINE void SetSlotIndex(int32 Index) { SlotIndex = Index; }	
 	// Getters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
 	FORCEINLINE int32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
 	FORCEINLINE int32 GetMagazineCapacity() const { return MagazineCapacity; }
+	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
 	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
