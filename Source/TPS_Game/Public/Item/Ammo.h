@@ -2,10 +2,18 @@
 
 #include "CoreMinimal.h"
 #include "Item/BaseItem.h"
-#include "AmmoType.h"
 #include "Ammo.generated.h"
 
 class UAmmoWidget;
+
+UENUM(BlueprintType)
+enum class EAmmoType : uint8
+{
+	EAT_9mm UMETA(DisplayName = "9mm"),
+	EAT_AR UMETA(DisplayName = "Assault Rifle"),
+
+	EAT_MAX UMETA(DisplayName = "Default")
+};
 
 UCLASS()
 class TPS_GAME_API AAmmo : public ABaseItem
