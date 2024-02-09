@@ -38,10 +38,8 @@ void UInventoryComponent::UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount)
 
 void UInventoryComponent::AddElementToInventory(TObjectPtr<ABaseItem> AddedItem)
 {
-	if (Inventory.Num() < InventoryCapacity)
-	{
-		Inventory.Add(AddedItem);
-	}
+	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, "2");
+	Inventory.Add(AddedItem);
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -77,6 +75,7 @@ void UInventoryComponent::GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem)
 		if (Inventory.Num() < InventoryCapacity)
 		{
 			AddElementToInventory(PickedUpWeapon);
+			PickedUpWeapon->SetItemProperties(EItemState::EIS_PickedUp);
 		}
 
 		else
