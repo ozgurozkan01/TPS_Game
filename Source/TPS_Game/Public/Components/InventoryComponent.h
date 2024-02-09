@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "AmmoType.h"
 #include "InventoryComponent.generated.h"
 
+enum class EAmmoType : uint8;
 class AShooterCharacter;
 class AWeapon;
 class ABaseItem;
