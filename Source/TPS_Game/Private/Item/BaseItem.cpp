@@ -363,6 +363,11 @@ void ABaseItem::SetItemProperties(EItemState CurrentState)
 		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
 	case EItemState::EIS_PickedUp:
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		TraceCheckSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		TraceCheckSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
 	case EItemState::EIS_MAX:
 		break;

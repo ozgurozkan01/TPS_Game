@@ -5,6 +5,7 @@
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "HUD/Item/InformationPopUp.h"
+#include "Item/Ammo.h"
 
 AWeapon::AWeapon() :
 	MagazineCapacity(30),
@@ -16,7 +17,8 @@ AWeapon::AWeapon() :
 	AmmoType(EAmmoType::EAT_9mm),
 	ReloadingMontageSection(FName(TEXT("Reload SMG"))),
 	MagazineBoneName("smg_clip"),
-	bIsMovingMagazine(false)
+	bIsMovingMagazine(false),
+	SlotIndex(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -129,6 +131,13 @@ void AWeapon::SetItemProperties(EItemState CurrentState)
 		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		break;
 	case EItemState::EIS_PickedUp:
+		InformationWidgetComponent->SetVisibility(false);
+		
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
+		ItemMesh->SetVisibility(false);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		break;
 	case EItemState::EIS_MAX:
 		break;
