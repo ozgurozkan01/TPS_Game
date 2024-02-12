@@ -172,8 +172,9 @@ void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 
 	if (ShooterCharacter->GetCombatComponent())
 	{
-		bIsReloading = 	ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Reloading;
+		bIsReloading = ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Reloading;
 		bIsAiming = ShooterCharacter->GetCombatComponent()->GetIsAiming();
+		bIsEquipping = ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Equipping;
 	}
 
 	if (ShooterCharacter->GetMotionComponent())
@@ -191,20 +192,20 @@ void UShooterAnimInstance::UpdateRecoilWeight()
 {
 	if (bIsTurningInPlace)
 	{
-		if (bIsReloading) { RecoilWeight = 1.f; }
+		if (bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
 		else { RecoilWeight = 0.f; }
 	}
 	else
 	{
 		if (bIsCrouching)
 		{
-			if (bIsReloading) { RecoilWeight = 1.f; }
+			if (bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
 			else { RecoilWeight = 0.1f; }
 		}
 
 		else
 		{
-			if (bIsAiming || bIsReloading) { RecoilWeight = 1.f; }
+			if (bIsAiming || bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
 			else { RecoilWeight = 0.5f; }			
 		}
 	}
