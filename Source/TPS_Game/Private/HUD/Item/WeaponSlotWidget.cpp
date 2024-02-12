@@ -2,10 +2,7 @@
 
 
 #include "HUD/Item/WeaponSlotWidget.h"
-
-#include "Brushes/SlateImageBrush.h"
 #include "Character/ShooterCharacter.h"
-#include "Components/Image.h"
 #include "Components/InventoryComponent.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
