@@ -91,8 +91,6 @@ private:
 	
 	/** Weapon */
 	TObjectPtr<AWeapon> SpawnDefaultWeapon();
-	UFUNCTION(BlueprintCallable)
-	void FinishReloading();
 	
 	/** Character Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess = "true"))
@@ -166,8 +164,6 @@ private:
 	TObjectPtr<UInputAction> Key_5_Action;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
-	FTransform MagazineTransform;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> LeftHandSceneComponent;
 	UPROPERTY(EditDefaultsOnly, Category=Animation)
 	TSubclassOf<UAnimInstance> AnimationClass;
@@ -197,12 +193,7 @@ public:
 	/** Update Overlapped item count and change the bShouldTraceForItems value accordingly */
 	/** Camera Interp Location */
 	FVector GetCameraInterpLocation();
-
-
-	UFUNCTION(BlueprintCallable)
-	void GrabMagazine();
-	UFUNCTION(BlueprintCallable)
-	void ReplaceMagazine();
+	
 	/** Interpolation Methods */
 	void InitializeInterpLocationContainer();
 	void UpdateInterpingItemCount(int32 Index, int32 Amount);
@@ -221,6 +212,7 @@ public:
 	FORCEINLINE TObjectPtr<UAnimatorComponent> GetAnimatorComponent() const { return AnimatorComponent; }
 	FORCEINLINE TObjectPtr<UEffectPlayerComponent> GetEffectPlayerComponent() const { return EffectPlayerComponent; }
 	FORCEINLINE TObjectPtr<UInventoryComponent> GetInventoryComponent() const { return InventoryComponent; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetLeftHandSceneComponent() const { return LeftHandSceneComponent; }
 	
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }

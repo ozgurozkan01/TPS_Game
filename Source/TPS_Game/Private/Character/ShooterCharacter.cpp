@@ -127,7 +127,6 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	GEngine->AddOnScreenDebugMessage(15, -1, FColor::Red, FString::Printf(TEXT("Equipped Weapon Slot Index: %d"), GetEquippedWeapon()->GetSlotIndex()));
 	CameraInterpZoom(DeltaTime);
 }
 
@@ -198,7 +197,7 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 {
 	bool bIsPressed = Value.Get<bool>();
 
-	if (bIsPressed && TracerComponent)
+	if (bIsPressed && TracerComponent && CombatComponent->GetCombatState() == ECombatState::ECS_Unoccupied)
 	{
 		TracerComponent->InterpolateItem();
 	}
@@ -330,38 +329,6 @@ FInterpLocation AShooterCharacter::GetInterpLocation(int32 Index)
 {
 	if (Index < ItemInterpLocations.Num() && Index >= 0) { return ItemInterpLocations[Index]; }
 	return FInterpLocation();
-}
-
-void AShooterCharacter::GrabMagazine()
-{
-	if (EquippedWeapon == nullptr) { return; }
-	if (EquippedWeapon->GetItemMesh() == nullptr) {return;}
-	if (LeftHandSceneComponent == nullptr) { return; }
-	
-	FName MagazineName = EquippedWeapon->GetMagazineBoneName();
-	int32 MagazineIndex = EquippedWeapon->GetItemMesh()->GetBoneIndex(MagazineName);
-	MagazineTransform = EquippedWeapon->GetItemMesh()->GetBoneTransform(MagazineIndex);
-	/** KeepRelative does the attached component hold its position by getting parent object as a center point. */
-	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-	// SceneComponent attached to the character mesh socket via the socket.
-	LeftHandSceneComponent->AttachToComponent(GetMesh(), AttachmentTransformRules, FName(TEXT("hand_l")));
-	/** when leftHandSceneComponent is attached to the hand_l bone, leftHandSceneComponent center is the bone center.
-	 * But when character holds the weapon magazine, magazine location and rotation is updated by using of leftHandSceneComp transform.
-	 * In this process, leftHandSceneComponent is the center of hand_l bone and because of that, magazine looks like overlapping with
-	 * mesh. To fix this, at the time of grabbing magazine, we update component transform as magazine transform. Because when character close its hand
-	 * and grab magazine, magazine looks like the center of the closed hand. */
-	LeftHandSceneComponent->SetWorldTransform(MagazineTransform);
-	EquippedWeapon->SetbIsMovingMagazine(true);
-}
-
-void AShooterCharacter::ReplaceMagazine()
-{
-	EquippedWeapon->SetbIsMovingMagazine(false);
-}
-
-void AShooterCharacter::FinishReloading()
-{
-	if (CombatComponent) { CombatComponent->FinishReloading(); }
 }
 
 void AShooterCharacter::InitializeInterpLocationContainer()
