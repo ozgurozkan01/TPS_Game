@@ -25,12 +25,25 @@ private:
 	TObjectPtr<UAnimMontage> GunFireMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> ReloadMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAnimMontage> EquipWeaponMontage;
 	UPROPERTY(EditDefaultsOnly, Category=Animation)
 	TObjectPtr<UShooterAnimInstance> ShooterAnimInstance;
 	UPROPERTY()
 	TObjectPtr<AShooterCharacter> OwnerRef;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
+	FTransform MagazineTransform;
 public:
 	void PlayGunFireMontage();
 	void PlayReloadWeaponMontage();
+	void PlayEquipWeaponMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
+	UFUNCTION(BlueprintCallable)
+	void GrabMagazine();
+	UFUNCTION(BlueprintCallable)
+	void ReplaceMagazine();
 };
