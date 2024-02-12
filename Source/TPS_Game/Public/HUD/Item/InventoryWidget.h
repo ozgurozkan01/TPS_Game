@@ -37,5 +37,5 @@ private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UWeaponSlotWidget> WeaponSlot5;
 
-	TArray<TObjectPtr<UWeaponSlotWidget>> InventorySlotArray;
+	TMap<int32, TObjectPtr<UWeaponSlotWidget>> WeaponSlotMap;
 };

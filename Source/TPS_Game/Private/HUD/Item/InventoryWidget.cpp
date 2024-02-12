@@ -19,33 +19,35 @@ void UInventoryWidget::NativeOnInitialized()
 	if (CurrentWeaponSlot)
 	{
 		CurrentWeaponSlot->SetSlotIndex(0);
-		InventorySlotArray.Add(CurrentWeaponSlot);
 	}
 	if (WeaponSlot1)
 	{
 		WeaponSlot1->SetSlotIndex(1);
-		InventorySlotArray.Add(WeaponSlot1);
 	}
 	if (WeaponSlot2)
 	{
 		WeaponSlot2->SetSlotIndex(2);
-		InventorySlotArray.Add(WeaponSlot2);
 	}
 	if (WeaponSlot3)
 	{
 		WeaponSlot3->SetSlotIndex(3);
-		InventorySlotArray.Add(WeaponSlot3);
 	}
 	if (WeaponSlot4)
 	{
 		WeaponSlot4->SetSlotIndex(4);
-		InventorySlotArray.Add(WeaponSlot4);
 	}
 	if (WeaponSlot5)
 	{
 		WeaponSlot5->SetSlotIndex(5);
-		InventorySlotArray.Add(WeaponSlot5);
 	}
+
+	WeaponSlotMap.Add(0, CurrentWeaponSlot);
+	WeaponSlotMap.Add(1, WeaponSlot1);
+	WeaponSlotMap.Add(2, WeaponSlot2);
+	WeaponSlotMap.Add(3, WeaponSlot3);
+	WeaponSlotMap.Add(4, WeaponSlot4);
+	WeaponSlotMap.Add(5, WeaponSlot5);
+
 }
 
 void UInventoryWidget::NativeConstruct()
@@ -60,4 +62,5 @@ void UInventoryWidget::NativeConstruct()
 
 void UInventoryWidget::EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex)
 {
+	
 }
