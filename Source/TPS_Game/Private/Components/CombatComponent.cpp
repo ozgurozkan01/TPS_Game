@@ -87,7 +87,7 @@ void UCombatComponent::AutomaticFireReset()
 		{
 			if (OwnerRef->GetIsFireButtonPressed())
 			{
-				StartFireTimer();
+				ShootingStart();
 			}	
 		}
 
