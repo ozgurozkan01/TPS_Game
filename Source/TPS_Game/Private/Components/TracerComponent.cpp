@@ -125,6 +125,11 @@ void UTracerComponent::LineTraceForInformationPopUp()
 		{
 			TraceHitItem = Cast<ABaseItem>(PopUpHit.GetActor());
 
+			if (TraceHitItem && TraceHitItem->GetItemState() == EItemState::EIS_EquipInterping)
+			{
+				TraceHitItem == nullptr;
+			}
+			
 			if (TraceHitItem && TraceHitItem->GetInformationWidgetComponent())
 			{	
 				TraceHitItem->GetInformationWidgetComponent()->SetVisibility(true);
@@ -179,7 +184,8 @@ void UTracerComponent::InterpolateItem()
 		TraceHitItem->StartItemCurve(MainCharacter);
 		TraceHitItem->PlayPickupSoundCue();
 		// we set it to nullptr again, because otherwise it can call StartItemCurrve repeatedly.
-		TraceHitItem = nullptr;	
+		TraceHitItem = nullptr;
+		HeldItem = nullptr;
 	}
 }
 
@@ -204,7 +210,8 @@ FVector UTracerComponent::GetBeamEndPoint()
 
 		return BeamEnd;
 	}
-		return FVector::ZeroVector;
+
+	return FVector::ZeroVector;
 }
 
 void UTracerComponent::IncrementOverlappedItemCount(int8 Amount)
