@@ -72,7 +72,17 @@ private:
 	void FireButtonPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void FireButtonReleased(const FInputActionValue& Value);
-
+	UFUNCTION()
+	void KeyOnePressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void KeyTwoPressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void KeyThreePressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void KeyFourPressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void KeyFivePressed(const FInputActionValue& Value);
+	
 	void Jump();
 
 	/** Aiming Functions */
@@ -142,7 +152,19 @@ private:
 	TObjectPtr<UInputAction> ReloadAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> CrouchingAction;
-
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> F_KeyAction;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> Key_1_Action;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> Key_2_Action;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> Key_3_Action;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> Key_4_Action;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> Key_5_Action;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))
 	FTransform MagazineTransform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=State, meta=(AllowPrivateAccess = "true"))

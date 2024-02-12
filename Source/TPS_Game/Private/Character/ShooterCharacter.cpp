@@ -86,6 +86,8 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	
 	if (FollowCamera)
 	{
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
@@ -125,6 +127,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	GEngine->AddOnScreenDebugMessage(15, -1, FColor::Red, FString::Printf(TEXT("Equipped Weapon Slot Index: %d"), GetEquippedWeapon()->GetSlotIndex()));
 	CameraInterpZoom(DeltaTime);
 }
 
@@ -146,7 +149,12 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &AShooterCharacter::SelectButtonPressed);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AShooterCharacter::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Triggered, this, &AShooterCharacter::CrouchingButtonPressed);
-		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonReleased);
+		
+		EnhancedInputComponent->BindAction(Key_1_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyOnePressed);
+		EnhancedInputComponent->BindAction(Key_2_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyTwoPressed);
+		EnhancedInputComponent->BindAction(Key_3_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyThreePressed);
+		EnhancedInputComponent->BindAction(Key_4_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyFourPressed);
+		EnhancedInputComponent->BindAction(Key_5_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyFivePressed);
 	}
 }
 
@@ -190,7 +198,10 @@ void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
 {
 	bool bIsPressed = Value.Get<bool>();
 
-	if (bIsPressed && TracerComponent) { TracerComponent->InterpolateItem(); }
+	if (bIsPressed && TracerComponent)
+	{
+		TracerComponent->InterpolateItem();
+	}
 }
 
 void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
@@ -233,6 +244,47 @@ void AShooterCharacter::FireButtonPressed(const FInputActionValue& Value)
 void AShooterCharacter::FireButtonReleased(const FInputActionValue& Value)
 {
 	bFireButtonPressed = false;
+}
+
+void AShooterCharacter::KeyOnePressed(const FInputActionValue& Value)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 1);
+	}
+}
+
+void AShooterCharacter::KeyTwoPressed(const FInputActionValue& Value)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 2);
+	}
+}
+
+void AShooterCharacter::KeyThreePressed(const FInputActionValue& Value)
+{
+	
+	if (InventoryComponent)
+	{
+		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 3);
+	}
+}
+
+void AShooterCharacter::KeyFourPressed(const FInputActionValue& Value)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 4);
+	}
+}
+
+void AShooterCharacter::KeyFivePressed(const FInputActionValue& Value)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 5);
+	}
 }
 
 TObjectPtr<AWeapon> AShooterCharacter::SpawnDefaultWeapon()
