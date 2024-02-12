@@ -3,6 +3,7 @@
 
 #include "Controller/ShooterPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "HUD/Shooter/HUDOverlay.h"
 
 AShooterPlayerController::AShooterPlayerController()
 {
@@ -14,7 +15,7 @@ void AShooterPlayerController::BeginPlay()
 
 	if (HUDOverlayClass)
 	{
-		HUDOverlay = CreateWidget<UUserWidget>(this, HUDOverlayClass);
+		HUDOverlay = CreateWidget<UHUDOverlay>(this, HUDOverlayClass);
 
 		if (HUDOverlay)
 		{
@@ -22,5 +23,4 @@ void AShooterPlayerController::BeginPlay()
 			HUDOverlay->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
-	
 }

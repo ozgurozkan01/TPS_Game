@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ShooterPlayerController.generated.h"
 
+class UHUDOverlay;
 class UUserWidget;
 
 UCLASS()
@@ -16,11 +17,12 @@ public:
 	AShooterPlayerController();
 protected:
 	virtual void BeginPlay() override;
-
 private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widget, meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> HUDOverlayClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Widget, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UUserWidget> HUDOverlay;
+	TObjectPtr<UHUDOverlay> HUDOverlay;
+public:
+	FORCEINLINE TObjectPtr<UHUDOverlay> GetHUDOverlay() const { return HUDOverlay; }
 };
