@@ -3,7 +3,10 @@
 #include "Components/InventoryComponent.h"
 #include "Item/Weapon.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/AnimatorComponent.h"
 #include "Components/CombatComponent.h"
+#include "Controller/ShooterPlayerController.h"
+#include "HUD/Shooter/HUDOverlay.h"
 #include "Item/Ammo.h"
 
 UInventoryComponent::UInventoryComponent() :
@@ -21,6 +24,15 @@ void UInventoryComponent::BeginPlay()
 	{
 		OwnerRef = Cast<AShooterCharacter>(GetOwner());
 	}
+
+	if (OwnerRef)
+	{
+		TObjectPtr<AShooterPlayerController> OwnerController = Cast<AShooterPlayerController>(OwnerRef->GetController());
+		if (OwnerController)
+		{
+			InventoryWidget = OwnerController->GetHUDOverlay()->GetInventoryWidget();
+		}
+	}
 	
 	InitializeAmmoMap();
 }
@@ -36,21 +48,26 @@ void UInventoryComponent::UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount)
 	AmmoMap.Add(AmmoType, AmmoAmount);
 }
 
-void UInventoryComponent::AddElementToInventory(TObjectPtr<ABaseItem> AddedItem)
+void UInventoryComponent::AddElementToInventory(TObjectPtr<AWeapon> AddedItem)
 {
 	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, "2");
 	Inventory.Add(AddedItem);
-}
-
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void UInventoryComponent::SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap)
 {
 	if (WeaponToSwap)
 	{
+		// Does slot index have a weapon ? 
+		if (OwnerRef->GetEquippedWeapon() && OwnerRef->GetEquippedWeapon()->GetSlotIndex() <= Inventory.Num() - 1)
+		{
+			// Change the weapon place in the inventory
+			// Equipped weapon -> weapon is used already by character
+			// Weapon to swap -> weapon intended to be used by character
+			Inventory[OwnerRef->GetEquippedWeapon()->GetSlotIndex()] = WeaponToSwap;
+			WeaponToSwap->SetSlotIndex(OwnerRef->GetEquippedWeapon()->GetSlotIndex());
+		}
+		
 		DropWeapon();
 		OwnerRef->EquipWeapon(WeaponToSwap);
 	}
@@ -64,6 +81,42 @@ void UInventoryComponent::DropWeapon()
 		OwnerRef->GetEquippedWeapon()->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
 		OwnerRef->GetEquippedWeapon()->SetItemState(EItemState::EIS_Falling);
 		OwnerRef->GetEquippedWeapon()->ThrowWeapon();
+	}
+}
+
+void UInventoryComponent::ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex)
+{
+	if (NewItemIndex >= Inventory.Num() || CurrentItemIndex == NewItemIndex || OwnerRef == nullptr) { return; }
+
+	if (OwnerRef->GetCombatComponent() && OwnerRef->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Unoccupied)
+	{
+		auto OldEquippedWeapon = OwnerRef->GetEquippedWeapon();
+		auto NewEquippedWeapon = Inventory[NewItemIndex];
+
+		TObjectPtr<AWeapon> WeaponTemp = Inventory[CurrentItemIndex];
+
+		// Change Weapon in slot in inventory
+		Inventory[CurrentItemIndex] = Inventory[NewItemIndex];
+		Inventory[NewItemIndex] = WeaponTemp;
+		// Update the weapon slot value of the weapon has changed its place in the inventory.
+		Inventory[CurrentItemIndex]->SetSlotIndex(CurrentItemIndex);
+		Inventory[NewItemIndex]->SetSlotIndex(NewItemIndex);
+	
+		if (NewEquippedWeapon)
+		{
+			// Update Equipped item as new
+			OwnerRef->EquipWeapon(NewEquippedWeapon);
+			// Update items states
+			OldEquippedWeapon->SetItemProperties(EItemState::EIS_PickedUp);
+			NewEquippedWeapon->SetItemProperties(EItemState::EIS_Equipped);
+		}
+
+		OwnerRef->GetCombatComponent()->SetCombatState(ECombatState::ECS_Equipping);
+
+		if (OwnerRef->GetAnimatorComponent())
+		{
+			OwnerRef->GetAnimatorComponent()->PlayEquipWeaponMontage();
+		}
 	}
 }
 

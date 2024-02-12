@@ -7,6 +7,7 @@
 #include "InventoryComponent.generated.h"
 
 enum class EAmmoType : uint8;
+class UInventoryWidget;
 class AShooterCharacter;
 class AWeapon;
 class ABaseItem;
@@ -19,16 +20,16 @@ class TPS_GAME_API UInventoryComponent : public UActorComponent
 
 public:	
 	UInventoryComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	virtual void BeginPlay() override;
-
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Inventory, meta=(AllowPrivateAccess))
+	TObjectPtr<UInventoryWidget> InventoryWidget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Inventory, meta=(AllowPrivateAccess="true"))
+	TArray<TObjectPtr<AWeapon>> Inventory;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Owner, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AShooterCharacter> OwnerRef;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Inventory, meta=(AllowPrivateAccess="true"))
-	TArray<TObjectPtr<ABaseItem>> Inventory;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category= Item, meta=(AllowPrivateAccess = "true"))
 	TMap<EAmmoType, int32> AmmoMap;
 	/** Weapon Ammo Variables */
@@ -40,15 +41,16 @@ private:
 	const int32 InventoryCapacity{6};
 public:
 	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
-	FORCEINLINE TArray<TObjectPtr<ABaseItem>> GetInventory() const { return Inventory; }
+	FORCEINLINE TArray<TObjectPtr<AWeapon>> GetInventory() const { return Inventory; }
 	int32 GetAmmoCountByWeaponType();
 	bool CarryingAmmo();
-
-	void AddElementToInventory(TObjectPtr<ABaseItem> AddedItem);
+ 
+	void AddElementToInventory(TObjectPtr<AWeapon> AddedItem);
 	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
 
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
 	void DropWeapon();
+	void ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex);
 	
 	/** Ammo Type Functions */
 	void InitializeAmmoMap();
