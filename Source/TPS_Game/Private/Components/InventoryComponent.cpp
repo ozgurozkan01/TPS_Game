@@ -117,6 +117,7 @@ void UInventoryComponent::ExchangeInventoryItems(int32 CurrentItemIndex, int32 N
 		{
 			OwnerRef->GetAnimatorComponent()->PlayEquipWeaponMontage();
 		}
+		NewEquippedWeapon->PlayExchangeSound(true);
 	}
 }
 

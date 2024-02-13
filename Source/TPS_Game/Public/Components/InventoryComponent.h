@@ -42,6 +42,7 @@ private:
 public:
 	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
 	FORCEINLINE TArray<TObjectPtr<AWeapon>> GetInventory() const { return Inventory; }
+	FORCEINLINE bool IsInventoryFull() const { return Inventory.Num() >= InventoryCapacity; };
 	int32 GetAmmoCountByWeaponType();
 	bool CarryingAmmo();
  
