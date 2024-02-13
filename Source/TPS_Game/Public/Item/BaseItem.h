@@ -126,7 +126,12 @@ private:
 	TObjectPtr<USoundBase> PickupSoundCue;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> EquipSoundCue;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> ExchangeSoundCue;
 
+	FTimerHandle ExchangeSoundTimerHandle;
+	float ExchangeDelayTime;
+	
 	int32 InterpLocationIndex;
 
 	/** Material instance that we can change at runtime */
@@ -163,6 +168,8 @@ public:
 	void StartItemCurve(TObjectPtr<AShooterCharacter> Shooter);
 	void PlayPickupSoundCue();
 	void PlayEquipSoundCue();
+	void PlayExchangeSound(bool bIsUsedTimer);
+	void StartExchangeSoundTimer();
 	
 	// Setter
 	void SetItemCollisions(bool bCanCollide);

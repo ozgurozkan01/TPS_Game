@@ -35,7 +35,9 @@ ABaseItem::ABaseItem() :
 	GlowAmount(150.f),
 	FresnelExponent(3.f),
 	FresnelReflectFraction(4.f),
-	PulseCurveTime(5.f)
+	PulseCurveTime(5.f),
+	// Exchange Variables
+	ExchangeDelayTime(0.35)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -106,9 +108,20 @@ void ABaseItem::FinishInterping()
 {
 	if (ShooterRef && ShooterRef->GetInventoryComponent())
 	{
-		ShooterRef->GetInventoryComponent()->GetPickUpItem(this);
 		// Update the location interping item count 
 		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
+		
+		if (ShooterRef->GetInventoryComponent()->IsInventoryFull())
+		{
+			PlayExchangeSound(false);
+		}
+
+		else
+		{
+			PlayEquipSoundCue();
+		}
+
+		ShooterRef->GetInventoryComponent()->GetPickUpItem(this);
 	}
 
 	bIsInterping = false;
@@ -116,7 +129,6 @@ void ABaseItem::FinishInterping()
 	SetActorScale3D(FVector(1.f));
 	SetGlowMaterialEnabled(1.f);
 	SetCustomDepthEnabled(false);
-	PlayEquipSoundCue();
 }
 
 void ABaseItem::StartGlowPulseTimer()
@@ -304,6 +316,27 @@ void ABaseItem::PlayEquipSoundCue()
 	if (EquipSoundCue)
 	{
 		UGameplayStatics::PlaySound2D(this, EquipSoundCue);
+	}
+}
+
+void ABaseItem::PlayExchangeSound(bool bIsUsedTimer)
+{
+	if (bIsUsedTimer)
+	{
+		GetWorldTimerManager().SetTimer(ExchangeSoundTimerHandle, this, &ABaseItem::StartExchangeSoundTimer, ExchangeDelayTime);
+	}
+
+	else if (ExchangeSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, ExchangeSoundCue);
+	}
+}
+
+void ABaseItem::StartExchangeSoundTimer()
+{
+	if (ExchangeSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, ExchangeSoundCue);
 	}
 }
 
