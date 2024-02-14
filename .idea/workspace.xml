@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
@@ -7,8 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1849c240-67a6-4eb5-83cf-c82516f164a0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/SoundEffect/Rifle/CueSounds/sw_Foley_Jump_01_Cue.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/SoundEffect/Rifle/CueSounds/sw_Wep_AR_Equip_02_Cue.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/SoundEffect/Rifle/CueSounds/sw_Wep_AR_Equip_03_Cue.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/SoundEffect/Rifle/CueSounds/sw_Wep_Launcher_Dryfire_02_Cue.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/ItemBackgrounds/CommonBackground.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/ItemBackgrounds/CommonBackground.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/ItemBackgrounds/DamagedBackground.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/ItemBackgrounds/DamagedBackground.uasset" afterDir="false" />
@@ -19,7 +25,7 @@
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/ARIcon2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/ARIcon2.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/PistolIcon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/PistolIcon.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/SMGIcon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Assets/Textures/Icons/WeaponIcons/SMGIcon.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimBP/ABP_ShooterCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimBP/ABP_ShooterCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimMontage/AM_EquipWeapon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/AnimMontage/AM_EquipWeapon.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/Crouch/CrouchIdle.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/Crouch/CrouchToStand.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/Crouch/StandToCrouch.uasset" beforeDir="false" />
@@ -31,21 +37,17 @@
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/JogStop/Yedek/4.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/TurnInPlace/Idle_Turn_90_Left_trimmed.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/Animation/TurnInPlace/Idle_Turn_90_Right_trimmed.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/BlendSpace/BS_JogStop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/BlendSpace/BS_JogStop.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/IK/IK_BelicaRig.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/AnimationAssets/IK/IK_BelicaRig.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Controller/BP_ShooterPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Controller/BP_ShooterPlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/GameMode/BP_TPS_GameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/GameMode/BP_TPS_GameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/HUD/Shooter/BP_HUDOverlay.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/HUD/Shooter/BP_ShooterHUD.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/HUD/Weapon/BP_InformationPopUp.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/HUD/Weapon/BP_WeaponWidget.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Item/Weapon/BP_BaseWeapon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Item/Weapon/BP_BaseWeapon.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Character/BP_ShooterCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Character/BP_ShooterCharacter.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/BP/Item/Weapon/BP_SMG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/BP/Item/Weapon/BP_SMG.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Maps/DefaultLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Maps/DefaultLevel.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/Material/M_SMG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/Material/M_SMG.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/MaterialFunctions/MF_SMG_Glow.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/MaterialFunctions/MF_SMG_Glow.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/MaterialInstance/MI_SMG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_Game/Materials/SMG_GlowMaterials/MaterialInstance/MI_SMG.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_Game/Materials/Transparent.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Private/Components/InventoryComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Private/Components/InventoryComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Private/Item/BaseItem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Private/Item/BaseItem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Public/Components/InventoryComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Public/Components/InventoryComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TPS_Game/Public/Item/BaseItem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TPS_Game/Public/Item/BaseItem.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +81,10 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -100,6 +106,7 @@
       <workItem from="1705703572207" duration="1000" />
       <workItem from="1705703581681" duration="6000" />
       <workItem from="1707751128158" duration="11000" />
+      <workItem from="1707764806101" duration="597000" />
     </task>
     <servers />
   </component>
