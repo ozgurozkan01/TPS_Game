@@ -4,6 +4,7 @@
 #include "HUD/Item/InventoryWidget.h"
 
 #include "Character/ShooterCharacter.h"
+#include "Components/InventoryComponent.h"
 #include "HUD/Item/WeaponSlotWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -47,7 +48,6 @@ void UInventoryWidget::NativeOnInitialized()
 	WeaponSlotMap.Add(3, WeaponSlot3);
 	WeaponSlotMap.Add(4, WeaponSlot4);
 	WeaponSlotMap.Add(5, WeaponSlot5);
-
 }
 
 void UInventoryWidget::NativeConstruct()
@@ -56,11 +56,26 @@ void UInventoryWidget::NativeConstruct()
 	
 	if (ShooterRef)
 	{
-		ShooterRef->GetEquipItemDelegate().AddDynamic(this, &UInventoryWidget::EquipItemEvent);
-	}	
+		ShooterRef->GetEquipItemDelegate().AddDynamic(this, &UInventoryWidget::OnEquipItem);
+
+		if (ShooterRef->GetInventoryComponent())
+		{
+			ShooterRef->GetInventoryComponent()->GetHighlightIconDelegate().AddDynamic(this, &UInventoryWidget::OnHighlightWeaponSlot);
+		}
+	}
 }
 
-void UInventoryWidget::EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex)
+void UInventoryWidget::OnEquipItem(int32 CurrentSlotIndex, int32 NewSlotIndex)
+{}
+
+void UInventoryWidget::OnHighlightWeaponSlot(int32 SlotIndex, bool bStartAnimation)
 {
-	
+	if (bStartAnimation)
+	{
+		WeaponSlotMap[SlotIndex]->PlayHightlightAnimation();
+	}
+	else
+	{
+		WeaponSlotMap[SlotIndex]->StopHightlightAnimation();
+	}
 }
