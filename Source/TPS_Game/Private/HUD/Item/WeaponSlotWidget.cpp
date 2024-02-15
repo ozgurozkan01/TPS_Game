@@ -3,6 +3,8 @@
 
 #include "HUD/Item/WeaponSlotWidget.h"
 #include "Character/ShooterCharacter.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
 #include "Components/InventoryComponent.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
@@ -15,6 +17,9 @@ void UWeaponSlotWidget::NativeOnInitialized()
 	{
 		ShooterRef = Cast<AShooterCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 	}
+
+	HighlightBorder->SetVisibility(ESlateVisibility::Hidden);
+	ArrowIcon->SetVisibility(ESlateVisibility::Hidden);
 }
 
 bool UWeaponSlotWidget::IsWeaponInSlot()
@@ -74,4 +79,18 @@ FText UWeaponSlotWidget::GetAmmoText()
 	}
 
 	return FText();
+}
+
+void UWeaponSlotWidget::PlayHightlightAnimation()
+{
+	HighlightBorder->SetVisibility(ESlateVisibility::Visible);
+	ArrowIcon->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(HighlightAnimation, 0 , 0);
+}
+
+void UWeaponSlotWidget::StopHightlightAnimation()
+{
+	HighlightBorder->SetVisibility(ESlateVisibility::Hidden);
+	ArrowIcon->SetVisibility(ESlateVisibility::Hidden);
+	StopAnimation(HighlightAnimation);
 }
