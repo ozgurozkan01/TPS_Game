@@ -38,12 +38,6 @@ void UInventoryComponent::BeginPlay()
 	InitializeAmmoMap();
 }
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 void UInventoryComponent::InitializeAmmoMap()
 {
 	AmmoMap.Add(EAmmoType::EAT_9mm, Starting9mmAmmo);
