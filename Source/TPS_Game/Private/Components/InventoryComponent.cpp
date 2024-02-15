@@ -48,6 +48,17 @@ void UInventoryComponent::UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount)
 	AmmoMap.Add(AmmoType, AmmoAmount);
 }
 
+int32 UInventoryComponent::GetEmptySlot()
+{
+	// Inventory is not full, return empty slot index
+	if (Inventory.Num() < InventoryCapacity)
+	{
+		return Inventory.Num();
+	}
+	// Inventory is full, return default weapon index to exchange
+	return 0;
+}
+
 void UInventoryComponent::AddElementToInventory(TObjectPtr<AWeapon> AddedItem)
 {
 	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, "2");
