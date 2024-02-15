@@ -6,12 +6,14 @@
 #include "Blueprint/UserWidget.h"
 #include "WeaponSlotWidget.generated.h"
 
+class UBorder;
 enum class EItemRarity : uint8;
 enum class EWeaponType : uint8;
 class AWeapon;
 class UTextBlock;
 class UImage;
 class AShooterCharacter;
+class SBorder;
 
 UCLASS()
 class TPS_GAME_API UWeaponSlotWidget : public UUserWidget
@@ -29,12 +31,13 @@ public:
 	UTexture2D* GetWeaponIcon();
 	UFUNCTION(BlueprintCallable)
 	FText GetAmmoText();
-	
-	/*void EmptySlot();
-	void FillSlot();*/
+
+	void PlayHightlightAnimation();
+	void StopHightlightAnimation();
 	
 	FORCEINLINE void SetSlotIndex(int32 Index) { SlotIndex = Index; }
 	FORCEINLINE void SetIsSlotAvailable(bool IsAvailable) { bIsSlotAvailable = IsAvailable; }
+	
 private:
 	virtual void NativeOnInitialized() override;
 	bool IsWeaponInSlot();
@@ -50,7 +53,13 @@ private:
 	TObjectPtr<UImage> WeaponIcon;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UTextBlock> AmmoText;
-
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UBorder> HighlightBorder;
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UImage> ArrowIcon;
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> HighlightAnimation;
+	
 	int32 SlotIndex = 0;
 	bool bIsSlotAvailable = true;
 	
