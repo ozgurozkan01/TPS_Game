@@ -4,6 +4,7 @@
 #include "Components/TracerComponent.h"
 
 #include "Character/ShooterCharacter.h"
+#include "Components/InventoryComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
@@ -124,16 +125,36 @@ void UTracerComponent::LineTraceForInformationPopUp()
 		if (PopUpHit.bBlockingHit)
 		{
 			TraceHitItem = Cast<ABaseItem>(PopUpHit.GetActor());
-
-			if (TraceHitItem && TraceHitItem->GetItemState() == EItemState::EIS_EquipInterping)
+			const TObjectPtr<AWeapon> TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
+			
+			if (TraceHitWeapon)
 			{
-				TraceHitItem == nullptr;
+				if (MainCharacter && MainCharacter->GetInventoryComponent() && MainCharacter->GetInventoryComponent()->GetHighlightSlotIndex() == -1)
+				{
+					MainCharacter->GetInventoryComponent()->SetInventorySlotHightlight(true);
+				}
+			}
+
+			else 
+			{
+				if (MainCharacter && MainCharacter->GetInventoryComponent() && MainCharacter->GetInventoryComponent()->GetHighlightSlotIndex() != -1)
+				{
+					MainCharacter->GetInventoryComponent()->SetInventorySlotHightlight(false);
+				}
 			}
 			
-			if (TraceHitItem && TraceHitItem->GetInformationWidgetComponent())
-			{	
-				TraceHitItem->GetInformationWidgetComponent()->SetVisibility(true);
-				TraceHitItem->SetCustomDepthEnabled(true);
+			if (TraceHitItem)
+			{
+				if (TraceHitItem->GetItemState() == EItemState::EIS_EquipInterping)
+				{
+					TraceHitItem == nullptr;
+				}
+
+				if (TraceHitItem->GetInformationWidgetComponent())
+				{
+					TraceHitItem->GetInformationWidgetComponent()->SetVisibility(true);
+					TraceHitItem->SetCustomDepthEnabled(true);
+				}
 			}
 
 			if (HeldItem && HeldItem != TraceHitItem)
