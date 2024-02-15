@@ -13,6 +13,8 @@ class AWeapon;
 class ABaseItem;
 class AAmmo;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHighlightIconDelegate, int32, SlotIndex, bool, bStartAnimation);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TPS_GAME_API UInventoryComponent : public UActorComponent
 {
@@ -39,6 +41,8 @@ private:
 	int32 StartingARAmmo;
 	
 	const int32 InventoryCapacity{6};
+
+	FHighlightIconDelegate HighlightIconDelegate;
 public:
 	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
 	FORCEINLINE TArray<TObjectPtr<AWeapon>> GetInventory() const { return Inventory; }
@@ -57,4 +61,6 @@ public:
 	void InitializeAmmoMap();
 	void PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo);
 	void UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount);
+
+	int32 GetEmptySlot();
 };
