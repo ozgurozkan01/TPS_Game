@@ -17,9 +17,13 @@ class TPS_GAME_API UInventoryWidget : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
+	
 	/** Delegate Functions */
 	UFUNCTION()
-	void EquipItemEvent(int32 CurrentSlotIndex, int32 NewSlotIndex);
+	void OnEquipItem(int32 CurrentSlotIndex, int32 NewSlotIndex);
+	UFUNCTION()
+	void OnHighlightWeaponSlot(int32 SlotIndex, bool bStartAnimation);
+
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Shooter, meta=(AllowPrivateAccess="true"))
