@@ -43,24 +43,29 @@ private:
 	const int32 InventoryCapacity{6};
 
 	FHighlightIconDelegate HighlightIconDelegate;
+	int32 HightlightSlotIndex;
 public:
 	FORCEINLINE TMap<EAmmoType, int32> GetAmmoMap() const { return AmmoMap; };
 	FORCEINLINE TArray<TObjectPtr<AWeapon>> GetInventory() const { return Inventory; }
-	FORCEINLINE bool IsInventoryFull() const { return Inventory.Num() >= InventoryCapacity; };
+	FORCEINLINE bool IsInventoryFull() const { return Inventory.Num() >= InventoryCapacity; }
+	FORCEINLINE int32& GetHighlightSlotIndex() { return HightlightSlotIndex; }
+	FORCEINLINE FHighlightIconDelegate& GetHighlightIconDelegate() { return HighlightIconDelegate; }
+	
 	int32 GetAmmoCountByWeaponType();
 	bool CarryingAmmo();
- 
+
+	/** Filling Inventory */
 	void AddElementToInventory(TObjectPtr<AWeapon> AddedItem);
 	void GetPickUpItem(TObjectPtr<ABaseItem> PickedUpItem);
-
+	/** Equip New Weapon */
 	void SwapWeapon(TObjectPtr<AWeapon> WeaponToSwap);
 	void DropWeapon();
 	void ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex);
-	
 	/** Ammo Type Functions */
 	void InitializeAmmoMap();
 	void PickUpAmmo(TObjectPtr<AAmmo> PickedUpAmmo);
 	void UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount);
-
-	int32 GetEmptySlot();
+	/** Highlight broadcast setter function */
+	void SetInventorySlotHightlight(bool bIsHightlight);
+	int32 GetEmptySlotIndex();
 };
