@@ -110,7 +110,7 @@ void ABaseItem::FinishInterping()
 	{
 		// Update the location interping item count 
 		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
-		
+		ShooterRef->GetInventoryComponent()->SetInventorySlotHightlight(false);
 		if (ShooterRef->GetInventoryComponent()->IsInventoryFull())
 		{
 			PlayExchangeSound(false);
@@ -239,9 +239,12 @@ void ABaseItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
 		
-		if (ShooterCharacter && ShooterCharacter->GetTracerComponent())
+		if (ShooterCharacter)
 		{
-			ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(1);
+			if (ShooterCharacter->GetTracerComponent())
+			{
+				ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(1);
+			}
 		}
 	}	
 }
@@ -256,6 +259,11 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		if (ShooterCharacter && ShooterCharacter->GetTracerComponent())
 		{
 			ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(-1);
+		}
+
+		if (ShooterCharacter->GetInventoryComponent())
+		{
+			ShooterCharacter->GetInventoryComponent()->SetInventorySlotHightlight(false);
 		}
 	}
 }
