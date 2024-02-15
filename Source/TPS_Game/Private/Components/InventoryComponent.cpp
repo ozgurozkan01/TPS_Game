@@ -11,7 +11,8 @@
 
 UInventoryComponent::UInventoryComponent() :
 	Starting9mmAmmo(90),
-	StartingARAmmo(120)
+	StartingARAmmo(120),
+	HightlightSlotIndex(-1)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -37,6 +38,12 @@ void UInventoryComponent::BeginPlay()
 	InitializeAmmoMap();
 }
 
+void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
 void UInventoryComponent::InitializeAmmoMap()
 {
 	AmmoMap.Add(EAmmoType::EAT_9mm, Starting9mmAmmo);
@@ -48,20 +55,39 @@ void UInventoryComponent::UpdateAmmoMap(EAmmoType AmmoType, int32 AmmoAmount)
 	AmmoMap.Add(AmmoType, AmmoAmount);
 }
 
-int32 UInventoryComponent::GetEmptySlot()
+void UInventoryComponent::SetInventorySlotHightlight(bool bIsHightlight)
 {
-	// Inventory is not full, return empty slot index
+	if (bIsHightlight)
+	{
+		HightlightSlotIndex = GetEmptySlotIndex();
+		HighlightIconDelegate.Broadcast(HightlightSlotIndex, bIsHightlight);
+		return;
+	}
+
+	HighlightIconDelegate.Broadcast(HightlightSlotIndex, bIsHightlight);
+	HightlightSlotIndex = -1;
+}
+
+int32 UInventoryComponent::GetEmptySlotIndex()
+{
+	for (int i = 0; i < Inventory.Num(); i++)
+	{
+		if (Inventory[i] == nullptr)
+		{
+			return i;
+		}
+	}
+	
 	if (Inventory.Num() < InventoryCapacity)
 	{
 		return Inventory.Num();
 	}
-	// Inventory is full, return default weapon index to exchange
-	return 0;
+	
+	return -1;
 }
 
 void UInventoryComponent::AddElementToInventory(TObjectPtr<AWeapon> AddedItem)
 {
-	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, "2");
 	Inventory.Add(AddedItem);
 }
 
