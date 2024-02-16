@@ -110,10 +110,11 @@ void ABaseItem::FinishInterping()
 	{
 		// Update the location interping item count 
 		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
-		ShooterRef->GetInventoryComponent()->SetInventorySlotHightlight(false);
+		
 		if (ShooterRef->GetInventoryComponent()->IsInventoryFull())
 		{
 			PlayExchangeSound(false);
+			ShooterRef->GetInventoryComponent()->SetInventorySlotHightlight(false);
 		}
 
 		else
@@ -130,7 +131,7 @@ void ABaseItem::FinishInterping()
 	SetGlowMaterialEnabled(1.f);
 	SetCustomDepthEnabled(false);
 }
-
+ 
 void ABaseItem::StartGlowPulseTimer()
 {
 	if(ItemState == EItemState::EIS_Pickup)
@@ -259,11 +260,6 @@ void ABaseItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		if (ShooterCharacter && ShooterCharacter->GetTracerComponent())
 		{
 			ShooterCharacter->GetTracerComponent()->IncrementOverlappedItemCount(-1);
-		}
-
-		if (ShooterCharacter->GetInventoryComponent())
-		{
-			ShooterCharacter->GetInventoryComponent()->SetInventorySlotHightlight(false);
 		}
 	}
 }
