@@ -2,6 +2,8 @@
 
 #include "Item/Weapon.h"
 
+#include "Character/ShooterCharacter.h"
+#include "Components/InventoryComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "HUD/Item/InformationPopUp.h"
@@ -90,6 +92,19 @@ void AWeapon::StopFalling()
 	bIsFalling = false;
 	SetItemState(EItemState::EIS_Pickup);
 	StartGlowPulseTimer();
+}
+
+void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+
+	TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
+	
+	if (ShooterCharacter->GetInventoryComponent() && ShooterCharacter->GetInventoryComponent()->GetHighlightSlotIndex() != -1 && ItemState == EItemState::EIS_Pickup)
+	{
+		ShooterCharacter->GetInventoryComponent()->SetInventorySlotHightlight(false);
+	}
 }
 
 void AWeapon::SetItemProperties(EItemState CurrentState)
