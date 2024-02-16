@@ -29,9 +29,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void StopFalling();
+
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 	
 private: // Variables
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInformationPopUp> InformationWidgetObject;
 	/** Weapon Ammo values */
