@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item/BaseItem.h"
+#include "WeaponRarityTable.h"
 #include "Weapon.generated.h"
 
 enum class EAmmoType : uint8;
@@ -52,18 +53,31 @@ private: // Variables
 	FName MagazineBoneName;
 
 	bool bIsMovingMagazine;
-	
-	TArray<bool> ActiveStars;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	int32 SlotIndex;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UDataTable> WeaponRarityTable;
+
+	/** Data Table Variables */
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	FLinearColor GlowColor;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	FLinearColor BrightColor;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	FLinearColor DarkColor;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	int32 ActiveStar;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	UTexture2D* SlotBackgroundImage;
 	
 public:
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
 	bool IsMagazineFull();
-	void SetActiveStars();
 
+	void SetWeaponRarityTableProperties();
+	
 	// Setters
 	void ReloadAmmo(int32 Ammo);
 	FORCEINLINE void SetbIsMovingMagazine(bool bIsMoving) { bIsMovingMagazine = bIsMoving; }
@@ -80,4 +94,5 @@ public:
 	FORCEINLINE FName GetMagazineBoneName() const { return MagazineBoneName; }
 	FORCEINLINE bool IsMovingClip() const { return bIsMovingMagazine; }
 	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
+	FORCEINLINE UTexture2D* GetSlotBackgroundImage() const { return SlotBackgroundImage; }
 };
