@@ -23,18 +23,20 @@ AWeapon::AWeapon() :
 	SlotIndex(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> RarityTable(TEXT("/Script/Engine.DataTable'/Game/_Game/BP/DataTable/DT_WeaponRarity.DT_WeaponRarity'"));
+
+	if (RarityTable.Succeeded())
+	{
+		WeaponRarityTable = RarityTable.Object;
+	}
 }
 
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (uint8 i = 0; i < 5; i++)
-	{
-		ActiveStars.Add(false);
-	}
-
-	SetActiveStars();
+	SetWeaponRarityTableProperties();
 	
 	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
 
@@ -42,7 +44,8 @@ void AWeapon::BeginPlay()
 	{
 		InformationWidgetObject->SetAmmoAmountText(CurrentAmmoAmount);
 		InformationWidgetObject->SetItemNameText(ItemName);
-		InformationWidgetObject->SetStarsImagesVisibility(ActiveStars);
+		InformationWidgetObject->SetStarsImagesVisibility(ActiveStar);
+		InformationWidgetObject->SetRightBoxBackgroundColors(BrightColor, DarkColor);
 	}
 
 	if (InformationWidgetComponent)
@@ -199,12 +202,47 @@ FTransform AWeapon::GetBarrelSocketTransform() const
 	return FTransform();
 }
 
-void AWeapon::SetActiveStars()
+void AWeapon::SetWeaponRarityTableProperties()
 {
-	uint8 ActiveStarAmount = GetActivateStarNumber();
-	
-	for (uint8 i = 0; i < ActiveStarAmount; i++)
+	if (WeaponRarityTable)
 	{
-		ActiveStars[i] = true;
+		FWeaponRarityTable* WeaponRarityRow = nullptr;
+		switch (ItemRarity)
+		{
+		case EItemRarity::EIR_Damaged:
+			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Damaged"), TEXT(""));
+			break;
+		case EItemRarity::EIR_Common:
+			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Common"), TEXT(""));
+			break;
+		case EItemRarity::EIR_Uncommon:
+			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Uncommon"), TEXT(""));
+			break;
+		case EItemRarity::EIR_Rare:
+			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Rare"), TEXT(""));
+			break;
+		case EItemRarity::EIR_Legendary:
+			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Legendary"), TEXT(""));
+		}
+
+		if (WeaponRarityRow)
+		{
+			GlowColor = WeaponRarityRow->GlowColor;
+			BrightColor = WeaponRarityRow->BrightColor;
+			DarkColor = WeaponRarityRow->DarkColor;
+			ActiveStar = WeaponRarityRow->ActiveStar;
+			SlotBackgroundImage = WeaponRarityRow->SlotBackgroundImage;
+
+			if (GetItemMesh())
+			{
+				if (DynamicMaterialInstance)
+				{
+					DynamicMaterialInstance->SetVectorParameterValue("FresnelExponent", GlowColor);
+					GetItemMesh()->SetMaterial(0, DynamicMaterialInstance);
+				}
+				
+				GetItemMesh()->SetCustomDepthStencilValue(WeaponRarityRow->CustomDepthStencil);
+			}
+		}
 	}
 }
