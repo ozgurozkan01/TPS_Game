@@ -22,11 +22,22 @@ void UInformationPopUp::NativeOnInitialized()
 		StarImageArray.Add(Star4Image);
 		StarImageArray.Add(Star5Image);
 	}
+
+	for (auto StartImage : StarImageArray)
+	{
+		StartImage->SetOpacity(0);
+	}
 }
 
 void UInformationPopUp::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	SetItemLabelText();
+}
+
+void UInformationPopUp::SetRightBoxBackgroundColors(FLinearColor& BrightColor, FLinearColor& DarkColor)
+{
+	RightBottomBackground->SetColorAndOpacity(DarkColor);
+	RightTopBackground->SetColorAndOpacity(BrightColor);
 }
 
 void UInformationPopUp::SetItemNameText(FString& ItemName)
@@ -55,23 +66,12 @@ void UInformationPopUp::SetItemLabelText()
 	}
 }
 
-void UInformationPopUp::SetStarsImagesVisibility(TArray<bool> ActiveStarsArray)
+void UInformationPopUp::SetStarsImagesVisibility(int32 ActiveStarAmount)
 {
 	if (StarImageArray.Num() == 0) { return; }
 	
-	for (uint8 i = 0; i < 5; i++)
+	for (uint8 i = 0; i < ActiveStarAmount; i++)
 	{
-		if (StarImageArray[i])
-		{
-			if (ActiveStarsArray[i] == true)
-			{
-				StarImageArray[i]->SetOpacity(1);
-			}
-
-			else
-			{
-				StarImageArray[i]->SetOpacity(0);
-			}	
-		}
+		StarImageArray[i]->SetOpacity(1);
 	}
 }
