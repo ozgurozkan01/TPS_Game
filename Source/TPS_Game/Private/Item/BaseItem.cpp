@@ -67,13 +67,13 @@ ABaseItem::ABaseItem() :
 void ABaseItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
 	if (MaterialInstance)
 	{
 		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
 		ItemMesh->SetMaterial(0, DynamicMaterialInstance);
+		SetGlowMaterialEnabled(1.f);
 	}
-
-	SetGlowMaterialEnabled(1.f);
 }
 
 void ABaseItem::BeginPlay()
@@ -415,24 +415,4 @@ void ABaseItem::SetItemState(EItemState CurrentState)
 {
 	ItemState = CurrentState;
 	SetItemProperties(CurrentState);
-}
-
-uint8 ABaseItem::GetActivateStarNumber()
-{
-	switch (ItemRarity)
-	{
-	case EItemRarity::EIR_Damaged:
-		return 1;
-	case EItemRarity::EIR_Common:
-		return 2;
-	case EItemRarity::EIR_Uncommon:
-		return 3;
-	case EItemRarity::EIR_Rare:
-		return 4;
-	case EItemRarity::EIR_Legendary:
-		return 5;
-	case EItemRarity::EIR_MAX:
-		return 0;
-	}
-	return 0;
 }
