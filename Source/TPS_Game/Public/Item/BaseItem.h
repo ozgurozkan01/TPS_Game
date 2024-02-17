@@ -84,13 +84,19 @@ protected:
 	EItemType ItemType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	EItemState ItemState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	EItemRarity ItemRarity;
+	/** Material instance that we can change at runtime */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterialInstance;
+	/** Material instance  */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMaterialInstance> MaterialInstance;
 private:
 	void SinusodialMovement();
 	void Rotate();
 	/** Handle interpolation and curve motion when in the EquipInterping state */
 	void ItemInterp(float DeltaTime);
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	EItemRarity ItemRarity;
 	/** Curve Asset to update Z Value */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCurveFloat> ItemZCurve;
@@ -132,14 +138,7 @@ private:
 	float ExchangeDelayTime;
 	
 	int32 InterpLocationIndex;
-
-	/** Material instance that we can change at runtime */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterialInstance;
-	/** Material instance  */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UMaterialInstance> MaterialInstance;
-
+	
 	/** Material Glowing Pulse Variables */
 	FTimerHandle PulseTimerHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
@@ -183,7 +182,4 @@ public:
 	FORCEINLINE FString GetItemName() const { return ItemName; };
 	FORCEINLINE EItemRarity GetItemRarity() const { return ItemRarity; }
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
-
-	uint8 GetActivateStarNumber();
-		
 };
