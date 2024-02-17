@@ -22,15 +22,20 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	// Getters and Setters
+	void SetRightBoxBackgroundColors(FLinearColor& BrightColor, FLinearColor& DarkColor);
 	void SetItemNameText(FString& ItemName);
 	void SetAmmoAmountText(int8 Amount);
-	void SetStarsImagesVisibility(TArray<bool> ActiveStarsArray);
+	void SetStarsImagesVisibility(int32 ActiveStarAmount);
 	void SetItemLabelText();
 	
 private:
 
 	TObjectPtr<AShooterCharacter> ShooterRef;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess = "true"), meta=(BindWidget))
+	TObjectPtr<UImage> RightTopBackground;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess = "true"), meta=(BindWidget))
+	TObjectPtr<UImage> RightBottomBackground;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess = "true"), meta=(BindWidget))
 	TObjectPtr<UTextBlock> ItemNameText;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item, meta=(AllowPrivateAccess = "true"), meta=(BindWidget))
