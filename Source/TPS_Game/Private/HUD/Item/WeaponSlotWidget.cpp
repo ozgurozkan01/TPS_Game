@@ -44,7 +44,7 @@ UTexture2D* UWeaponSlotWidget::GetBackgrounImage()
 {
 	if (IsWeaponInSlot())
 	{
-		 return BackgroundImageMap[WeaponRef->GetItemRarity()];
+		 return WeaponRef->GetSlotBackgroundImage();
 	}
 
 	return nullptr;
