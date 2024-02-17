@@ -62,9 +62,7 @@ private:
 	
 	int32 SlotIndex = 0;
 	bool bIsSlotAvailable = true;
-	
-	UPROPERTY(EditDefaultsOnly, Category=Inventory, meta=(AllowPrivateAccess=true))
-	TMap<EItemRarity, TObjectPtr<UTexture2D>> BackgroundImageMap;
+
 	UPROPERTY(EditDefaultsOnly, Category=Inventory, meta=(AllowPrivateAccess=true))
 	TMap<EWeaponType, TObjectPtr<UTexture2D>> WeaponIconMap;
 	UPROPERTY(EditDefaultsOnly, Category=Inventory, meta=(AllowPrivateAccess=true))
