@@ -19,7 +19,6 @@ class TPS_GAME_API UInformationPopUp : public UUserWidget
 	GENERATED_BODY()
 public:
 	virtual void NativeOnInitialized() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	// Getters and Setters
 	void SetRightBoxBackgroundColors(FLinearColor& BrightColor, FLinearColor& DarkColor);

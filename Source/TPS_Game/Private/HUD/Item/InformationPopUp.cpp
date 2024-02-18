@@ -27,11 +27,8 @@ void UInformationPopUp::NativeOnInitialized()
 	{
 		StartImage->SetOpacity(0);
 	}
-}
 
-void UInformationPopUp::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	SetItemLabelText();
+	IconLabelText->Font.Size = 17;
 }
 
 void UInformationPopUp::SetRightBoxBackgroundColors(FLinearColor& BrightColor, FLinearColor& DarkColor)
@@ -58,10 +55,9 @@ void UInformationPopUp::SetItemLabelText()
 		IconLabelText->Font.Size = 10;
 		IconLabelText->SetText(FText::FromString("Swap Weapon"));
 	}
-	
+		
 	else
 	{
-		IconLabelText->Font.Size = 13;
 		IconLabelText->SetText(FText::FromString("Pick Up"));
 	}
 }
