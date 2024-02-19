@@ -76,6 +76,11 @@ int32 UInventoryComponent::GetEmptySlotIndex()
 	{
 		return Inventory.Num();
 	}
+
+	if (Inventory.Num() >= InventoryCapacity)
+	{
+		return 0;
+	}
 	
 	return -1;
 }
