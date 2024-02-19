@@ -31,13 +31,13 @@ ABaseItem::ABaseItem() :
 	ItemInitialYawOffset(0.f),
 	InterpLocationIndex(0),
 	ItemType(EItemType::EIT_Default),
+	// Exchange Variables
+	ExchangeDelayTime(0.35),
 	// Dynamic Material Parameters
 	GlowAmount(150.f),
 	FresnelExponent(3.f),
 	FresnelReflectFraction(4.f),
-	PulseCurveTime(5.f),
-	// Exchange Variables
-	ExchangeDelayTime(0.35)
+	PulseCurveTime(5.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -68,10 +68,10 @@ void ABaseItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+	
 	if (MaterialInstance)
 	{
 		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
-		ItemMesh->SetMaterial(0, DynamicMaterialInstance);
 		SetGlowMaterialEnabled(1.f);
 	}
 }
@@ -86,7 +86,7 @@ void ABaseItem::BeginPlay()
 	SetItemState(ItemState);
 	SetCustomDepthEnabled(false);
 	SetGlowMaterialEnabled(0.1f);
-
+	
 	StartGlowPulseTimer();
 }
 
@@ -100,7 +100,6 @@ void ABaseItem::Tick(float DeltaTime)
 	{
 		ItemInterp(DeltaTime);
 	}
-
 	UpdateGlowPulseScalars();
 }
 
@@ -110,11 +109,11 @@ void ABaseItem::FinishInterping()
 	{
 		// Update the location interping item count 
 		ShooterRef->UpdateInterpingItemCount(InterpLocationIndex, -1);
-		
-		if (ShooterRef->GetInventoryComponent()->IsInventoryFull())
+		ShooterRef->GetInventoryComponent()->SetInventorySlotHightlight(false);
+
+		if (ShooterRef->GetInventoryComponent()->IsInventoryFull() && ShooterRef->GetInventoryComponent()->GetHighlightSlotIndex() != -1)
 		{
 			PlayExchangeSound(false);
-			ShooterRef->GetInventoryComponent()->SetInventorySlotHightlight(false);
 		}
 
 		else
@@ -131,32 +130,7 @@ void ABaseItem::FinishInterping()
 	SetGlowMaterialEnabled(1.f);
 	SetCustomDepthEnabled(false);
 }
- 
-void ABaseItem::StartGlowPulseTimer()
-{
-	if(ItemState == EItemState::EIS_Pickup)
-	{
-		GetWorldTimerManager().SetTimer(PulseTimerHandle, this, &ABaseItem::ResetGlowPulseTimer, PulseCurveTime);
-	}
-}
 
-void ABaseItem::ResetGlowPulseTimer()
-{
-	StartGlowPulseTimer();
-}
-
-void ABaseItem::UpdateGlowPulseScalars()
-{
-	if (ItemState == EItemState::EIS_Pickup && GlowPulseCurve)
-	{
-		const float ElapsedTime { GetWorldTimerManager().GetTimerElapsed(PulseTimerHandle)};
-		const FVector PulseCurve { GlowPulseCurve->GetVectorValue(ElapsedTime)}; 
-		
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), GlowAmount * PulseCurve.X);
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelExponent"), FresnelExponent * PulseCurve.Y);
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelReflectFraction"), FresnelReflectFraction * PulseCurve.Z);
-	}
-}
 
 void ABaseItem::SetCustomDepthEnabled(bool bIsEnabled)
 {
@@ -415,4 +389,30 @@ void ABaseItem::SetItemState(EItemState CurrentState)
 {
 	ItemState = CurrentState;
 	SetItemProperties(CurrentState);
+}
+
+void ABaseItem::StartGlowPulseTimer()
+{
+	if(ItemState == EItemState::EIS_Pickup)
+	{
+		GetWorldTimerManager().SetTimer(PulseTimerHandle, this, &ABaseItem::ResetGlowPulseTimer, PulseCurveTime);
+	}
+}
+
+void ABaseItem::ResetGlowPulseTimer()
+{
+	StartGlowPulseTimer();
+}
+
+void ABaseItem::UpdateGlowPulseScalars()
+{
+	if (ItemState == EItemState::EIS_Pickup && GlowPulseCurve)
+	{
+		const float ElapsedTime { GetWorldTimerManager().GetTimerElapsed(PulseTimerHandle)};
+		const FVector PulseCurve { GlowPulseCurve->GetVectorValue(ElapsedTime)}; 
+		
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), GlowAmount * PulseCurve.X);
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelExponent"), FresnelExponent * PulseCurve.Y);
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelReflectFraction"), FresnelReflectFraction * PulseCurve.Z);
+	}
 }
