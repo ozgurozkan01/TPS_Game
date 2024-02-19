@@ -6,6 +6,7 @@
 #include "Character/ShooterCharacter.h"
 #include "Components/InventoryComponent.h"
 #include "Components/WidgetComponent.h"
+#include "HUD/Item/InformationPopUp.h"
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
@@ -129,6 +130,8 @@ void UTracerComponent::LineTraceForInformationPopUp()
 			
 			if (TraceHitWeapon)
 			{
+				TraceHitWeapon->GetInformationWidgetObject()->SetItemLabelText();
+				
 				if (MainCharacter && MainCharacter->GetInventoryComponent() && MainCharacter->GetInventoryComponent()->GetHighlightSlotIndex() == -1)
 				{
 					MainCharacter->GetInventoryComponent()->SetInventorySlotHightlight(true);
