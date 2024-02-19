@@ -8,6 +8,8 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "HUD/Item/InformationPopUp.h"
 #include "Item/Ammo.h"
+#include "Item/WeaponRarityTable.h"
+#include "Item/WeaponTable.h"
 
 AWeapon::AWeapon() :
 	MagazineCapacity(30),
@@ -24,11 +26,16 @@ AWeapon::AWeapon() :
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> RarityTable(TEXT("/Script/Engine.DataTable'/Game/_Game/BP/DataTable/DT_WeaponRarity.DT_WeaponRarity'"));
-
-	if (RarityTable.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UDataTable> WeaponRarityTableRef(TEXT("/Script/Engine.DataTable'/Game/_Game/BP/DataTable/DT_WeaponRarity.DT_WeaponRarity'"));
+	if (WeaponRarityTableRef.Succeeded())
 	{
-		WeaponRarityTable = RarityTable.Object;
+		WeaponRarityDataTable = WeaponRarityTableRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> WeaponTableRef(TEXT("/Script/Engine.DataTable'/Game/_Game/BP/DataTable/DT_Weapon.DT_Weapon'"));
+	if (WeaponTableRef.Succeeded())
+	{
+		WeaponDataTable = WeaponTableRef.Object;
 	}
 }
 
@@ -37,6 +44,7 @@ void AWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	SetWeaponRarityTableProperties();
+	SetWeaponTableProperties();
 	
 	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
 
@@ -104,7 +112,7 @@ void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 
 	TObjectPtr<AShooterCharacter> ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
 	
-	if (ShooterCharacter->GetInventoryComponent() && ShooterCharacter->GetInventoryComponent()->GetHighlightSlotIndex() != -1 && ItemState == EItemState::EIS_Pickup)
+	if (ItemState == EItemState::EIS_Pickup && ShooterCharacter && ShooterCharacter->GetInventoryComponent() && ShooterCharacter->GetInventoryComponent()->GetHighlightSlotIndex() != -1)
 	{
 		ShooterCharacter->GetInventoryComponent()->SetInventorySlotHightlight(false);
 	}
@@ -204,25 +212,25 @@ FTransform AWeapon::GetBarrelSocketTransform() const
 
 void AWeapon::SetWeaponRarityTableProperties()
 {
-	if (WeaponRarityTable)
+	if (WeaponRarityDataTable)
 	{
 		FWeaponRarityTable* WeaponRarityRow = nullptr;
 		switch (ItemRarity)
 		{
 		case EItemRarity::EIR_Damaged:
-			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Damaged"), TEXT(""));
+			WeaponRarityRow = WeaponRarityDataTable->FindRow<FWeaponRarityTable>(FName("Damaged"), TEXT(""));
 			break;
 		case EItemRarity::EIR_Common:
-			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Common"), TEXT(""));
+			WeaponRarityRow = WeaponRarityDataTable->FindRow<FWeaponRarityTable>(FName("Common"), TEXT(""));
 			break;
 		case EItemRarity::EIR_Uncommon:
-			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Uncommon"), TEXT(""));
+			WeaponRarityRow = WeaponRarityDataTable->FindRow<FWeaponRarityTable>(FName("Uncommon"), TEXT(""));
 			break;
 		case EItemRarity::EIR_Rare:
-			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Rare"), TEXT(""));
+			WeaponRarityRow = WeaponRarityDataTable->FindRow<FWeaponRarityTable>(FName("Rare"), TEXT(""));
 			break;
 		case EItemRarity::EIR_Legendary:
-			WeaponRarityRow = WeaponRarityTable->FindRow<FWeaponRarityTable>(FName("Legendary"), TEXT(""));
+			WeaponRarityRow = WeaponRarityDataTable->FindRow<FWeaponRarityTable>(FName("Legendary"), TEXT(""));
 		}
 
 		if (WeaponRarityRow)
@@ -237,12 +245,52 @@ void AWeapon::SetWeaponRarityTableProperties()
 			{
 				if (DynamicMaterialInstance)
 				{
-					DynamicMaterialInstance->SetVectorParameterValue("FresnelExponent", GlowColor);
-					GetItemMesh()->SetMaterial(0, DynamicMaterialInstance);
+					DynamicMaterialInstance->SetVectorParameterValue(TEXT("FresnelColor"), GlowColor);
+					ItemMesh->SetMaterial(0, DynamicMaterialInstance);
 				}
 				
 				GetItemMesh()->SetCustomDepthStencilValue(WeaponRarityRow->CustomDepthStencil);
 			}
+		}
+	}
+}
+
+void AWeapon::SetWeaponTableProperties()
+{
+	if (WeaponDataTable)
+	{
+		FWeaponTable* WeaponTableRow = nullptr;
+		switch (WeaponType)
+		{
+		case EWeaponType::EWT_SubmachineGun:
+			WeaponTableRow = WeaponDataTable->FindRow<FWeaponTable>(FName("SubmachineGun"), TEXT(""));
+			break;
+		case EWeaponType::EWT_AssaultRifle:
+			WeaponTableRow = WeaponDataTable->FindRow<FWeaponTable>(FName("AssaultRifle"), TEXT(""));
+			break;
+		}
+
+		if (WeaponTableRow)
+		{
+			AmmoType = WeaponTableRow->AmmoType;
+			CurrentAmmoAmount = WeaponTableRow->CurrentAmmoAmount;
+			MagazineCapacity = WeaponTableRow->MazagineCapacity;
+			PickupSound = WeaponTableRow->PickupSound;
+			EquipSound = WeaponTableRow->EquipSound;
+			ItemMesh->SetSkeletalMesh(WeaponTableRow->WeaponMesh);
+			AmmoIcon = WeaponTableRow->AmmoIcon;
+			WeaponIcon = WeaponTableRow->WeaponIcon;
+			ItemName = WeaponTableRow->WeaponName;
+			MaterialInstance = WeaponTableRow->MaterialInstance;
+			MaterialIndex = WeaponTableRow->MaterialIndex;
+
+			if (MaterialInstance)
+			{
+				DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
+				DynamicMaterialInstance->SetVectorParameterValue(TEXT("FresnelColor"), GlowColor);
+				ItemMesh->SetMaterial(MaterialIndex, DynamicMaterialInstance);
+			}
+				
 		}
 	}
 }

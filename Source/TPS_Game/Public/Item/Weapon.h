@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Item/BaseItem.h"
-#include "WeaponRarityTable.h"
 #include "Weapon.generated.h"
 
 enum class EAmmoType : uint8;
+class UDataTable;
+class UInformationPopUp;
 
 UENUM()
 enum class EWeaponType : uint8
@@ -47,7 +48,9 @@ private: // Variables
 	float ThrowWeaponTime;
 	bool bIsFalling;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true	"))
 	EWeaponType WeaponType;
+	
 	EAmmoType AmmoType;
 	FName ReloadingMontageSection;
 	FName MagazineBoneName;
@@ -57,9 +60,11 @@ private: // Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	int32 SlotIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UDataTable> WeaponRarityTable;
-
-	/** Data Table Variables */
+	TObjectPtr<UDataTable> WeaponRarityDataTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UDataTable> WeaponDataTable;
+	
+	/** Rarity Data Table Variables */
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	FLinearColor GlowColor;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
@@ -71,12 +76,24 @@ private: // Variables
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	UTexture2D* SlotBackgroundImage;
 	
+	/** Weapon Data Table Varibles */
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<USoundBase> PickupSound;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<USoundBase> EquipSound;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture2D> AmmoIcon;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture2D> WeaponIcon;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	int32 MaterialIndex;	
 public:
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
 	bool IsMagazineFull();
 
 	void SetWeaponRarityTableProperties();
+	void SetWeaponTableProperties();
 	
 	// Setters
 	void ReloadAmmo(int32 Ammo);
