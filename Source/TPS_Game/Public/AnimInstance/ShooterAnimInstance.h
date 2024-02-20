@@ -95,4 +95,6 @@ private:
 	double LeanDeltaYawOffset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
 	EWeaponType ShooterWeaponType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
+	bool bShouldUseFABRIK;
 };

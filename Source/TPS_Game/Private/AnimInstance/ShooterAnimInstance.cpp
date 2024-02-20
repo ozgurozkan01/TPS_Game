@@ -180,6 +180,8 @@ void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 		bIsReloading = ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Reloading;
 		bIsAiming = ShooterCharacter->GetCombatComponent()->GetIsAiming();
 		bIsEquipping = ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Equipping;
+		bShouldUseFABRIK =	ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Unoccupied ||
+							ShooterCharacter->GetCombatComponent()->GetCombatState() == ECombatState::ECS_FireTimerInProgress;
 	}
 
 	if (ShooterCharacter->GetMotionComponent())
