@@ -10,7 +10,7 @@ enum class EAmmoType : uint8;
 class UDataTable;
 class UInformationPopUp;
 
-UENUM()
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	EWT_SubmachineGun UMETA(DisplayName = "SubmachineGun"),
