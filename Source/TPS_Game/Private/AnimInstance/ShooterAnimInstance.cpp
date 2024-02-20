@@ -158,6 +158,11 @@ void UShooterAnimInstance::UpdateOffsetState()
 void UShooterAnimInstance::UpdateAnimationTransitionVariables()
 {
 	if (ShooterCharacter == nullptr) { return; }
+
+	if (ShooterCharacter->GetEquippedWeapon())
+	{
+		ShooterWeaponType = ShooterCharacter->GetEquippedWeapon()->GetWeaponType();
+	}
 	
 	if (ShooterCharacter->GetCharacterMovement())
 	{

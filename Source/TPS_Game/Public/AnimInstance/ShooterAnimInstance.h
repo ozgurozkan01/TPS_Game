@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Item/Weapon.h"
 #include "ShooterAnimInstance.generated.h"
 
 class AShooterCharacter;
@@ -26,10 +27,9 @@ class TPS_GAME_API UShooterAnimInstance : public UAnimInstance
 	
 public:
 	UShooterAnimInstance();
-	virtual void NativeInitializeAnimation() override;
-	UFUNCTION(BlueprintCallable)
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 private:
 
 	/** Calculate the character aim rotation (Controller Rotation for AI, Camera Look At Rotation for Main Player) */
@@ -93,4 +93,6 @@ private:
 	FRotator LeanCharacterRotationLastFrame;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lean", meta=(AllowPrivateAccess = "true"))
 	double LeanDeltaYawOffset;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
+	EWeaponType ShooterWeaponType;
 };
