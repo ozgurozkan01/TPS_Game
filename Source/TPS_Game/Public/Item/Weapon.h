@@ -48,11 +48,13 @@ private: // Variables
 	float ThrowWeaponTime;
 	bool bIsFalling;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true	"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	EWeaponType WeaponType;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	EAmmoType AmmoType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	FName ReloadingMontageSection;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	FName MagazineBoneName;
 
 	bool bIsMovingMagazine;
@@ -86,7 +88,7 @@ private: // Variables
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	TObjectPtr<UTexture2D> WeaponIcon;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
-	int32 MaterialIndex;	
+	int32 MaterialIndex;
 public:
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
