@@ -30,4 +30,10 @@ struct FWeaponTable : public FTableRowBase
 	TObjectPtr<UMaterialInstance> MaterialInstance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	int32 MaterialIndex;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	FName MagazineBoneName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	FName ReloadMontageSection;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TSubclassOf<UAnimInstance> AnimInstanceBP;
 };
