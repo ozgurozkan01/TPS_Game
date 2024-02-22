@@ -20,7 +20,6 @@ AWeapon::AWeapon() :
 	WeaponType(EWeaponType::EWT_SubmachineGun),
 	AmmoType(EAmmoType::EAT_9mm),
 	ReloadingMontageSection(FName(TEXT("Reload SMG"))),
-	MagazineBoneName("smg_clip"),
 	bIsMovingMagazine(false),
 	SlotIndex(0)
 {
@@ -283,7 +282,10 @@ void AWeapon::SetWeaponTableProperties()
 			ItemName = WeaponTableRow->WeaponName;
 			MaterialInstance = WeaponTableRow->MaterialInstance;
 			MaterialIndex = WeaponTableRow->MaterialIndex;
-
+			MagazineBoneName = WeaponTableRow->MagazineBoneName;
+			ReloadingMontageSection = WeaponTableRow->ReloadMontageSection;
+			ItemMesh->SetAnimInstanceClass(WeaponTableRow->AnimInstanceBP);
+			
 			if (MaterialInstance)
 			{
 				DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
