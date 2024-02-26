@@ -5,6 +5,7 @@
 
 #include "Character/ShooterCharacter.h"
 #include "Components/CrosshairAnimatorComponent.h"
+#include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
 void AShooterHUD::BeginPlay()
@@ -18,6 +19,8 @@ void AShooterHUD::BeginPlay()
 // It is called in the BP with ReceiveDrawHUD event
 void AShooterHUD::DrawCrosshair(int32 ScreenWidth, int32 ScreenHeight)
 {
+	SetCrosshairTextures();
+	
 	float SpreadValue = CalculateCrosshairSpreadValue();
 	FVector2D CrosshairLocation = CalculateCrosshairLocation(ScreenWidth, ScreenHeight);
 	
@@ -25,6 +28,7 @@ void AShooterHUD::DrawCrosshair(int32 ScreenWidth, int32 ScreenHeight)
 	DrawTexture(CrosshairRight, CrosshairLocation.X + SpreadValue, CrosshairLocation.Y, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);
 	DrawTexture(CrosshairBottom, CrosshairLocation.X, CrosshairLocation.Y + SpreadValue, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);
 	DrawTexture(CrosshairTop, CrosshairLocation.X, CrosshairLocation.Y - SpreadValue, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);
+	DrawTexture(CrosshairMiddle, CrosshairLocation.X, CrosshairLocation.Y, CrosshairWidth, CrosshairHeight, 0, 0, 1, 1);
 }
 
 FVector2D AShooterHUD::CalculateCrosshairLocation(int32 ScreenWidth, int32 ScreenHeight)
@@ -47,4 +51,16 @@ float AShooterHUD::CalculateCrosshairSpreadValue()
 	}
 
 	return 0.f;
+}
+
+void AShooterHUD::SetCrosshairTextures()
+{
+	if (ShooterCharacter && ShooterCharacter->GetEquippedWeapon())
+	{
+		CrosshairLeft = ShooterCharacter->GetEquippedWeapon()->GetCrosshairLeftImage();
+		CrosshairTop = ShooterCharacter->GetEquippedWeapon()->GetCrosshairTopImage();
+		CrosshairRight = ShooterCharacter->GetEquippedWeapon()->GetCrosshairRightImage();
+		CrosshairBottom = ShooterCharacter->GetEquippedWeapon()->GetCrosshairBottomImage();
+		CrosshairMiddle = ShooterCharacter->GetEquippedWeapon()->GetCrosshairMiddleImage();
+	}
 }
