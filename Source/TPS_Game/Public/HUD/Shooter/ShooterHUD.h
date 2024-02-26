@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "ShooterHUD.generated.h"
 
+class AWeapon;
 class UTexture2D;
 class AShooterCharacter;
 
@@ -22,21 +23,24 @@ public:
 	void DrawCrosshair(int32 ScreenWidth, int32 ScreenHeight);
 	FVector2D CalculateCrosshairLocation(int32 ScreenWidth, int32 ScreenHeight);
 	float CalculateCrosshairSpreadValue();
+	void SetCrosshairTextures();
 private:
-
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
+	TObjectPtr<UTexture> CrosshairMiddle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture> CrosshairLeft;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture> CrosshairRight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture> CrosshairBottom;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture> CrosshairTop;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
-	int32 CrosshairWidth = 32;
+	int32 CrosshairWidth = 48;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
-	int32 CrosshairHeight = 32;
+	int32 CrosshairHeight = 48;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<AShooterCharacter> ShooterCharacter;
 };
