@@ -65,7 +65,13 @@ private: // Variables
 	TObjectPtr<UDataTable> WeaponRarityDataTable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UDataTable> WeaponDataTable;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> HitParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> SmokeBeamParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UParticleSystem> MuzzleFlash;
 	/** Rarity Data Table Variables */
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	FLinearColor GlowColor;
@@ -88,8 +94,28 @@ private: // Variables
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	TObjectPtr<UTexture2D> WeaponIcon;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture> CrosshairLeft;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture> CrosshairRight;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture> CrosshairBottom;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture> CrosshairTop;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	TObjectPtr<UTexture> CrosshairMiddle;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	int32 MaterialIndex;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	USoundBase* FireSoundCue;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	float AutoFireRate;
 public:
+
+	void PlayFireSoundCue();
+	void PlayBarrelMuzzleFlash();
+	void PlayHitParticle(const FVector& HitLocation);
+	void PlayBeamParticle(const FTransform& Start, const FVector& End);
+	
 	virtual void SetItemProperties(EItemState CurrentState);
 	void DecremenetAmmo();
 	bool IsMagazineFull();
@@ -114,4 +140,10 @@ public:
 	FORCEINLINE bool IsMovingClip() const { return bIsMovingMagazine; }
 	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 	FORCEINLINE UTexture2D* GetSlotBackgroundImage() const { return SlotBackgroundImage; }
+	FORCEINLINE TObjectPtr<UTexture> GetCrosshairLeftImage() const { return CrosshairLeft; }
+	FORCEINLINE TObjectPtr<UTexture> GetCrosshairRightImage() const { return CrosshairRight; }
+	FORCEINLINE TObjectPtr<UTexture> GetCrosshairBottomImage() const { return CrosshairBottom; }
+	FORCEINLINE TObjectPtr<UTexture> GetCrosshairTopImage() const { return CrosshairTop; }
+	FORCEINLINE TObjectPtr<UTexture> GetCrosshairMiddleImage() const { return CrosshairMiddle; }
+	FORCEINLINE float GetAutoFireRate() const { return AutoFireRate; }
 };
