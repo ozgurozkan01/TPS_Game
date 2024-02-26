@@ -36,4 +36,18 @@ struct FWeaponTable : public FTableRowBase
 	FName ReloadMontageSection;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	TSubclassOf<UAnimInstance> AnimInstanceBP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UTexture> CrosshairMiddle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UTexture> CrosshairLeft;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UTexture> CrosshairRight;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UTexture> CrosshairBottom;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UTexture> CrosshairTop;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	float AutoFireRate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<USoundBase> FireSoundCue;
 };
