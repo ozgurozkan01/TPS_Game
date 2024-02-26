@@ -287,6 +287,13 @@ void AWeapon::SetWeaponTableProperties()
 			MagazineBoneName = WeaponTableRow->MagazineBoneName;
 			ReloadingMontageSection = WeaponTableRow->ReloadMontageSection;
 			ItemMesh->SetAnimInstanceClass(WeaponTableRow->AnimInstanceBP);
+			CrosshairLeft = WeaponTableRow->CrosshairLeft;
+			CrosshairRight = WeaponTableRow->CrosshairRight;
+			CrosshairBottom = WeaponTableRow->CrosshairBottom;
+			CrosshairTop = WeaponTableRow->CrosshairTop;
+			CrosshairMiddle = WeaponTableRow->CrosshairMiddle;
+			FireSoundCue = WeaponTableRow->FireSoundCue;
+			AutoFireRate = WeaponTableRow->AutoFireRate;
 			
 			if (MaterialInstance)
 			{
