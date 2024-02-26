@@ -13,7 +13,6 @@
 
 UCombatComponent::UCombatComponent() :
 	// Automatic Gun Fire Factors
-	AutomaticFireRate(0.1f),
 	CombatState(ECombatState::ECS_Unoccupied),
 	bAiming(false)
 {
@@ -35,15 +34,15 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::ShootingStart()
 {
-	if (OwnerRef)
+	if (OwnerRef && OwnerRef->GetTracerComponent() && OwnerRef->GetEquippedWeapon())
 	{
 		FVector BeamEndPoint = OwnerRef->GetTracerComponent()->GetBeamEndPoint();
 		FTransform BarrelSocketTransform = OwnerRef->GetEquippedWeapon()->GetBarrelSocketTransform();
 		OwnerRef->GetAnimatorComponent()->PlayGunFireMontage();
-		OwnerRef->GetEffectPlayerComponent()->PlayHitParticle(BeamEndPoint);
-		OwnerRef->GetEffectPlayerComponent()->PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
-		OwnerRef->GetEffectPlayerComponent()->PlayFireSoundCue();
-		OwnerRef->GetEffectPlayerComponent()->PlayBarrelMuzzleFlash();
+		OwnerRef->GetEquippedWeapon()->PlayHitParticle(BeamEndPoint);
+		OwnerRef->GetEquippedWeapon()->PlayBeamParticle(BarrelSocketTransform, BeamEndPoint);
+		OwnerRef->GetEquippedWeapon()->PlayFireSoundCue();
+		OwnerRef->GetEquippedWeapon()->PlayBarrelMuzzleFlash();
 		OwnerRef->GetEquippedWeapon()->DecremenetAmmo();
 		StartFireTimer();	
 	}
@@ -71,10 +70,10 @@ void UCombatComponent::StopAim()
 
 void UCombatComponent::StartFireTimer()
 {
-	if (OwnerRef)
+	if (OwnerRef && OwnerRef->GetEquippedWeapon())
 	{
 		CombatState = ECombatState::ECS_FireTimerInProgress;
-		OwnerRef->GetWorldTimerManager().SetTimer(AutomaticFireHandle, this, &UCombatComponent::AutomaticFireReset, AutomaticFireRate);
+		OwnerRef->GetWorldTimerManager().SetTimer(AutomaticFireHandle, this, &UCombatComponent::AutomaticFireReset, OwnerRef->GetEquippedWeapon()->GetAutoFireRate());
 	}
 }
 
