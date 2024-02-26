@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Item/Weapon.h"
-
 #include "Character/ShooterCharacter.h"
 #include "Components/InventoryComponent.h"
 #include "Components/WidgetComponent.h"
@@ -10,6 +9,8 @@
 #include "Item/Ammo.h"
 #include "Item/WeaponRarityTable.h"
 #include "Item/WeaponTable.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AWeapon::AWeapon() :
 	MagazineCapacity(30),
@@ -41,7 +42,6 @@ AWeapon::AWeapon() :
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
 	SetWeaponRarityTableProperties();
 	SetWeaponTableProperties();
 	
@@ -214,6 +214,7 @@ void AWeapon::SetWeaponRarityTableProperties()
 	if (WeaponRarityDataTable)
 	{
 		FWeaponRarityTable* WeaponRarityRow = nullptr;
+
 		switch (ItemRarity)
 		{
 		case EItemRarity::EIR_Damaged:
@@ -259,6 +260,7 @@ void AWeapon::SetWeaponTableProperties()
 	if (WeaponDataTable)
 	{
 		FWeaponTable* WeaponTableRow = nullptr;
+		
 		switch (WeaponType)
 		{
 		case EWeaponType::EWT_SubmachineGun:
@@ -294,5 +296,42 @@ void AWeapon::SetWeaponTableProperties()
 			}
 				
 		}
+	}
+}
+
+void AWeapon::PlayFireSoundCue()
+{
+	if (FireSoundCue)
+	{
+		UGameplayStatics::PlaySound2D(this, FireSoundCue);
+	}
+}
+
+void AWeapon::PlayBarrelMuzzleFlash()
+{
+	if (MuzzleFlash)
+	{
+		FTransform BarrelSocketTransform = GetBarrelSocketTransform();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
+	}
+}
+
+void AWeapon::PlayHitParticle(const FVector& HitLocation)
+{
+	if (HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, HitLocation);
+	}
+}
+
+void AWeapon::PlayBeamParticle(const FTransform& Start, const FVector& End)
+{
+	if (SmokeBeamParticle)
+	{
+		/** Spawn the Beam Particle and Store in the variable */
+		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, Start);
+		/** This Particle has the target point and target point represents the end location. If we do not set, the end point is set FVector(0, 0, 0)
+		 * To set this variable we need to store it in variable. */
+		BeamParticleComponent->SetVectorParameter(FName("Target"), End);
 	}
 }
