@@ -63,7 +63,6 @@ AShooterCharacter::AShooterCharacter() :
 	MotionComponent = CreateDefaultSubobject<UMotionComponent>(TEXT("MotionComponent"));
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	AnimatorComponent = CreateDefaultSubobject<UAnimatorComponent>(TEXT("AnimatorComponent"));
-	EffectPlayerComponent = CreateDefaultSubobject<UEffectPlayerComponent>(TEXT("EffectPlayerComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
 	WeaponInterpTargetComp = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponInterpTarget"));
