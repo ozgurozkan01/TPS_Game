@@ -108,8 +108,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimatorComponent> AnimatorComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UEffectPlayerComponent> EffectPlayerComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Attribute", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInventoryComponent> InventoryComponent;
 	
 	float CameraDefaultFOV;
@@ -210,7 +208,6 @@ public:
 	FORCEINLINE TObjectPtr<UMotionComponent> GetMotionComponent() const { return MotionComponent; }
 	FORCEINLINE TObjectPtr<UCombatComponent> GetCombatComponent() const { return CombatComponent; }
 	FORCEINLINE TObjectPtr<UAnimatorComponent> GetAnimatorComponent() const { return AnimatorComponent; }
-	FORCEINLINE TObjectPtr<UEffectPlayerComponent> GetEffectPlayerComponent() const { return EffectPlayerComponent; }
 	FORCEINLINE TObjectPtr<UInventoryComponent> GetInventoryComponent() const { return InventoryComponent; }
 	FORCEINLINE TObjectPtr<USceneComponent> GetLeftHandSceneComponent() const { return LeftHandSceneComponent; }
 	
