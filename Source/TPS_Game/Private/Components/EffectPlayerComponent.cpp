@@ -6,7 +6,7 @@
 
 UEffectPlayerComponent::UEffectPlayerComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UEffectPlayerComponent::BeginPlay()
@@ -19,12 +19,7 @@ void UEffectPlayerComponent::BeginPlay()
 	}
 }
 
-void UEffectPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-void UEffectPlayerComponent::PlayHitParticle(const FVector& HitLocation)
+/*void UEffectPlayerComponent::PlayHitParticle(const FVector& HitLocation)
 {
 	if (HitParticle)
 	{
@@ -36,27 +31,14 @@ void UEffectPlayerComponent::PlayBeamParticle(const FTransform& Start, const FVe
 {
 	if (SmokeBeamParticle)
 	{
-		/** Spawn the Beam Particle and Store in the variable */
+		/** Spawn the Beam Particle and Store in the variable #1#
 		TObjectPtr<UParticleSystemComponent> BeamParticleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBeamParticle, Start);
 		/** This Particle has the target point and target point represents the end location. If we do not set, the end point is set FVector(0, 0, 0)
-		 * To set this variable we need to store it in variable. */
+		 * To set this variable we need to store it in variable. #1#
 		BeamParticleComponent->SetVectorParameter(FName("Target"), End);
 	}
-}
+}*/
 
-void UEffectPlayerComponent::PlayFireSoundCue()
-{
-	if (FireSoundCue)
-	{
-		UGameplayStatics::PlaySound2D(this, FireSoundCue);
-	}
-}
+/*
 
-void UEffectPlayerComponent::PlayBarrelMuzzleFlash()
-{
-	if (MuzzleFlash && OwnerRef && OwnerRef->GetEquippedWeapon())
-	{
-		FTransform BarrelSocketTransform = OwnerRef->GetEquippedWeapon()->GetBarrelSocketTransform();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, BarrelSocketTransform);
-	}
-}
+}*/

@@ -15,7 +15,6 @@ class TPS_GAME_API UEffectPlayerComponent : public UActorComponent
 
 public:	
 	UEffectPlayerComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,10 +30,4 @@ private:
 	TObjectPtr<UParticleSystem> HitParticle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UParticleSystem> SmokeBeamParticle;
-
-public:
-	void PlayHitParticle(const FVector& HitLocation);
-	void PlayBeamParticle(const FTransform& Start, const FVector& End);
-	void PlayFireSoundCue();
-	void PlayBarrelMuzzleFlash();		
 };
