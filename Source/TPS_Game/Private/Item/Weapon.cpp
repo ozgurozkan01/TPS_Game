@@ -44,6 +44,11 @@ void AWeapon::BeginPlay()
 	Super::BeginPlay();
 	SetWeaponRarityTableProperties();
 	SetWeaponTableProperties();
+
+	if (BoneToHide != FName(""))
+	{
+		GetItemMesh()->HideBoneByName(BoneToHide, PBO_None);
+	}
 	
 	InformationWidgetObject = Cast<UInformationPopUp>(InformationWidgetComponent->GetUserWidgetObject());
 
@@ -269,6 +274,8 @@ void AWeapon::SetWeaponTableProperties()
 		case EWeaponType::EWT_AssaultRifle:
 			WeaponTableRow = WeaponDataTable->FindRow<FWeaponTable>(FName("AssaultRifle"), TEXT(""));
 			break;
+		case EWeaponType::EWT_Pistol:
+			WeaponTableRow = WeaponDataTable->FindRow<FWeaponTable>(FName("Pistol"), TEXT(""));
 		}
 
 		if (WeaponTableRow)
@@ -294,6 +301,7 @@ void AWeapon::SetWeaponTableProperties()
 			CrosshairMiddle = WeaponTableRow->CrosshairMiddle;
 			FireSoundCue = WeaponTableRow->FireSoundCue;
 			AutoFireRate = WeaponTableRow->AutoFireRate;
+			BoneToHide = WeaponTableRow->BoneToHide;
 			
 			if (MaterialInstance)
 			{
