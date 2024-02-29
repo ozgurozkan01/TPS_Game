@@ -42,7 +42,7 @@ bool UWeaponSlotWidget::IsWeaponInSlot()
 
 UTexture2D* UWeaponSlotWidget::GetBackgrounImage()
 {
-	if (IsWeaponInSlot())
+	if (IsWeaponInSlot() && WeaponRef && WeaponRef->GetSlotBackgroundImage())
 	{
 		 return WeaponRef->GetSlotBackgroundImage();
 	}
@@ -52,7 +52,7 @@ UTexture2D* UWeaponSlotWidget::GetBackgrounImage()
 
 UTexture2D* UWeaponSlotWidget::GetAmmoIcon()
 {
-	if (IsWeaponInSlot())
+	if (IsWeaponInSlot() && WeaponRef)
 	{
 		return AmmoIconMap[WeaponRef->GetWeaponType()];
 	}
@@ -62,7 +62,7 @@ UTexture2D* UWeaponSlotWidget::GetAmmoIcon()
 
 UTexture2D* UWeaponSlotWidget::GetWeaponIcon()
 {
-	if (IsWeaponInSlot())
+	if (IsWeaponInSlot() && WeaponRef)
 	{
 		return WeaponIconMap[WeaponRef->GetWeaponType()];
 	}
@@ -72,7 +72,7 @@ UTexture2D* UWeaponSlotWidget::GetWeaponIcon()
 
 FText UWeaponSlotWidget::GetAmmoText()
 {
-	if (IsWeaponInSlot())
+	if (IsWeaponInSlot() && WeaponRef)
 	{
 		FString AmmoString = FString::FromInt(WeaponRef->GetCurrentAmmo());
 		return FText::FromString(AmmoString);
