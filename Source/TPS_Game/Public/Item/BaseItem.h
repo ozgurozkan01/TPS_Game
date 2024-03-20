@@ -69,6 +69,10 @@ protected:
 	void FinishInterping();
 	void StartGlowPulseTimer();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> PickupSoundCue;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> EquipSoundCue;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> ItemMesh;	
 	/** Line Trace collides with it to show the HUD which has information about item */
@@ -126,11 +130,7 @@ private:
 	float YawRotationRate;
 	float ItemInitialYawOffset;
 	bool bCanIdleMove;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<USoundBase> PickupSoundCue;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<USoundBase> EquipSoundCue;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> ExchangeSoundCue;
 
