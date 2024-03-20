@@ -34,7 +34,6 @@ private:
 	TObjectPtr<AShooterCharacter> OwnerRef;
 	
 	/** Automatic Fire Factors*/
-	float AutomaticFireRate;
 	FTimerHandle AutomaticFireHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=State, meta=(AllowPrivateAccess = "true"))
