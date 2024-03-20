@@ -283,8 +283,8 @@ void AWeapon::SetWeaponTableProperties()
 			AmmoType = WeaponTableRow->AmmoType;
 			CurrentAmmoAmount = WeaponTableRow->CurrentAmmoAmount;
 			MagazineCapacity = WeaponTableRow->MazagineCapacity;
-			PickupSound = WeaponTableRow->PickupSound;
-			EquipSound = WeaponTableRow->EquipSound;
+			PickupSoundCue = WeaponTableRow->PickupSound;
+			EquipSoundCue = WeaponTableRow->EquipSound;
 			ItemMesh->SetSkeletalMesh(WeaponTableRow->WeaponMesh);
 			AmmoIcon = WeaponTableRow->AmmoIcon;
 			WeaponIcon = WeaponTableRow->WeaponIcon;

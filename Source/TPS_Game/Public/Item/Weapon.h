@@ -87,10 +87,6 @@ private: // Variables
 	
 	/** Weapon Data Table Varibles */
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
-	TObjectPtr<USoundBase> PickupSound;
-	UPROPERTY(EditDefaultsOnly, Category="Table Property")
-	TObjectPtr<USoundBase> EquipSound;
-	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	TObjectPtr<UTexture2D> AmmoIcon;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	TObjectPtr<UTexture2D> WeaponIcon;
