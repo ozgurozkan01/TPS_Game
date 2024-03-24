@@ -34,6 +34,9 @@ protected:
 	void StopFalling();
 
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
+
+	void FinishMovingSlide();
+	void UpdateSlideDisplacement();
 	
 private: // Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess = "true"))
@@ -107,7 +110,25 @@ private: // Variables
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	float AutoFireRate;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
-	FName BoneToHide;	
+	FName BoneToHide;
+
+	// Pistol Slider Values
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UCurveFloat> SlideDisplacementCurve;
+	/** Current Displacement Value */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
+	float CurrentSlideDisplacement;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
+	float CurrentRecoilRotation;
+	FTimerHandle SlideTimer;
+	/** How long it will slide */
+	float SlideDisplacementTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
+	/** How far it will slide */
+	float MaxSlideDisplacement;
+	float MaxRecoilRotation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
+	bool bIsSliding;
 public:
 
 	void PlayFireSoundCue();
@@ -121,6 +142,8 @@ public:
 
 	void SetWeaponRarityTableProperties();
 	void SetWeaponTableProperties();
+
+	void StartSlideTimer();
 	
 	// Setters
 	void ReloadAmmo(int32 Ammo);
@@ -129,6 +152,8 @@ public:
 	// Getters
 	const USkeletalMeshSocket* GetBarrelSocket() const;
 	FTransform GetBarrelSocketTransform() const;
+	FORCEINLINE float GetSlideDisplacement() const { return CurrentSlideDisplacement; }
+	FORCEINLINE float GetRecoilRotation() const { return CurrentRecoilRotation; }
 	FORCEINLINE int32 GetCurrentAmmo() const { return CurrentAmmoAmount; }
 	FORCEINLINE int32 GetMagazineCapacity() const { return MagazineCapacity; }
 	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
