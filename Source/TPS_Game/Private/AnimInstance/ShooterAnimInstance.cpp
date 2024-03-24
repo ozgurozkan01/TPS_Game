@@ -28,7 +28,8 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	LeanCharacterRotationLastFrame(FRotator::ZeroRotator),
 	LeanDeltaYawOffset(0.f),
 	bIsTurningInPlace(false),
-	RecoilWeight(0.f)
+	RecoilWeight(0.f),
+	bShouldUseFABRIK(true)
 {
 }
 
@@ -43,6 +44,7 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
 	UpdateAnimationTransitionVariables();
+	GEngine->AddOnScreenDebugMessage(100, -1, FColor::Red, FString::Printf(TEXT("%f"), RecoilWeight));
 }
 
 FRotator UShooterAnimInstance::GetAimRotation()
@@ -199,21 +201,36 @@ void UShooterAnimInstance::UpdateRecoilWeight()
 {
 	if (bIsTurningInPlace)
 	{
-		if (bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
-		else { RecoilWeight = 0.f; }
+		if (bIsReloading || bIsEquipping)
+		{
+			RecoilWeight = 1.f;
+		}
+		else
+		{
+			RecoilWeight = 0.f;
+		}
 	}
 	else
 	{
 		if (bIsCrouching)
 		{
-			if (bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
-			else { RecoilWeight = 0.1f; }
+			if (bIsReloading || bIsEquipping)
+			{
+				RecoilWeight = 1.f;
+			}
+			else
+			{
+				RecoilWeight = 0.1f;
+			}
 		}
 
 		else
 		{
-			if (bIsAiming || bIsReloading || bIsEquipping) { RecoilWeight = 1.f; }
-			else { RecoilWeight = 0.5f; }			
+			if (bIsAiming || bIsReloading || bIsEquipping)
+			{
+				RecoilWeight = 1.f;
+			}
+			else { RecoilWeight = 0.1f; }			
 		}
 	}
 }

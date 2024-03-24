@@ -9,7 +9,6 @@
 #include "Components/CombatComponent.h"
 #include "Components/TracerComponent.h"
 #include "Components/CrosshairAnimatorComponent.h"
-#include "Components/EffectPlayerComponent.h"
 #include "Components/InventoryComponent.h"
 #include "Components/MotionComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -20,7 +19,7 @@
 AShooterCharacter::AShooterCharacter() :
 	// Camera Field Of View values to use aiming/not aiming
 	CameraDefaultFOV(0.f),
-	CameraZoomedFOV(25.f),
+	CameraZoomedFOV(40.f),
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
 	CameraForwardDistance(120.f),

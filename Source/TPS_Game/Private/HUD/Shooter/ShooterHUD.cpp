@@ -37,7 +37,7 @@ FVector2D AShooterHUD::CalculateCrosshairLocation(int32 ScreenWidth, int32 Scree
 	int32 CenterY = ScreenHeight / 2;
 
 	FVector2D ScreenCenter {FVector2D(CenterX, CenterY)};
-	FVector2D CrosshairLocation {FVector2D(ScreenCenter.X - (CrosshairWidth / 2), ScreenCenter.Y - (CrosshairHeight / 2))};
+	FVector2D CrosshairLocation {FVector2D(ScreenCenter.X - (CrosshairWidth / 2), ScreenCenter.Y - (CrosshairHeight / 2) + CrosshairLocationShifting)};
 
 	return CrosshairLocation;
 }

@@ -40,7 +40,9 @@ private:
 	int32 CrosshairWidth = 48;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
 	int32 CrosshairHeight = 48;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess))
+	int32 CrosshairLocationShifting = 20;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess))
 	TObjectPtr<AShooterCharacter> ShooterCharacter;
 };
