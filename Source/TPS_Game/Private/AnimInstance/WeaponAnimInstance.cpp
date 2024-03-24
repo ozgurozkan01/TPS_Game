@@ -3,8 +3,8 @@
 
 #include "AnimInstance/WeaponAnimInstance.h"
 #include "Character/ShooterCharacter.h"
-#include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
+#include "Item/Weapon.h"
 
 void UWeaponAnimInstance::NativeInitializeAnimation()
 {
@@ -39,5 +39,11 @@ void UWeaponAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		LeftHandSceneCompTransform = ShooterRef->GetLeftHandSceneCompTransform();
 		bIsMovingMagazine = OwningWeaponRef->IsMovingClip();
+
+		if (OwningWeaponRef->GetWeaponType() == EWeaponType::EWT_Pistol)
+		{
+			SlideDisplacement = OwningWeaponRef->GetSlideDisplacement() * -1.f;
+			RecoilRotation = OwningWeaponRef->GetRecoilRotation() * -1.f;
+		}
 	}
 }
