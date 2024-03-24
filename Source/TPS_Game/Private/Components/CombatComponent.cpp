@@ -44,7 +44,12 @@ void UCombatComponent::ShootingStart()
 		OwnerRef->GetEquippedWeapon()->PlayFireSoundCue();
 		OwnerRef->GetEquippedWeapon()->PlayBarrelMuzzleFlash();
 		OwnerRef->GetEquippedWeapon()->DecremenetAmmo();
-		StartFireTimer();	
+		StartFireTimer();
+
+		if (OwnerRef->GetEquippedWeapon()->GetWeaponType() == EWeaponType::EWT_Pistol)
+		{
+			OwnerRef->GetEquippedWeapon()->StartSlideTimer();
+		}
 	}
 }
 
