@@ -31,4 +31,8 @@ private:
 	/** Controller for magazine movement while reloading */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
 	bool bIsMovingMagazine;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
+	float SlideDisplacement;	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Animation, meta=(AllowPrivateAccess="true"))
+	float RecoilRotation;
 };
