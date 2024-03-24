@@ -22,7 +22,12 @@ AWeapon::AWeapon() :
 	AmmoType(EAmmoType::EAT_9mm),
 	ReloadingMontageSection(FName(TEXT("Reload SMG"))),
 	bIsMovingMagazine(false),
-	SlotIndex(0)
+	SlotIndex(0),
+	CurrentSlideDisplacement(0),
+	CurrentRecoilRotation(0),
+	SlideDisplacementTime(.2f),
+	MaxSlideDisplacement(4.f),
+	MaxRecoilRotation(20.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -75,6 +80,8 @@ void AWeapon::Tick(float DeltaSeconds)
 		const FRotator MeshRotation {0.f, GetItemMesh()->GetComponentRotation().Yaw, 0.f};
 		GetItemMesh()->SetWorldRotation(MeshRotation, false, nullptr, ETeleportType::TeleportPhysics);
 	}
+
+	UpdateSlideDisplacement();
 }
 
 void AWeapon::ThrowWeapon()
@@ -312,6 +319,33 @@ void AWeapon::SetWeaponTableProperties()
 				
 		}
 	}
+}
+
+void AWeapon::FinishMovingSlide()
+{
+	bIsSliding = false;
+}
+
+void AWeapon::UpdateSlideDisplacement()
+{
+	if (SlideDisplacementCurve && bIsSliding)
+	{
+		const float ElapsedTime =  GetWorldTimerManager().GetTimerElapsed(SlideTimer);
+		const float CurveFloatValue = SlideDisplacementCurve->GetFloatValue(ElapsedTime); // Current Curve Value
+		CurrentSlideDisplacement = CurveFloatValue * MaxSlideDisplacement; // Scale Sliding Amount
+		CurrentRecoilRotation = CurveFloatValue * MaxRecoilRotation;
+	}
+}
+
+void AWeapon::StartSlideTimer()
+{
+	bIsSliding = true;
+	GetWorldTimerManager().SetTimer(
+		SlideTimer,
+		this,
+		&AWeapon::FinishMovingSlide,
+		SlideDisplacementTime
+	);
 }
 
 void AWeapon::PlayFireSoundCue()
