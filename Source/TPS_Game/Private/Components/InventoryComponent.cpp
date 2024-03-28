@@ -126,6 +126,8 @@ void UInventoryComponent::ExchangeInventoryItems(int32 CurrentItemIndex, int32 N
 
 	if (OwnerRef->GetCombatComponent() && OwnerRef->GetCombatComponent()->GetCombatState() == ECombatState::ECS_Unoccupied)
 	{
+		OwnerRef->GetCombatComponent()->SetIsAiming(false);
+		
 		auto OldEquippedWeapon = OwnerRef->GetEquippedWeapon();
 		auto NewEquippedWeapon = Inventory[NewItemIndex];
 
