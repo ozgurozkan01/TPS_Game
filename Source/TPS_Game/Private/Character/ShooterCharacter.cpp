@@ -146,7 +146,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &AShooterCharacter::SelectButtonPressed);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AShooterCharacter::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Triggered, this, &AShooterCharacter::CrouchingButtonPressed);
-		
+		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonReleased);
+
 		EnhancedInputComponent->BindAction(Key_1_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyOnePressed);
 		EnhancedInputComponent->BindAction(Key_2_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyTwoPressed);
 		EnhancedInputComponent->BindAction(Key_3_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyThreePressed);
@@ -178,17 +179,26 @@ void AShooterCharacter::LookAround(const FInputActionValue& Value)
 
 void AShooterCharacter::OpenScope(const FInputActionValue& Value)
 {
-	bool bIsScopeOpen = Value.Get<bool>();
+	bAimingButtonPressed = Value.Get<bool>();
 
-	if (bIsScopeOpen && CombatComponent && CombatComponent->GetCombatState() != ECombatState::ECS_Reloading && MotionComponent)
+	if (bAimingButtonPressed &&
+		CombatComponent &&
+		CombatComponent->GetCombatState() != ECombatState::ECS_Reloading &&
+		CombatComponent->GetCombatState() != ECombatState::ECS_Equipping &&
+		MotionComponent)
 	{
+		GEngine->AddOnScreenDebugMessage(-1 , -1, FColor::Green, TEXT("OpenScope"));
 		CombatComponent->StartAim();
 	}
 }
 
 void AShooterCharacter::CloseScope(const FInputActionValue& Value)
 {
-	if (MotionComponent) { CombatComponent->StopAim(); }
+	if (MotionComponent)
+	{
+		bAimingButtonPressed = false;
+		CombatComponent->StopAim();
+	}
 }
 
 void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
