@@ -65,6 +65,11 @@ void UAnimatorComponent::FinishEquipping()
 	if (OwnerRef->GetCombatComponent())
 	{
 		OwnerRef->GetCombatComponent()->SetCombatState(ECombatState::ECS_Unoccupied);
+
+		if (OwnerRef->GetIsAimingButtonPressed())
+		{
+			OwnerRef->GetCombatComponent()->SetIsAiming(true);
+		}
 	}
 }
 
