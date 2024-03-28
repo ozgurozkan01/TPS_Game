@@ -52,4 +52,6 @@ struct FWeaponTable : public FTableRowBase
 	TObjectPtr<USoundBase> FireSoundCue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	FName BoneToHide;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	bool bIsAutomatic;	
 };
