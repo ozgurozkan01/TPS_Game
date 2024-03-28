@@ -309,16 +309,22 @@ void AWeapon::SetWeaponTableProperties()
 			FireSoundCue = WeaponTableRow->FireSoundCue;
 			AutoFireRate = WeaponTableRow->AutoFireRate;
 			BoneToHide = WeaponTableRow->BoneToHide;
+			bIsAutomatic = WeaponTableRow->bIsAutomatic;
 			
 			if (MaterialInstance)
 			{
 				DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
 				DynamicMaterialInstance->SetVectorParameterValue(TEXT("FresnelColor"), GlowColor);
+
+				SetGlowMaterialEnabled(0.1f);
+				StartGlowPulseTimer();
 				ItemMesh->SetMaterial(MaterialIndex, DynamicMaterialInstance);
 			}
-				
 		}
 	}
+
+	SetGlowMaterialEnabled(0.1f);
+	StartGlowPulseTimer();
 }
 
 void AWeapon::FinishMovingSlide()
