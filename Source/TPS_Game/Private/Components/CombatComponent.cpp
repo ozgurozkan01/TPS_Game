@@ -89,7 +89,7 @@ void UCombatComponent::AutomaticFireReset()
 	{
 		if (OwnerRef->GetEquippedWeapon()->GetCurrentAmmo() > 0)
 		{
-			if (OwnerRef->GetIsFireButtonPressed())
+			if (OwnerRef->GetEquippedWeapon()->IsAutomatic() && OwnerRef->GetIsFireButtonPressed())
 			{
 				ShootingStart();
 			}	
