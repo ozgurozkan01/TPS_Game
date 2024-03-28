@@ -67,13 +67,6 @@ ABaseItem::ABaseItem() :
 void ABaseItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
-	
-	if (MaterialInstance)
-	{
-		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
-		SetGlowMaterialEnabled(1.f);
-	}
 }
 
 void ABaseItem::BeginPlay()
@@ -85,9 +78,6 @@ void ABaseItem::BeginPlay()
 
 	SetItemState(ItemState);
 	SetCustomDepthEnabled(false);
-	SetGlowMaterialEnabled(0.1f);
-	
-	StartGlowPulseTimer();
 }
 
 void ABaseItem::Tick(float DeltaTime)
@@ -409,10 +399,13 @@ void ABaseItem::UpdateGlowPulseScalars()
 	if (ItemState == EItemState::EIS_Pickup && GlowPulseCurve)
 	{
 		const float ElapsedTime { GetWorldTimerManager().GetTimerElapsed(PulseTimerHandle)};
-		const FVector PulseCurve { GlowPulseCurve->GetVectorValue(ElapsedTime)}; 
-		
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), GlowAmount * PulseCurve.X);
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelExponent"), FresnelExponent * PulseCurve.Y);
-		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelReflectFraction"), FresnelReflectFraction * PulseCurve.Z);
+		const FVector PulseCurve { GlowPulseCurve->GetVectorValue(ElapsedTime)};
+
+		if (DynamicMaterialInstance)
+		{
+			DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), GlowAmount * PulseCurve.X);
+			DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelExponent"), FresnelExponent * PulseCurve.Y);
+			DynamicMaterialInstance->SetScalarParameterValue(TEXT("FresnelReflectFraction"), FresnelReflectFraction * PulseCurve.Z);
+		}
 	}
 }
