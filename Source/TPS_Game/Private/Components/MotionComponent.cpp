@@ -36,6 +36,7 @@ void UMotionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	SetLookRates();
 	UpdateCapsuleHalfHeight(DeltaTime);
+	GEngine->AddOnScreenDebugMessage(-11, -1, FColor::Black, FString::Printf(TEXT("%d"), bIsCrouching));
 }
 
 void UMotionComponent::Movement(const FVector2D& Value)
