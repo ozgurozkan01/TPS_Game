@@ -116,7 +116,8 @@ private:
 	float CameraZoomInterpSpeed;
 
 	bool bFireButtonPressed;
-
+	bool bAimingButtonPressed;
+	
 	/** Default Weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<AWeapon> EquippedWeapon;
@@ -214,4 +215,5 @@ public:
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
 	FORCEINLINE bool GetIsFireButtonPressed() const { return bFireButtonPressed; }
+	FORCEINLINE bool GetIsAimingButtonPressed() const { return bAimingButtonPressed; }
 };
