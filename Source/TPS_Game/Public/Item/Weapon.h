@@ -111,6 +111,8 @@ private: // Variables
 	float AutoFireRate;
 	UPROPERTY(EditDefaultsOnly, Category="Table Property")
 	FName BoneToHide;
+	UPROPERTY(EditDefaultsOnly, Category="Table Property")
+	bool bIsAutomatic;
 
 	// Pistol Slider Values
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
@@ -129,6 +131,7 @@ private: // Variables
 	float MaxRecoilRotation;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
 	bool bIsSliding;
+
 public:
 
 	void PlayFireSoundCue();
@@ -162,6 +165,7 @@ public:
 	FORCEINLINE FName GetReloadingWeaponSection() const { return ReloadingMontageSection; }
 	FORCEINLINE FName GetMagazineBoneName() const { return MagazineBoneName; }
 	FORCEINLINE bool IsMovingClip() const { return bIsMovingMagazine; }
+	FORCEINLINE bool IsAutomatic() const { return bIsAutomatic; }
 	FORCEINLINE TObjectPtr<UInformationPopUp> GetInformationWidgetObject() const { return InformationWidgetObject; };
 	FORCEINLINE UTexture2D* GetSlotBackgroundImage() const { return SlotBackgroundImage; }
 	FORCEINLINE TObjectPtr<UTexture> GetCrosshairLeftImage() const { return CrosshairLeft; }
