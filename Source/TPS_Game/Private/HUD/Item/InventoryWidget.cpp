@@ -76,5 +76,8 @@ void UInventoryWidget::OnHighlightWeaponSlot(int32 SlotIndex, bool bStartAnimati
 		return;
 	}
 
-	WeaponSlotMap[SlotIndex]->StopHightlightAnimation();
+	if (SlotIndex >= 0)
+	{
+		WeaponSlotMap[SlotIndex]->StopHightlightAnimation();
+	}
 }
