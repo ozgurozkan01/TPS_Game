@@ -1,15 +1,13 @@
 #include "Components/CombatComponent.h"
 #include "Character/ShooterCharacter.h"
 #include "Components/AnimatorComponent.h"
-#include "Components/EffectPlayerComponent.h"
 #include "Components/InventoryComponent.h"
 #include "Components/TracerComponent.h"
 #include "Item/Weapon.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/MotionComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Controller/ShooterCameraShake.h"
 
 UCombatComponent::UCombatComponent() :
 	// Automatic Gun Fire Factors
@@ -44,6 +42,7 @@ void UCombatComponent::ShootingStart()
 		OwnerRef->GetEquippedWeapon()->PlayFireSoundCue();
 		OwnerRef->GetEquippedWeapon()->PlayBarrelMuzzleFlash();
 		OwnerRef->GetEquippedWeapon()->DecremenetAmmo();
+		ShakeCamera();
 		StartFireTimer();
 
 		if (OwnerRef->GetEquippedWeapon()->GetWeaponType() == EWeaponType::EWT_Pistol)
@@ -155,5 +154,19 @@ void UCombatComponent::FinishReloading()
 			
 			OwnerRef->GetInventoryComponent()->UpdateAmmoMap(AmmoType, CarriedAmmo);
 		}	
+	}
+}
+
+void UCombatComponent::ShakeCamera()
+{
+	if (OwnerRef)
+	{
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(
+		GetWorld(),
+		CameraShakeClass,
+		OwnerRef->GetActorLocation(),
+		0.f,
+		1000.f,
+		1.f	);	
 	}
 }
