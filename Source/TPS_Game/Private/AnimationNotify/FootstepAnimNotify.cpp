@@ -3,15 +3,18 @@
 
 #include "AnimationNotify/FootstepAnimNotify.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void UFootstepAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-	const FAnimNotifyEventReference& EventReference)
+                                 const FAnimNotifyEventReference& EventReference)
 {
-	if (GEngine)
+	//ConstructorHelpers::FObjectFinder<USoundBase> FoundSound(TEXT("OBJECT PATH"));
+	//FootstepCue = FoundSound.Object;
+	
+	if (FootstepCue && MeshComp)
 	{
-		GEngine->AddOnScreenDebugMessage(250,
-								10,
-								FColor::Red,
-								FString::Printf(TEXT("Bone Name : %s"),
-								*BoneName.ToString()));
+		FVector SocketLocation = MeshComp->GetSocketLocation(SocketNameOnBone);
+		// Play Footstep Sound
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepCue, SocketLocation);
 	}
 }
