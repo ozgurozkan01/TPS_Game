@@ -6,6 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "FootstepAnimNotify.generated.h"
 
+class USoundCue;
 /**
  * 
  */
@@ -16,6 +17,8 @@ class TPS_GAME_API UFootstepAnimNotify : public UAnimNotify
 public:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 private:
-	UPROPERTY(EditDefaultsOnly, Category="Notify Properties", meta=(AllowPrivateAccess="true"))
-	FName BoneName;
+	UPROPERTY(EditAnywhere, Category="Notify Properties", meta=(AllowPrivateAccess="true"))
+	FName SocketNameOnBone;
+	UPROPERTY(EditAnywhere, Category="Notify Properties", meta=(AllowPrivateAccess="true"))
+	USoundBase* FootstepCue;
 };
