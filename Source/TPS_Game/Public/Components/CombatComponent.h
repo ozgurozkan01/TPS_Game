@@ -9,6 +9,7 @@
 class AShooterCharacter;
 class UShooterAnimInstance;
 class USoundCue;
+class ULegacyCameraShake;
 
 UENUM(BlueprintType)
 enum class ECombatState
@@ -35,14 +36,16 @@ private:
 	
 	/** Automatic Fire Factors*/
 	FTimerHandle AutomaticFireHandle;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=State, meta=(AllowPrivateAccess = "true"))
 	ECombatState CombatState;
-
+	// Camera Shaking
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	TSubclassOf<ULegacyCameraShake> CameraShakeClass;
 	
 	bool bAiming; 
 	bool bIsScopeOpen;
 
+	
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -56,6 +59,8 @@ public:
 
 	void ReloadWeapon(); // This function is for reloading weapon automatically when the magazine is empty 
 	void FinishReloading();
+
+	void ShakeCamera();
 	
 	FORCEINLINE void SetCombatState(ECombatState CurrentState) { CombatState = CurrentState; }
 	FORCEINLINE void SetIsAiming(bool bIsAiming) { bAiming = bIsAiming; } 
