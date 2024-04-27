@@ -15,7 +15,7 @@ class TPS_GAME_API UMotionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UMotionComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
