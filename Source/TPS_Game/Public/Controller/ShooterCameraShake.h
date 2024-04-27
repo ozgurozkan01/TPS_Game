@@ -13,5 +13,6 @@ UCLASS()
 class TPS_GAME_API UShooterCameraShake : public ULegacyCameraShake
 {
 	GENERATED_BODY()
-	
+public:
+	UShooterCameraShake();
 };
