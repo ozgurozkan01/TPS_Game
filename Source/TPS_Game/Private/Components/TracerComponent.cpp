@@ -186,6 +186,25 @@ void UTracerComponent::LineTraceForInformationPopUp()
 	}
 }
 
+void UTracerComponent::LineTraceThroughFloor()
+{
+	if (MainCharacter)
+	{
+		FHitResult GroundHit;
+		FVector Start {MainCharacter->GetActorLocation()};
+		FVector End {Start + FVector(0.f, 0.f, -400.f)};
+		FCollisionQueryParams QueryParams;
+		QueryParams.bReturnPhysicalMaterial = true;
+			
+		GetWorld()->LineTraceSingleByChannel(GroundHit, Start, End, ECC_Visibility, QueryParams);
+
+		if (GroundHit.GetActor())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GroundHit.GetActor()->GetActorNameOrLabel());			
+		}
+	}
+}
+
 void UTracerComponent::CrosshairStartFireBullet()
 {
 	bFiring = true;

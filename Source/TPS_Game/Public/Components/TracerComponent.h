@@ -51,4 +51,8 @@ public:
 	void InterpolateItem();
 	void IncrementOverlappedItemCount(int8 Amount);
 	FVector GetBeamEndPoint();
+
+	UFUNCTION(BlueprintCallable)
+	void LineTraceThroughFloor();
+
 };
