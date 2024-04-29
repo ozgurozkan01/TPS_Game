@@ -10,6 +10,8 @@
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "TPS_Game/TPS_Game.h"
 
 // Sets default values for this component's properties
 UTracerComponent::UTracerComponent() :
@@ -186,25 +188,6 @@ void UTracerComponent::LineTraceForInformationPopUp()
 	}
 }
 
-void UTracerComponent::LineTraceThroughFloor()
-{
-	if (MainCharacter)
-	{
-		FHitResult GroundHit;
-		FVector Start {MainCharacter->GetActorLocation()};
-		FVector End {Start + FVector(0.f, 0.f, -400.f)};
-		FCollisionQueryParams QueryParams;
-		QueryParams.bReturnPhysicalMaterial = true;
-			
-		GetWorld()->LineTraceSingleByChannel(GroundHit, Start, End, ECC_Visibility, QueryParams);
-
-		if (GroundHit.GetActor())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GroundHit.GetActor()->GetActorNameOrLabel());			
-		}
-	}
-}
-
 void UTracerComponent::CrosshairStartFireBullet()
 {
 	bFiring = true;
@@ -255,6 +238,30 @@ FVector UTracerComponent::GetBeamEndPoint()
 	}
 
 	return FVector::ZeroVector;
+}
+
+EPhysicalSurface UTracerComponent::GetSurfaceType()
+{
+	if (MainCharacter)
+	{
+		FHitResult GroundHit;
+		FVector Start {MainCharacter->GetActorLocation()};
+		FVector End {Start + FVector(0.f, 0.f, -400.f)};
+		FCollisionQueryParams QueryParams;
+		QueryParams.bReturnPhysicalMaterial = true;
+			
+		GetWorld()->LineTraceSingleByChannel(GroundHit, Start, End, ECC_Visibility, QueryParams);
+
+		if (GroundHit.bBlockingHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TEST"));
+			return UPhysicalMaterial::DetermineSurfaceType(GroundHit.PhysMaterial.Get());			
+		}
+		
+		return SurfaceType_Default;
+	}
+
+	return SurfaceType_Default;
 }
 
 void UTracerComponent::IncrementOverlappedItemCount(int8 Amount)

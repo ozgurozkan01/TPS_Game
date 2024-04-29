@@ -53,6 +53,6 @@ public:
 	FVector GetBeamEndPoint();
 
 	UFUNCTION(BlueprintCallable)
-	void LineTraceThroughFloor();
+	EPhysicalSurface GetSurfaceType();
 
 };
