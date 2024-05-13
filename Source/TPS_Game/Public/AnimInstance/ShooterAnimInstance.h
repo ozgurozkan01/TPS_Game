@@ -97,4 +97,7 @@ private:
 	EWeaponType ShooterWeaponType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
 	bool bShouldUseFABRIK;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
+	bool bShouldTurnHip;	
+    float MinAngleTurningHip;
 };
