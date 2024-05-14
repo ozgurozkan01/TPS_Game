@@ -98,6 +98,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
 	bool bShouldUseFABRIK;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
-	bool bShouldTurnHip;	
-    float MinAngleTurningHip;
+	bool bShouldTurnHip;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=FABRIK, meta=(AllowPrivateAccess = "true"))
+	bool bRunningBackwards;
+	float MaxAngleTurningHipForward;
+	float MinAngleTurnHipBackward;
 };

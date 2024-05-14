@@ -31,7 +31,8 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	RecoilWeight(0.f),
 	bShouldUseFABRIK(true),
 	bShouldTurnHip(true),
-	MinAngleTurningHip(60.f)
+	MaxAngleTurningHipForward(60.f),
+	MinAngleTurnHipBackward(120.f)
 {
 }
 
@@ -48,7 +49,8 @@ void UShooterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	UpdateAnimationTransitionVariables();
 	GEngine->AddOnScreenDebugMessage(100, -1, FColor::Red, FString::Printf(TEXT("%f"), RecoilWeight));
 
-	bShouldTurnHip = FMath::Abs(MovementOffsetYaw) < MinAngleTurningHip && !bIsCrouching && bIsAccelerating;
+	bShouldTurnHip = FMath::Abs(MovementOffsetYaw) < MaxAngleTurningHipForward && !bIsCrouching && bIsAccelerating;
+	bRunningBackwards = FMath::Abs(MovementOffsetYaw) > MinAngleTurnHipBackward && !bIsCrouching && bIsAccelerating;
 }
 
 FRotator UShooterAnimInstance::GetAimRotation()
