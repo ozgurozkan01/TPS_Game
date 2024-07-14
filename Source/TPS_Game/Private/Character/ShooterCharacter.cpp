@@ -23,7 +23,9 @@ AShooterCharacter::AShooterCharacter() :
 	CameraCurrentFOV(0.f),
 	CameraZoomInterpSpeed(25.f),
 	CameraForwardDistance(120.f),
-	CameraUpDistance(30.f)
+	CameraUpDistance(30.f),
+	bFireButtonPressed(false),
+	bAimingButtonPressed(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -147,7 +149,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AShooterCharacter::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Triggered, this, &AShooterCharacter::CrouchingButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchingAction, ETriggerEvent::Completed, this, &AShooterCharacter::CrouchingButtonReleased);
-
+		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Started, this,  &AShooterCharacter::SlidingButtonPressed);
+		
 		EnhancedInputComponent->BindAction(Key_1_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyOnePressed);
 		EnhancedInputComponent->BindAction(Key_2_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyTwoPressed);
 		EnhancedInputComponent->BindAction(Key_3_Action, ETriggerEvent::Started, this, &AShooterCharacter::KeyThreePressed);
@@ -163,7 +166,7 @@ void AShooterCharacter::Jump()
 
 void AShooterCharacter::Movement(const FInputActionValue& Value)
 {
-	if (!GetCharacterMovement()->IsFalling() && MotionComponent)
+	if (!GetCharacterMovement()->IsFalling() && MotionComponent && !GetMotionComponent()->IsSlidingOnGround())
 	{
 		FVector2D MovementDirection = Value.Get<FVector2D>();
 		MotionComponent->Movement(MovementDirection);
@@ -291,6 +294,30 @@ void AShooterCharacter::KeyFivePressed(const FInputActionValue& Value)
 	if (InventoryComponent)
 	{
 		InventoryComponent->ExchangeInventoryItems(EquippedWeapon->GetSlotIndex(), 5);
+	}
+}
+
+void AShooterCharacter::SlidingButtonPressed(const FInputActionValue& Value)
+{
+	bool bSlidingKeyPressed = Value.Get<bool>();
+
+	/*FString Sliding = bSlidingKeyPressed? "true" : "false";
+	FString CanSliding = GetMotionComponent()->CanSlide()? "true" : "false";
+
+	UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *Sliding, *CanSliding);*/
+	//UE_LOG(LogTemp, Warning, TEXT("Pressed 1"));
+
+
+	/*FString MoveForward = bSlidingKeyPressed? "true" : "false";
+	FString IsFall = GetMotionComponent()? "true" : "false";
+	FString IsCrouch = GetMotionComponent()->CanSlide()? "true" : "false";
+	FString AimPressed = !GetMotionComponent()->IsSlidingOnGround()? "true" : "false";
+
+	UE_LOG(LogTemp, Warning, TEXT("%s, %s, %s, %s"), *MoveForward, *IsFall, *IsCrouch, *AimPressed);*/
+	
+	if (bSlidingKeyPressed && GetMotionComponent() && GetMotionComponent()->CanSlide() && !GetMotionComponent()->IsSlidingOnGround())
+	{
+		MotionComponent->Slide();
 	}
 }
 

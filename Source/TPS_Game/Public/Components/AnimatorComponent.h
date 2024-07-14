@@ -27,6 +27,8 @@ private:
 	TObjectPtr<UAnimMontage> ReloadMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAnimMontage> EquipWeaponMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAnimMontage> SlidingMontage;
 	UPROPERTY(EditDefaultsOnly, Category=Animation)
 	TObjectPtr<UShooterAnimInstance> ShooterAnimInstance;
 	UPROPERTY()
@@ -37,7 +39,8 @@ public:
 	void PlayGunFireMontage();
 	void PlayReloadWeaponMontage();
 	void PlayEquipWeaponMontage();
-
+	void PlaySlidingMontage();
+	
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 	UFUNCTION(BlueprintCallable)
@@ -46,4 +49,6 @@ public:
 	void GrabMagazine();
 	UFUNCTION(BlueprintCallable)
 	void ReplaceMagazine();
+	UFUNCTION(BlueprintCallable)
+	void FinishSliding();
 };

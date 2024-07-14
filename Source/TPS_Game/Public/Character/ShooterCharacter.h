@@ -82,9 +82,11 @@ private:
 	void KeyFourPressed(const FInputActionValue& Value);
 	UFUNCTION()
 	void KeyFivePressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void SlidingButtonPressed(const FInputActionValue& Value); 
 	
 	void Jump();
-
+	
 	/** Aiming Functions */
 	float InterpCurrentFOV(float TargetFOV, float DeltaTime);
 	void CameraInterpZoom(float DeltaTime);
@@ -139,6 +141,8 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
+	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> SlideAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> FireAction;
 	UPROPERTY(EditDefaultsOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -214,6 +218,6 @@ public:
 	
 	FORCEINLINE TObjectPtr<AWeapon> GetEquippedWeapon() const { return EquippedWeapon; }
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
-	FORCEINLINE bool GetIsFireButtonPressed() const { return bFireButtonPressed; }
-	FORCEINLINE bool GetIsAimingButtonPressed() const { return bAimingButtonPressed; }
+	FORCEINLINE bool IsFireButtonPressed() const { return bFireButtonPressed; }
+	FORCEINLINE bool IsAimingButtonPressed() const { return bAimingButtonPressed; }
 };

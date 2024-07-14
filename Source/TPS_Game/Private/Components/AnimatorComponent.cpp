@@ -5,7 +5,10 @@
 #include "AnimInstance/ShooterAnimInstance.h"
 #include "Character/ShooterCharacter.h"
 #include "Components/CombatComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/MotionComponent.h"
 #include "Item/Weapon.h"
+#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
 UAnimatorComponent::UAnimatorComponent()
 {
@@ -60,13 +63,21 @@ void UAnimatorComponent::PlayEquipWeaponMontage()
 	}
 }
 
+void UAnimatorComponent::PlaySlidingMontage()
+{
+	if (ShooterAnimInstance && SlidingMontage)
+	{
+		ShooterAnimInstance->Montage_Play(SlidingMontage);
+	}
+}
+
 void UAnimatorComponent::FinishEquipping()
 {
 	if (OwnerRef->GetCombatComponent())
 	{
 		OwnerRef->GetCombatComponent()->SetCombatState(ECombatState::ECS_Unoccupied);
 
-		if (OwnerRef->GetIsAimingButtonPressed())
+		if (OwnerRef->IsAimingButtonPressed())
 		{
 			OwnerRef->GetCombatComponent()->SetIsAiming(true);
 		}
@@ -101,6 +112,15 @@ void UAnimatorComponent::ReplaceMagazine()
 	{
 		OwnerRef->GetEquippedWeapon()->SetbIsMovingMagazine(false);
 	}
+}
+
+void UAnimatorComponent::FinishSliding()
+{
+	if (!OwnerRef || !OwnerRef->GetCapsuleComponent() || !OwnerRef->GetMotionComponent()) { return;}
+
+	OwnerRef->GetCapsuleComponent()->SetCapsuleHalfHeight(OwnerRef->GetMotionComponent()->GetRunningHalfHeight());
+	OwnerRef->GetMotionComponent()->SetIsSlidingOnGround(false);
+	OwnerRef->GetMesh()->SetWorldLocation(OwnerRef->GetMesh()->GetComponentLocation() - FVector3d(0, 0, 35));
 }
 
 void UAnimatorComponent::FinishReloading()

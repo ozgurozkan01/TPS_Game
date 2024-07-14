@@ -4,6 +4,7 @@
 #include "Components/MotionComponent.h"
 
 #include "Character/ShooterCharacter.h"
+#include "Components/AnimatorComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,8 +16,10 @@ UMotionComponent::UMotionComponent() :
 	RunningSpeed(650.f),
 	CrouchingSpeed(300.f),
 	bIsCrouching(false),
+	bSlidingOnGround(false),
 	RunningHalfHeight(88.f),
-	CrouchingHalfHeight(50.f)
+	CrouchingHalfHeight(50.f),
+	SlidingHalfHeight(50)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -36,7 +39,8 @@ void UMotionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	SetLookRates();
 	UpdateCapsuleHalfHeight(DeltaTime);
-	GEngine->AddOnScreenDebugMessage(-11, -1, FColor::Black, FString::Printf(TEXT("%d"), bIsCrouching));
+	//GEngine->AddOnScreenDebugMessage(-11, -1, FColor::Black, FString::Printf(TEXT("%d"), bIsCrouching));
+	//OwnerRef->GetCapsuleComponent()->SetWorldRotation(FRotator(0, OwnerRef->GetCapsuleComponent()->GetComponentRotation().Yaw , 0));
 }
 
 void UMotionComponent::Movement(const FVector2D& Value)
@@ -97,7 +101,12 @@ void UMotionComponent::SetLookRates()
 
 void UMotionComponent::UpdateCapsuleHalfHeight(float DeltaTime)
 {
-	bIsCrouching ? TargetHalfHeight = CrouchingHalfHeight : TargetHalfHeight = RunningHalfHeight;
+	if (IsSlidingOnGround())
+	{
+		return;
+	}
+	
+	/*bIsCrouching ? TargetHalfHeight = CrouchingHalfHeight : TargetHalfHeight = RunningHalfHeight;
 
 	if (OwnerRef)
 	{
@@ -112,5 +121,48 @@ void UMotionComponent::UpdateCapsuleHalfHeight(float DeltaTime)
 		OwnerRef->GetMesh()->AddLocalOffset(MeshOffset);
 	
 		OwnerRef->GetCapsuleComponent()->SetCapsuleHalfHeight(InterpHalfHeight);
-	}
+	}*/
+}
+
+void UMotionComponent::Slide()
+{
+	if (!OwnerRef || !OwnerRef->GetCapsuleComponent() || !OwnerRef->GetAnimatorComponent()) { return;}
+
+	OwnerRef->GetCapsuleComponent()->SetCapsuleHalfHeight(SlidingHalfHeight);
+	bSlidingOnGround = false;
+	OwnerRef->GetMesh()->SetWorldLocation(OwnerRef->GetMesh()->GetComponentLocation() + FVector3d(0, 0, 35));
+	OwnerRef->GetAnimatorComponent()->PlaySlidingMontage();
+}
+
+bool UMotionComponent::IsMovingForward()
+{
+	if (!OwnerRef) { return false;}
+	
+	FVector ForwardVector = OwnerRef->GetActorForwardVector();
+	FVector Velocity = OwnerRef->GetVelocity();
+	// Normalize the velocity vector
+	FVector Direction = Velocity.GetSafeNormal();
+	// Calculate the dot product between the forward vector and the direction of movement
+	float DotProduct = FVector::DotProduct(ForwardVector, Direction);
+	// Calculate the angle in radians between the forward vector and the velocity direction
+	float AngleRadians = FMath::Acos(DotProduct);
+	// Convert the angle from radians to degrees
+	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), AngleDegrees);
+	
+	return AngleDegrees < 5;
+}
+
+bool UMotionComponent::CanSlide()
+{
+	if (!OwnerRef) { return false; }
+
+	return IsMovingForward() &&
+		!IsSlidingOnGround() &&
+		(OwnerRef->GetCharacterMovement()->Velocity.Length() > 250) &&
+		!OwnerRef->GetCharacterMovement()->IsFalling() &&
+		!OwnerRef->GetCharacterMovement()->IsCrouching() &&
+		!OwnerRef->IsAimingButtonPressed() &&
+		!OwnerRef->IsFireButtonPressed();
 }
