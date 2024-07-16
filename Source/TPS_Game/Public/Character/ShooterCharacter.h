@@ -119,6 +119,7 @@ private:
 
 	bool bFireButtonPressed;
 	bool bAimingButtonPressed;
+	bool bCrouchingButtonPressed;
 	
 	/** Default Weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
@@ -220,4 +221,5 @@ public:
 	FORCEINLINE FTransform GetLeftHandSceneCompTransform() const { return LeftHandSceneComponent->GetComponentTransform(); }
 	FORCEINLINE bool IsFireButtonPressed() const { return bFireButtonPressed; }
 	FORCEINLINE bool IsAimingButtonPressed() const { return bAimingButtonPressed; }
+	FORCEINLINE bool IsCrouchingButtonPressed() const { return bCrouchingButtonPressed; }
 };

@@ -46,6 +46,7 @@ public:
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void LineTraceForInformationPopUp();
+	void LineTraceForCrouching();
 	void CrosshairStartFireBullet();
 	void CrosshairFinishFireBullet();
 	void InterpolateItem();

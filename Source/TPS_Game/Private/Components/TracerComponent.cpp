@@ -5,13 +5,13 @@
 
 #include "Character/ShooterCharacter.h"
 #include "Components/InventoryComponent.h"
+#include "Components/MotionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "HUD/Item/InformationPopUp.h"
 #include "Item/BaseItem.h"
 #include "Item/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
-#include "TPS_Game/TPS_Game.h"
 
 // Sets default values for this component's properties
 UTracerComponent::UTracerComponent() :
@@ -41,6 +41,7 @@ void UTracerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	LineTraceForInformationPopUp();
+	LineTraceForCrouching();
 }
 
 
@@ -188,6 +189,22 @@ void UTracerComponent::LineTraceForInformationPopUp()
 	}
 }
 
+void UTracerComponent::LineTraceForCrouching()
+{
+	if (!MainCharacter->GetMotionComponent()) { return; }
+	
+	FHitResult Result;
+	FVector Start = MainCharacter->GetMesh()->GetComponentLocation();
+	FVector End = Start + (MainCharacter->GetActorUpVector() * 175.f);
+	GetWorld()->LineTraceSingleByChannel(Result, Start, End, ECC_Visibility);
+
+	UKismetSystemLibrary::DrawDebugLine(GetWorld(), Start, End, FColor::Red);
+
+	if (MainCharacter->IsCrouchingButtonPressed()) { return; }
+	
+	Result.bBlockingHit ? MainCharacter->GetMotionComponent()->CrouchStart(true) : MainCharacter->GetMotionComponent()->CrouchStop(false);
+}
+
 void UTracerComponent::CrosshairStartFireBullet()
 {
 	bFiring = true;
@@ -254,7 +271,7 @@ EPhysicalSurface UTracerComponent::GetSurfaceType()
 
 		if (GroundHit.bBlockingHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("TEST"));
+			//UE_LOG(LogTemp, Warning, TEXT("TEST"));
 			return UPhysicalMaterial::DetermineSurfaceType(GroundHit.PhysMaterial.Get());			
 		}
 		

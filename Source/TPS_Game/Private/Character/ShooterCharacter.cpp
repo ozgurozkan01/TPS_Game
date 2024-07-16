@@ -25,7 +25,8 @@ AShooterCharacter::AShooterCharacter() :
 	CameraForwardDistance(120.f),
 	CameraUpDistance(30.f),
 	bFireButtonPressed(false),
-	bAimingButtonPressed(false)
+	bAimingButtonPressed(false),
+	bCrouchingButtonPressed(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -227,8 +228,8 @@ void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
 {
 	if (!GetCharacterMovement()->IsFalling() && MotionComponent)
 	{
-		bool bCrouchingPressed = Value.Get<bool>();
-		MotionComponent->CrouchStart(bCrouchingPressed);
+		bCrouchingButtonPressed = Value.Get<bool>();
+		MotionComponent->CrouchStart(bCrouchingButtonPressed);
 	}
 }
 
@@ -236,8 +237,8 @@ void AShooterCharacter::CrouchingButtonReleased(const FInputActionValue& Value)
 {
 	if (!GetCharacterMovement()->IsFalling() && MotionComponent)
 	{
-		bool bCrouchingReleased = Value.Get<bool>();
-		MotionComponent->CrouchStop(bCrouchingReleased);
+		bCrouchingButtonPressed = Value.Get<bool>();
+		MotionComponent->CrouchStop(bCrouchingButtonPressed);
 	}
 }
 

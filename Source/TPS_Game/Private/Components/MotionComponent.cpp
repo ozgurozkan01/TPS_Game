@@ -66,6 +66,7 @@ void UMotionComponent::CrouchStart(const bool& Value)
 {
 	if (OwnerRef)
 	{
+		GEngine->AddOnScreenDebugMessage(123123, -1, FColor::Black, FString::Printf(TEXT("TargetHalfHeight : %d"), Value));
 		SetIsCrouching(Value);
 		OwnerRef->GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
 		OwnerRef->GetCharacterMovement()->GroundFriction = 5.f;
@@ -105,9 +106,9 @@ void UMotionComponent::UpdateCapsuleHalfHeight(float DeltaTime)
 	{
 		return;
 	}
-	
-	/*bIsCrouching ? TargetHalfHeight = CrouchingHalfHeight : TargetHalfHeight = RunningHalfHeight;
 
+	bIsCrouching ? TargetHalfHeight = CrouchingHalfHeight : TargetHalfHeight = RunningHalfHeight;
+	
 	if (OwnerRef)
 	{
 		const float InterpHalfHeight { FMath::FInterpTo(
@@ -121,7 +122,7 @@ void UMotionComponent::UpdateCapsuleHalfHeight(float DeltaTime)
 		OwnerRef->GetMesh()->AddLocalOffset(MeshOffset);
 	
 		OwnerRef->GetCapsuleComponent()->SetCapsuleHalfHeight(InterpHalfHeight);
-	}*/
+	}
 }
 
 void UMotionComponent::Slide()
@@ -129,7 +130,7 @@ void UMotionComponent::Slide()
 	if (!OwnerRef || !OwnerRef->GetCapsuleComponent() || !OwnerRef->GetAnimatorComponent()) { return;}
 
 	OwnerRef->GetCapsuleComponent()->SetCapsuleHalfHeight(SlidingHalfHeight);
-	bSlidingOnGround = false;
+	bSlidingOnGround = true;
 	OwnerRef->GetMesh()->SetWorldLocation(OwnerRef->GetMesh()->GetComponentLocation() + FVector3d(0, 0, 35));
 	OwnerRef->GetAnimatorComponent()->PlaySlidingMontage();
 }
@@ -148,9 +149,6 @@ bool UMotionComponent::IsMovingForward()
 	float AngleRadians = FMath::Acos(DotProduct);
 	// Convert the angle from radians to degrees
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
-
-	UE_LOG(LogTemp, Warning, TEXT("%f"), AngleDegrees);
-	
 	return AngleDegrees < 5;
 }
 
