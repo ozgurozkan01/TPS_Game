@@ -37,16 +37,19 @@ private:
 	FVector BeamEnd;
 	/** Trace Control Values */
 	int8 OverlappedItemCount;
+
+	bool CrouchingHit;
 public:
 	FORCEINLINE void SetShouldTraceItem(bool bIsTrace) { bShouldTraceForItems = bIsTrace; }
 	FORCEINLINE bool GetIsFiring() const { return bFiring; }
+	FORCEINLINE bool IsCrouchingHitValid() const { return CrouchingHit; }
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 
 	bool IsConvertedScreenToWorld(FVector& CrosshairWorldPosition, FVector& CrosshairWorldDirection);
 	void LineTraceFromTheScreen(const FVector& CrosshairWorldPosition, const FVector& CrosshairWorldDirection, FVector& BeamEndPoint);
 	void LineTraceFromTheGunBarrel(const FVector& GunSocketLocation, FVector& BeamEndPoint);
 	void LineTraceForInformationPopUp();
-	void LineTraceForCrouching();
+	bool LineTraceForCrouching();
 	void CrosshairStartFireBullet();
 	void CrosshairFinishFireBullet();
 	void InterpolateItem();

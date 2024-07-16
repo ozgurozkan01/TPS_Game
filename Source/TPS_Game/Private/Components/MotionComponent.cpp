@@ -7,6 +7,7 @@
 #include "Components/AnimatorComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CombatComponent.h"
+#include "Components/TracerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UMotionComponent::UMotionComponent() :
@@ -62,22 +63,24 @@ void UMotionComponent::Movement(const FVector2D& Value)
 	}
 }
 
-void UMotionComponent::CrouchStart(const bool& Value)
+void UMotionComponent::CrouchStart()
 {
 	if (OwnerRef)
 	{
-		GEngine->AddOnScreenDebugMessage(123123, -1, FColor::Black, FString::Printf(TEXT("TargetHalfHeight : %d"), Value));
-		SetIsCrouching(Value);
+		// GEngine->AddOnScreenDebugMessage(123123, -1, FColor::Black, FString::Printf(TEXT("Crouching")));
+		SetIsCrouching(true);
 		OwnerRef->GetCharacterMovement()->MaxWalkSpeed = CrouchingSpeed;
 		OwnerRef->GetCharacterMovement()->GroundFriction = 5.f;
 	}
 }
 
-void UMotionComponent::CrouchStop(const bool& Value)
+void UMotionComponent::CrouchStop()
 {
-	if (OwnerRef)
+	//GEngine->AddOnScreenDebugMessage(123123, 10, FColor::Black, FString::Printf(TEXT("%d"), OwnerRef->GetTracerComponent()->IsCrouchingHitValid()));
+	//GEngine->AddOnScreenDebugMessage(123133, 10, FColor::Black, FString::Printf(TEXT("Out If")));
+	if (OwnerRef && OwnerRef->GetTracerComponent())
 	{
-		SetIsCrouching(Value);
+		SetIsCrouching(false);
 		OwnerRef->GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
 		OwnerRef->GetCharacterMovement()->GroundFriction = .75f;		
 	}

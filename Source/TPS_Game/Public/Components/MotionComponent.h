@@ -56,8 +56,8 @@ public:
 
 	void Movement(const FVector2D& Value);
 	void LookAround(const FVector2D& Value);
-	void CrouchStart(const bool& Value);
-	void CrouchStop(const bool& Value);
+	void CrouchStart();
+	void CrouchStop();
 	void SetLookRates();
 	void UpdateCapsuleHalfHeight(float DeltaTime);
 	// Getters

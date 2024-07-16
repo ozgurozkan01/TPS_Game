@@ -226,19 +226,21 @@ void AShooterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 
 void AShooterCharacter::CrouchingButtonPressed(const FInputActionValue& Value)
 {
+	bCrouchingButtonPressed = Value.Get<bool>();
+
 	if (!GetCharacterMovement()->IsFalling() && MotionComponent)
 	{
-		bCrouchingButtonPressed = Value.Get<bool>();
-		MotionComponent->CrouchStart(bCrouchingButtonPressed);
+		MotionComponent->CrouchStart();
 	}
 }
 
 void AShooterCharacter::CrouchingButtonReleased(const FInputActionValue& Value)
 {
-	if (!GetCharacterMovement()->IsFalling() && MotionComponent)
+	bCrouchingButtonPressed = Value.Get<bool>();
+
+	if (!GetCharacterMovement()->IsFalling() && MotionComponent  && TracerComponent && !TracerComponent->IsCrouchingHitValid())
 	{
-		bCrouchingButtonPressed = Value.Get<bool>();
-		MotionComponent->CrouchStop(bCrouchingButtonPressed);
+		MotionComponent->CrouchStop();
 	}
 }
 

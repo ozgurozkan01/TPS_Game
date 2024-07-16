@@ -41,7 +41,14 @@ void UTracerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	LineTraceForInformationPopUp();
-	LineTraceForCrouching();
+
+	GEngine->AddOnScreenDebugMessage(2, 2, FColor::Cyan, FString::Printf(TEXT("TEST : %d, %d"), !LineTraceForCrouching(), !MainCharacter->IsCrouchingButtonPressed()));
+	
+	if (!LineTraceForCrouching() && MainCharacter && !MainCharacter->IsCrouchingButtonPressed() && MainCharacter->GetMotionComponent())
+	{
+		MainCharacter->GetMotionComponent()->CrouchStop();
+	}
+	
 }
 
 
@@ -189,20 +196,38 @@ void UTracerComponent::LineTraceForInformationPopUp()
 	}
 }
 
-void UTracerComponent::LineTraceForCrouching()
+bool UTracerComponent::LineTraceForCrouching()
 {
-	if (!MainCharacter->GetMotionComponent()) { return; }
-	
-	FHitResult Result;
+	FHitResult HitResult;
 	FVector Start = MainCharacter->GetMesh()->GetComponentLocation();
-	FVector End = Start + (MainCharacter->GetActorUpVector() * 175.f);
-	GetWorld()->LineTraceSingleByChannel(Result, Start, End, ECC_Visibility);
+	FVector End = Start + (MainCharacter->GetActorUpVector() * 250.f);
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
 
 	UKismetSystemLibrary::DrawDebugLine(GetWorld(), Start, End, FColor::Red);
 
-	if (MainCharacter->IsCrouchingButtonPressed()) { return; }
+	CrouchingHit = HitResult.bBlockingHit;
+
+	/*
+	if (CrouchingHit && !MainCharacter->GetMotionComponent()->GetIsCrouching())
+	{
+		MainCharacter->GetMotionComponent()->CrouchStart();
+	}
+	else if (!CrouchingHit && !MainCharacter->IsCrouchingButtonPressed() && MainCharacter->GetMotionComponent()->GetIsCrouching())
+	{
+		MainCharacter->GetMotionComponent()->CrouchStop();
+	}
+	else if (!CrouchingHit && !MainCharacter->IsCrouchingButtonPressed() && !MainCharacter->GetMotionComponent()->GetIsCrouching())
+	{
+		MainCharacter->GetMotionComponent()->CrouchStop();
+	}
+	*/
+
+	if (HitResult.bBlockingHit)
+	{
+		GEngine->AddOnScreenDebugMessage(123123, 2, FColor::Black, FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetActorNameOrLabel()));
+	}
 	
-	Result.bBlockingHit ? MainCharacter->GetMotionComponent()->CrouchStart(true) : MainCharacter->GetMotionComponent()->CrouchStop(false);
+	return HitResult.bBlockingHit;
 }
 
 void UTracerComponent::CrosshairStartFireBullet()
@@ -249,7 +274,7 @@ FVector UTracerComponent::GetBeamEndPoint()
 			LineTraceFromTheGunBarrel(BarrelSocketTransform.GetLocation(), BeamEnd);
 			CrosshairStartFireBullet();
 		}
-		GEngine->AddOnScreenDebugMessage(2, 2, FColor::Cyan, FString::Printf(TEXT("Beam End : %f, %f, %f"), BeamEnd.X, BeamEnd.Y, BeamEnd.Z));
+		//GEngine->AddOnScreenDebugMessage(2, 2, FColor::Cyan, FString::Printf(TEXT("Beam End : %f, %f, %f"), BeamEnd.X, BeamEnd.Y, BeamEnd.Z));
 
 		return BeamEnd;
 	}
